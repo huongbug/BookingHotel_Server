@@ -25,7 +25,8 @@ import org.springframework.web.cors.CorsConfiguration;
 @EnableGlobalMethodSecurity(
     securedEnabled = true,
     jsr250Enabled = true,
-    prePostEnabled = true)
+    prePostEnabled = true
+)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final CustomUserDetailsServiceImpl customUserDetailsService;
@@ -49,6 +50,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .authorizeRequests()
         .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
         .antMatchers("/api/v1/auth/**").permitAll()
+        .antMatchers("/api/v1/room/**").permitAll()
         .anyRequest().authenticated()
         .and()
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
