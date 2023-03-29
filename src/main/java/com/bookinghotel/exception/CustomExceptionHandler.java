@@ -2,6 +2,7 @@ package com.bookinghotel.exception;
 
 import com.bookinghotel.base.RestData;
 import com.bookinghotel.base.VsResponseUtil;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -17,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Log4j2(topic = "ErrorLogger")
 @RestControllerAdvice
 public class CustomExceptionHandler {
 
@@ -44,43 +46,59 @@ public class CustomExceptionHandler {
     return VsResponseUtil.error(HttpStatus.BAD_REQUEST, result);
   }
 
+  @ExceptionHandler(Exception.class)
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  public ResponseEntity<RestData<?>> handlerInternalServerError(Exception ex, WebRequest req) {
+    log.error(ex.getMessage(), ex);
+    return VsResponseUtil.error(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+  }
+
+//Exception custom
   @ExceptionHandler(VsException.class)
   public ResponseEntity<RestData<?>> handleVsException(VsException ex, WebRequest req) {
+    log.error(ex.getMessage(), ex);
     return VsResponseUtil.error(ex.getStatusCode(), ex.getErrMessage());
   }
 
   @ExceptionHandler(DuplicateException.class)
   public ResponseEntity<RestData<?>> handleDuplicateException(DuplicateException ex, WebRequest req) {
+    log.error(ex.getMessage(), ex);
     return VsResponseUtil.error(ex.getStatusCode(), ex.getMessage());
   }
 
   @ExceptionHandler(ForbiddenException.class)
   public ResponseEntity<RestData<?>> handleAccessDeniedException(ForbiddenException ex, WebRequest req) {
+    log.error(ex.getMessage(), ex);
     return VsResponseUtil.error(ex.getStatusCode(), ex.getMessage());
   }
 
   @ExceptionHandler(InternalServerException.class)
   public ResponseEntity<RestData<?>> handlerInternalServerException(InternalServerException ex, WebRequest req) {
+    log.error(ex.getMessage(), ex);
     return VsResponseUtil.error(ex.getStatusCode(), ex.getMessage());
   }
 
   @ExceptionHandler(InvalidException.class)
   public ResponseEntity<RestData<?>> handlerInvalidException(InvalidException ex, WebRequest req) {
+    log.error(ex.getMessage(), ex);
     return VsResponseUtil.error(ex.getStatusCode(), ex.getMessage());
   }
 
   @ExceptionHandler(NotFoundException.class)
   public ResponseEntity<RestData<?>> handlerNotFoundException(NotFoundException ex, WebRequest req) {
+    log.error(ex.getMessage(), ex);
     return VsResponseUtil.error(ex.getStatusCode(), ex.getMessage());
   }
 
   @ExceptionHandler(UnauthorizedException.class)
   public ResponseEntity<RestData<?>> handleUnauthorizedException(UnauthorizedException ex, WebRequest req) {
+    log.error(ex.getMessage(), ex);
     return VsResponseUtil.error(ex.getStatusCode(), ex.getMessage());
   }
 
   @ExceptionHandler(UploadImageException.class)
   public ResponseEntity<RestData<?>> handleUploadImageException(UploadImageException ex, WebRequest req) {
+    log.error(ex.getMessage(), ex);
     return VsResponseUtil.error(ex.getStatusCode(), ex.getMessage());
   }
 
