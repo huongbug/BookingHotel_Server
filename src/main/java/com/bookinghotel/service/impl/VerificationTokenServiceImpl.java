@@ -1,7 +1,9 @@
 package com.bookinghotel.service.impl;
 
+import com.bookinghotel.constant.ErrorMessage;
 import com.bookinghotel.entity.User;
 import com.bookinghotel.entity.VerificationToken;
+import com.bookinghotel.exception.InvalidException;
 import com.bookinghotel.repository.VerificationTokenRepository;
 import com.bookinghotel.service.VerificationTokenService;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +20,22 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
   private final VerificationTokenRepository verificationTokenRepository;
 
   @Override
+  public VerificationToken getByToken(String token) {
+    VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
+    checkVerificationToken(verificationToken);
+    return verificationToken;
+  }
+
+  @Override
   public VerificationToken createVerificationToken(User user) {
     UUID token = UUID.randomUUID();
     VerificationToken verificationToken = new VerificationToken(user, token.toString());
     return verificationTokenRepository.save(verificationToken);
+  }
+
+  @Override
+  public void deleteToken(Long id) {
+    verificationTokenRepository.deleteById(id);
   }
 
   @Override
@@ -31,6 +45,17 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
     for (VerificationToken verificationToken : verificationTokenList) {
       if ((verificationToken.getExpirationTime().getTime() - cal.getTime().getTime()) <= 0) {
         verificationTokenRepository.delete(verificationToken);
+      }
+    }
+  }
+
+  private void checkVerificationToken(VerificationToken verificationToken) {
+    if (verificationToken == null) {
+      throw new InvalidException(ErrorMessage.Auth.INVALID_TOKEN);
+    } else {
+      Calendar cal = Calendar.getInstance();
+      if ((verificationToken.getExpirationTime().getTime() - cal.getTime().getTime()) <= 0) {
+        throw new InvalidException(ErrorMessage.Auth.EXPIRED_TOKEN);
       }
     }
   }

@@ -5,9 +5,13 @@ import com.bookinghotel.entity.VerificationToken;
 
 public interface VerificationTokenService {
 
+  VerificationToken getByToken(String token);
+
   VerificationToken createVerificationToken(User user);
 
-  //Xóa các token rác
+  void deleteToken(Long id);
+
+  //Delete junk token
   void deleteAllJunkVerificationToken();
 
 }
