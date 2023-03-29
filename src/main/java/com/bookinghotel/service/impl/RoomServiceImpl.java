@@ -6,6 +6,7 @@ import com.bookinghotel.constant.ErrorMessage;
 import com.bookinghotel.constant.SortByDataConstant;
 import com.bookinghotel.dto.RoomCreateDTO;
 import com.bookinghotel.dto.RoomDTO;
+import com.bookinghotel.dto.RoomFilterDTO;
 import com.bookinghotel.dto.RoomUpdateDTO;
 import com.bookinghotel.dto.common.CommonResponseDTO;
 import com.bookinghotel.dto.pagination.PaginationResponseDTO;
@@ -61,6 +62,19 @@ public class RoomServiceImpl implements RoomService {
     List<RoomDTO> roomDTOs = roomMapper.toRoomDTOs(rooms.getContent());
     return new PaginationResponseDTO<RoomDTO>(meta, roomDTOs);
   }
+
+  @Override
+  public PaginationResponseDTO<RoomDTO> getRoomsAvailable(PaginationSearchSortRequestDTO requestDTO, RoomFilterDTO roomFilter) {
+    String roomType = roomFilter.getRoomType() == null ? null : roomFilter.getRoomType().getValue();
+    //Pagination
+    Pageable pageable = PaginationUtil.buildPageable(requestDTO, SortByDataConstant.ROOM);
+    Page<Room> rooms = roomRepository.findAllAvailable(requestDTO.getKeyword(), roomFilter, roomType, pageable);
+    //Create Output
+    PagingMeta meta = PaginationUtil.buildPagingMeta(requestDTO, SortByDataConstant.ROOM, rooms);
+    List<RoomDTO> roomDTOs = roomMapper.toRoomDTOs(rooms.getContent());
+    return new PaginationResponseDTO<RoomDTO>(meta, roomDTOs);
+  }
+
 
   @Override
   @Transactional

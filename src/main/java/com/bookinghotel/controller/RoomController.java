@@ -6,6 +6,7 @@ import com.bookinghotel.constant.RoleConstant;
 import com.bookinghotel.constant.RoomType;
 import com.bookinghotel.constant.UrlConstant;
 import com.bookinghotel.dto.RoomCreateDTO;
+import com.bookinghotel.dto.RoomFilterDTO;
 import com.bookinghotel.dto.RoomUpdateDTO;
 import com.bookinghotel.dto.pagination.PaginationSearchSortRequestDTO;
 import com.bookinghotel.security.AuthorizationInfo;
@@ -39,6 +40,13 @@ public class RoomController {
   public ResponseEntity<?> getRooms(@Valid @ParameterObject PaginationSearchSortRequestDTO pagination,
                                     @RequestParam(required = false) RoomType filter) {
     return VsResponseUtil.ok(roomService.getRooms(pagination, filter == null ? null : filter.getValue()));
+  }
+
+  @Operation(summary = "API get all room available")
+  @GetMapping(UrlConstant.Room.GET_ROOMS_AVAILABLE)
+  public ResponseEntity<?> getRoomsAvailable(@Valid @ParameterObject PaginationSearchSortRequestDTO pagination,
+                                             @ParameterObject RoomFilterDTO roomFilterDTO) {
+    return VsResponseUtil.ok(roomService.getRoomsAvailable(pagination, roomFilterDTO));
   }
 
   @Tag(name = "room-controller-admin")
