@@ -34,8 +34,15 @@ public class Sale extends FlagUserDateAuditing {
   private Integer salePercent;
 
   //Link to table Room
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "sale")
+  @OneToMany(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH}, mappedBy = "sale")
   @JsonIgnore
   private Set<Room> rooms = new HashSet<>();
+
+  @PreRemove
+  private void removeSaleFromRooms() {
+    for (Room room : rooms) {
+      room.setSale(null);
+    }
+  }
 
 }

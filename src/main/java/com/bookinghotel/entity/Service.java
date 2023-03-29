@@ -39,7 +39,7 @@ public class Service extends FlagUserDateAuditing {
   private String description;
 
   //Link to table Service
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "service")
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "service")
   @JsonIgnore
   private Set<Product> products = new HashSet<>();
 

@@ -31,7 +31,7 @@ public class Product extends FlagUserDateAuditing {
   private String description;
 
   //Link to table Service
-  @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "service_id", foreignKey = @ForeignKey(name = "FK_PRODUCT_SERVICE"))
   private Service service;
 

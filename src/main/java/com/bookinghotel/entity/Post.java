@@ -29,12 +29,12 @@ public class Post extends FlagUserDateAuditing {
   private String content;
 
   //Link to table User
-  @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_POST_USER"))
   private User user;
 
   //Link to table Media
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "post")
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
   @JsonIgnore
   private Set<Media> medias = new HashSet<>();
 

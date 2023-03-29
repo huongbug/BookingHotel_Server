@@ -24,12 +24,12 @@ public class Media extends FlagUserDateAuditing {
   private String url;
 
   //Link to table Post
-  @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "post_id", foreignKey = @ForeignKey(name = "FK_MEDIA_POST"))
   private Post post;
 
   //Link to table Room
-  @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "room_id", foreignKey = @ForeignKey(name = "FK_MEDIA_ROOM"))
   private Room room;
 

@@ -51,22 +51,17 @@ public class Room extends FlagUserDateAuditing {
   private String description;
 
   //Link to table Sale
-  @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "sale_id", foreignKey = @ForeignKey(name = "FK_ROOM_SALE"))
   private Sale sale;
 
-  //Link to table RoomRating
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "room")
-  @JsonIgnore
-  private Set<RoomRating> roomRatings = new HashSet<>();
-
   //Link to table Media
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "room")
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "room")
   @JsonIgnore
   private Set<Media> medias = new HashSet<>();
 
   //Link to table BookingDetail
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "room")
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "room")
   @JsonIgnore
   private Set<BookingRoomDetail> bookingDetails = new HashSet<>();
 

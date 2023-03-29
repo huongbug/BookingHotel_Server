@@ -61,24 +61,19 @@ public class User extends DateAuditing {
   private Boolean enabled;
 
   //Link to table Role
-  @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "role_id", foreignKey = @ForeignKey(name = "FK_USER_ROLE"))
   private Role role;
 
   //Link to table Booking
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
   @JsonIgnore
   private Set<Booking> bookings = new HashSet<>();
 
   //Link to table Post
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
   @JsonIgnore
   private Set<Post> posts = new HashSet<>();
-
-  //Link to table RoomRating
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
-  @JsonIgnore
-  private Set<RoomRating> roomRatings = new HashSet<>();
 
   @PrePersist
   public void prePersist() {

@@ -27,12 +27,12 @@ public class BookingServiceDetail extends UserDateAuditing {
   private Integer amount;
 
   //Link to table Booking
-  @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "booking_id", foreignKey = @ForeignKey(name = "FK_BOOKING_SERVICE_DETAIL_BOOKING"))
   private Booking booking;
 
   //Link to table Service
-  @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "service_id", foreignKey = @ForeignKey(name = "FK_BOOKING_SERVICE_DETAIL_SERVICE"))
   private Service service;
 

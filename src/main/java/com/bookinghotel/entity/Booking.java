@@ -44,17 +44,17 @@ public class Booking extends UserDateAuditing {
   private String note;
 
   //Link to table Role
-  @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_BOOKING_USER"))
   private User user;
 
   //Link to table BookingRoomDetail
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "booking")
+  @OneToMany(cascade = CascadeType.ALL,mappedBy = "booking")
   @JsonIgnore
   private Set<BookingRoomDetail> bookingRoomDetails = new HashSet<>();
 
   //Link to table BookingServiceDetail
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "booking")
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "booking")
   @JsonIgnore
   private Set<BookingServiceDetail> bookingServiceDetails = new HashSet<>();
 
