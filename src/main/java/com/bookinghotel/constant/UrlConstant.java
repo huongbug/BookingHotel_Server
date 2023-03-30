@@ -46,4 +46,20 @@ public class UrlConstant {
     }
   }
 
+  public static class Sale {
+    private static final String PRE_FIX = "/sale";
+
+    public static final String GET_SALES = PRE_FIX;
+    public static final String GET_SALE = PRE_FIX + "/{saleId}";
+
+    public static final String CREATE_SALE = PRE_FIX + "/create";
+
+    public static final String UPDATE_SALE = PRE_FIX + "/update/{saleId}";
+
+    public static final String DELETE_SALE = PRE_FIX + "/delete/{saleId}";
+
+    private Sale() {
+    }
+  }
+
 }
