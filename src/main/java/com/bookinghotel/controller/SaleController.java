@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Tags(@Tag(name = "sale-controller-admin"))
 @RequiredArgsConstructor
@@ -59,6 +60,20 @@ public class SaleController {
   @DeleteMapping(UrlConstant.Sale.DELETE_SALE)
   public ResponseEntity<?> deleteSaleById(@PathVariable Long saleId) {
     return VsResponseUtil.ok(saleService.deleteSale(saleId));
+  }
+
+  @Operation(summary = "API add sale to room")
+  @AuthorizationInfo(role = { RoleConstant.ADMIN })
+  @PostMapping(UrlConstant.Sale.ADD_SALE_TO_ROOM)
+  public ResponseEntity<?> addSaleToRoom(@PathVariable Long saleId, @RequestBody List<Long> roomIds) {
+    return VsResponseUtil.ok(saleService.addSalesToRoom(saleId, roomIds));
+  }
+
+  @Operation(summary = "API remove sale from room")
+  @AuthorizationInfo(role = { RoleConstant.ADMIN })
+  @PostMapping(UrlConstant.Sale.REMOVE_SALE_FROM_ROOM)
+  public ResponseEntity<?> removeSaleFromRoom(@PathVariable Long saleId, @PathVariable Long roomId) {
+    return VsResponseUtil.ok(saleService.removeSaleFromRoom(saleId, roomId));
   }
 
 }

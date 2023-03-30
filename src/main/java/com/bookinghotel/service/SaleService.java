@@ -7,6 +7,8 @@ import com.bookinghotel.dto.common.CommonResponseDTO;
 import com.bookinghotel.dto.pagination.PaginationResponseDTO;
 import com.bookinghotel.dto.pagination.PaginationSearchSortRequestDTO;
 
+import java.util.List;
+
 public interface SaleService {
 
   SaleDTO getSale(Long saleId);
@@ -18,6 +20,10 @@ public interface SaleService {
   SaleDTO updateSale(Long saleId, SaleUpdateDTO updateDTO);
 
   CommonResponseDTO deleteSale(Long saleId);
+
+  CommonResponseDTO addSalesToRoom(Long saleId, List<Long> roomIds);
+
+  CommonResponseDTO removeSaleFromRoom(Long saleId, Long roomId);
 
   void deleteSaleByDeleteFlag(Boolean isDeleteFlag, Integer daysToDeleteRecords);
 

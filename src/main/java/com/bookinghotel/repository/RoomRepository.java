@@ -21,6 +21,9 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
   @Query("SELECT r FROM Room r WHERE r.id = ?1 AND r.deleteFlag = false")
   Optional<Room> findById(Long id);
 
+  @Query("SELECT r FROM Room r WHERE r.id IN ?1 AND r.deleteFlag = false")
+  List<Room> findAllByIds(List<Long> ids);
+
   @Query(value = "SELECT * FROM rooms r WHERE (:keyword is null or r.title LIKE CONCAT('%', :keyword, '%')) " +
       "AND (:filter is null or r.type = :filter) AND r.delete_flag = 0",
       countQuery = "SELECT COUNT(*) FROM rooms r WHERE (:keyword is null or r.title LIKE CONCAT('%', :keyword, '%')) " +
