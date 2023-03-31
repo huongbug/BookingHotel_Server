@@ -24,6 +24,7 @@ public class UrlConstant {
 
     public static final String GET_USERS = PRE_FIX;
     public static final String GET_USER = PRE_FIX + "/{userId}";
+    public static final String GET_CURRENT_USER = PRE_FIX + "/current";
 
     public static final String UPDATE_USER = PRE_FIX + "/update/{userId}";
 
@@ -62,6 +63,23 @@ public class UrlConstant {
     public static final String REMOVE_SALE_FROM_ROOM = PRE_FIX + "/remove/room/{saleId}/{roomId}";
 
     private Sale() {
+    }
+  }
+
+  public static class Service {
+    private static final String PRE_FIX = "/service";
+
+    public static final String GET_SERVICES = PRE_FIX;
+    public static final String GET_SERVICE = PRE_FIX + "/{serviceId}";
+    public static final String GET_PRODUCTS_BY_SERVICE = PRE_FIX + "/{serviceId}/products";
+
+    public static final String CREATE_SERVICE = PRE_FIX + "/create";
+
+    public static final String UPDATE_SERVICE = PRE_FIX + "/update/{serviceId}";
+
+    public static final String DELETE_SERVICE = PRE_FIX + "/delete/{serviceId}";
+
+    private Service() {
     }
   }
 
