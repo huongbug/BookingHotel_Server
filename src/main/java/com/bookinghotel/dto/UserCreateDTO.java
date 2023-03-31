@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -47,5 +48,7 @@ public class UserCreateDTO {
 
   @NotBlank(message = ErrorMessage.NOT_BLANK_FIELD)
   private String address;
+
+  private MultipartFile avatarFile;
 
 }

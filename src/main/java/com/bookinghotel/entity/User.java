@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Nationalized;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -60,6 +61,8 @@ public class User extends DateAuditing {
   @Column(nullable = false)
   private Boolean enabled;
 
+  private String avatar;
+
   //Link to table Role
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "role_id", foreignKey = @ForeignKey(name = "FK_USER_ROLE"))
@@ -72,6 +75,7 @@ public class User extends DateAuditing {
 
   //Link to table Post
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+  @Where(clause = "delete_flag = 0")
   @JsonIgnore
   private Set<Post> posts = new HashSet<>();
 
@@ -83,7 +87,7 @@ public class User extends DateAuditing {
   }
 
   public User(String email, String phoneNumber, String password, String firstName, String lastName,
-              String gender, LocalDate birthday, String address, Boolean enabled, Role role) {
+              String gender, LocalDate birthday, String address, Boolean enabled, String avatar,Role role) {
     this.email = email;
     this.phoneNumber = phoneNumber;
     this.password = password;
@@ -93,6 +97,7 @@ public class User extends DateAuditing {
     this.birthday = birthday;
     this.address = address;
     this.enabled = enabled;
+    this.avatar = avatar;
     this.role = role;
   }
 

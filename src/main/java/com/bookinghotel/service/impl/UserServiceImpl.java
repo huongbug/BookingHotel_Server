@@ -1,8 +1,6 @@
 package com.bookinghotel.service.impl;
 
-import com.bookinghotel.constant.ErrorMessage;
-import com.bookinghotel.constant.RoleConstant;
-import com.bookinghotel.constant.SortByDataConstant;
+import com.bookinghotel.constant.*;
 import com.bookinghotel.dto.UserCreateDTO;
 import com.bookinghotel.dto.UserDTO;
 import com.bookinghotel.dto.UserUpdateDTO;
@@ -19,12 +17,14 @@ import com.bookinghotel.repository.UserRepository;
 import com.bookinghotel.security.UserPrincipal;
 import com.bookinghotel.service.UserService;
 import com.bookinghotel.util.PaginationUtil;
+import com.bookinghotel.util.UploadFileUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +41,8 @@ public class UserServiceImpl implements UserService {
 
   private final PasswordEncoder passwordEncoder;
 
+  private final UploadFileUtil uploadFile;
+
   @Override
   public UserDTO getUserById(String userId) {
     Optional<User> user = userRepository.findById(userId);
@@ -49,11 +51,16 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public UserDTO getCurrentUser(UserPrincipal principal) {
+    User user = userRepository.getUser(principal);
+    return userMapper.toUserDTO(user);
+  }
+
+  @Override
   public PaginationResponseDTO<UserDTO> getUsers(PaginationSearchSortRequestDTO requestDTO) {
     //Pagination
     Pageable pageable = PaginationUtil.buildPageable(requestDTO, SortByDataConstant.USER);
     Page<User> users = userRepository.findAllByKey(requestDTO.getKeyword(), pageable);
-
     //Create Output
     PagingMeta meta = PaginationUtil.buildPagingMeta(requestDTO, SortByDataConstant.USER, users);
     List<UserDTO> userDTOs = userMapper.toUserDTOs(users.getContent());
@@ -65,6 +72,9 @@ public class UserServiceImpl implements UserService {
     User user = userMapper.toUser(userCreateDTO);
     user.setPassword(passwordEncoder.encode(userCreateDTO.getPassword()));
     user.setRole(roleRepository.findByRoleName(RoleConstant.USER));
+    if(userCreateDTO.getAvatarFile() != null) {
+      user.setAvatar(uploadFile.getUrlFromFile(userCreateDTO.getAvatarFile()));
+    }
     return userRepository.save(user);
   }
 
@@ -73,6 +83,9 @@ public class UserServiceImpl implements UserService {
     User user = userMapper.toUser(userCreateDTO);
     user.setPassword(passwordEncoder.encode(userCreateDTO.getPassword()));
     user.setRole(roleRepository.findByRoleName(RoleConstant.ADMIN));
+    if(userCreateDTO.getAvatarFile() != null) {
+      user.setAvatar(uploadFile.getUrlFromFile(userCreateDTO.getAvatarFile()));
+    }
     return userRepository.save(user);
   }
 
@@ -104,7 +117,25 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public CommonResponseDTO deleteUser(String userId) {
-    return null;
+    Optional<User> user = userRepository.findById(userId);
+    checkNotFoundUserById(user, userId);
+    userRepository.delete(user.get());
+    return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.DELETE_SUCCESS);
+  }
+
+  @Override
+  public CommonResponseDTO changeAvatar(MultipartFile avatar, UserPrincipal principal) {
+    User user = userRepository.getUser(principal);
+    try {
+      if(user.getAvatar() != null) {
+        uploadFile.removeImageFromUrl(user.getAvatar());
+      }
+      user.setAvatar(uploadFile.getUrlFromFile(avatar));
+      userRepository.save(user);
+      return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.UPDATE_SUCCESS);
+    } catch (Exception e) {
+      return new CommonResponseDTO(CommonConstant.FALSE, e.getMessage());
+    }
   }
 
   private void checkNotFoundUserById(Optional<User> user, String userId) {

@@ -47,7 +47,7 @@ public class BookingHotelApplication {
       if (userRepository.count() == 0) {
         User admin = new User(userInfo.getEmail(), userInfo.getPhone(), passwordEncoder.encode(userInfo.getPassword()),
             userInfo.getFirstName(), userInfo.getLastName(), "Nữ", LocalDate.parse(userInfo.getBirthday()),
-            userInfo.getAddress(), Boolean.TRUE, roleRepository.findByRoleName(RoleConstant.ADMIN));
+            userInfo.getAddress(), Boolean.TRUE, userInfo.getAvatar(), roleRepository.findByRoleName(RoleConstant.ADMIN));
         userRepository.save(admin);
       }
     };
