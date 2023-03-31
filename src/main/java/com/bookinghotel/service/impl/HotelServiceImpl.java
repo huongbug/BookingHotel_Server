@@ -12,6 +12,7 @@ import com.bookinghotel.dto.pagination.PaginationResponseDTO;
 import com.bookinghotel.dto.pagination.PaginationSearchSortRequestDTO;
 import com.bookinghotel.dto.pagination.PagingMeta;
 import com.bookinghotel.entity.Service;
+import com.bookinghotel.exception.InvalidException;
 import com.bookinghotel.exception.NotFoundException;
 import com.bookinghotel.mapper.ServiceMapper;
 import com.bookinghotel.repository.ServiceRepository;
@@ -67,8 +68,12 @@ public class HotelServiceImpl implements HotelService {
     Optional<Service> currentService = serviceRepository.findById(serviceId);
     checkNotFoundServiceById(currentService, serviceId);
     //update thumbnail
-    if(StringUtils.isEmpty(serviceUpdateDTO.getThumbnail()) && serviceUpdateDTO.getThumbnailFile() != null) {
-      currentService.get().setThumbnail(uploadFile.getUrlFromFile(serviceUpdateDTO.getThumbnailFile()));
+    if(StringUtils.isEmpty(serviceUpdateDTO.getThumbnail())) {
+      if(serviceUpdateDTO.getThumbnailFile() != null) {
+        currentService.get().setThumbnail(uploadFile.getUrlFromFile(serviceUpdateDTO.getThumbnailFile()));
+      } else {
+        throw new InvalidException(ErrorMessage.Service.ERR_SERVICE_MUST_HAVE_THUMBNAIL);
+      }
     }
     serviceMapper.updateProductFromDTO(serviceUpdateDTO, currentService.get());
     return serviceMapper.toServiceDTO(serviceRepository.save(currentService.get()));

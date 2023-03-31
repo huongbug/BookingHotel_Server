@@ -19,7 +19,6 @@ public class ErrorMessage {
   public static final String INVALID_FORMAT_SOME_THING_FIELD = "Invalid format";
 
   public static class Auth {
-
     public static final String ERR_INCORRECT_AUTHENTICATION = "Username or password incorrect";
     public static final String ERR_DUPLICATE_EMAIL = "Email is already taken";
     public static final String ERR_DUPLICATE_PASSWORD = "The new password must be different from the old password";
@@ -60,6 +59,7 @@ public class ErrorMessage {
 
   public static class Service {
     public static final String ERR_NOT_FOUND_ID = "Service not found with id: %s";
+    public static final String ERR_SERVICE_MUST_HAVE_THUMBNAIL = "Service must have a thumbnail";
   }
 
   public static class Booking {
