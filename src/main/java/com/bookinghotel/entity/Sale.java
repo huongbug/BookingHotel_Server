@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -35,6 +36,7 @@ public class Sale extends FlagUserDateAuditing {
 
   //Link to table Room
   @OneToMany(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH}, mappedBy = "sale")
+  @Where(clause = "delete_flag = 0")
   @JsonIgnore
   private Set<Room> rooms = new HashSet<>();
 

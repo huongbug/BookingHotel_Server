@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Nationalized;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -35,6 +36,7 @@ public class Post extends FlagUserDateAuditing {
 
   //Link to table Media
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
+  @Where(clause = "delete_flag = 0")
   @JsonIgnore
   private Set<Media> medias = new HashSet<>();
 
