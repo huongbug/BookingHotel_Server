@@ -17,6 +17,11 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface RoomMapper {
 
+  @Mappings({
+      @Mapping(target = "sale.dayStart", source = "room.sale.dayStart"),
+      @Mapping(target = "sale.dayEnd", source = "room.sale.dayEnd"),
+      @Mapping(target = "sale.salePercent", source = "room.sale.salePercent")
+  })
   RoomDTO toRoomDTO(Room room);
 
   List<RoomDTO> toRoomDTOs(List<Room> rooms);

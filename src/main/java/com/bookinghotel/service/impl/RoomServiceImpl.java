@@ -48,7 +48,6 @@ public class RoomServiceImpl implements RoomService {
   public RoomDTO getRoom(Long roomId) {
     Optional<Room> room = roomRepository.findById(roomId);
     checkNotFoundRoomById(room, roomId);
-    room.get().setMedias(mediaService.getMediaByRoom(roomId));
     return roomMapper.toRoomDTO(room.get());
   }
 

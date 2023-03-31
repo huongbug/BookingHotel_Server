@@ -28,6 +28,8 @@ public class RoomDTO {
 
   private String description;
 
+  private SaleDTO sale;
+
   private List<MediaDTO> medias;
 
 }
