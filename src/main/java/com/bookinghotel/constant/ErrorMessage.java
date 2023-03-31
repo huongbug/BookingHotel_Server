@@ -49,21 +49,23 @@ public class ErrorMessage {
     public static final String ERR_NOT_FOUND_ID = "Sale not found with id: %s";
   }
 
-  public static class Post {
-    public static final String ERR_NOT_FOUND_ID = "Post not found with id: %s";
-  }
-
-  public static class Product {
-    public static final String ERR_NOT_FOUND_ID = "Product not found with id: %s";
-  }
-
   public static class Service {
     public static final String ERR_NOT_FOUND_ID = "Service not found with id: %s";
     public static final String ERR_SERVICE_MUST_HAVE_THUMBNAIL = "Service must have a thumbnail";
   }
 
+  public static class Product {
+    public static final String ERR_NOT_FOUND_ID = "Product not found with id: %s";
+    public static final String ERR_PRODUCT_MUST_HAVE_THUMBNAIL = "Product must have a thumbnail";
+  }
+
   public static class Booking {
     public static final String ERR_NOT_FOUND_ID = "Booking not found with id: %s";
   }
+
+  public static class Post {
+    public static final String ERR_NOT_FOUND_ID = "Post not found with id: %s";
+  }
+
 
 }
