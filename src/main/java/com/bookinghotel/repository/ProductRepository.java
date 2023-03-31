@@ -20,7 +20,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
   Page<Product> findAllByKey(Pageable pageable, String keyword);
 
   @Query(value = "SELECT * FROM products p WHERE (:keyword IS NULL OR p.name LIKE CONCAT('%', :keyword, '%')) " +
-      "AND p.serviceId = :serviceId AND p.delete_flag = 0",
+      "AND p.service_id = :serviceId AND p.delete_flag = 0",
       countQuery = "SELECT COUNT(*) FROM products p WHERE (:keyword IS NULL OR p.name LIKE CONCAT('%', :keyword, '%')) " +
           "AND p.service_id = :serviceId AND p.delete_flag = 0",
       nativeQuery = true)

@@ -9,6 +9,7 @@ import com.bookinghotel.dto.ServiceUpdateDTO;
 import com.bookinghotel.dto.pagination.PaginationSearchSortRequestDTO;
 import com.bookinghotel.security.AuthorizationInfo;
 import com.bookinghotel.service.HotelService;
+import com.bookinghotel.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,8 @@ public class HotelServiceController {
 
   private final HotelService hotelService;
 
+  private final ProductService productService;
+
   @Operation(summary = "API get service by id")
   @GetMapping(UrlConstant.Service.GET_SERVICE)
   public ResponseEntity<?> getServiceById(@PathVariable Long serviceId) {
@@ -35,6 +38,12 @@ public class HotelServiceController {
   @GetMapping(UrlConstant.Service.GET_SERVICES)
   public ResponseEntity<?> getServices(@Valid @ParameterObject PaginationSearchSortRequestDTO requestDTO) {
     return VsResponseUtil.ok(hotelService.getServices(requestDTO));
+  }
+
+  @Operation(summary = "API get all product by service id")
+  @GetMapping(UrlConstant.Service.GET_PRODUCTS_BY_SERVICE)
+  public ResponseEntity<?> getProductsByService(@PathVariable Long serviceId, @Valid @ParameterObject PaginationSearchSortRequestDTO requestDTO) {
+    return VsResponseUtil.ok(productService.getProductsByServiceId(serviceId, requestDTO));
   }
 
   @Tag(name = "hotel-service-controller-admin")

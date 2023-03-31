@@ -5,6 +5,7 @@ import com.bookinghotel.dto.ServiceDTO;
 import com.bookinghotel.dto.ServiceUpdateDTO;
 import com.bookinghotel.entity.Service;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public interface ServiceMapper {
 
   Service createDtoToProduct(ServiceCreateDTO createDTO);
 
+  @Mapping(target = "thumbnail", ignore = true)
   void updateProductFromDTO(ServiceUpdateDTO updateDTO, @MappingTarget Service service);
 
 }

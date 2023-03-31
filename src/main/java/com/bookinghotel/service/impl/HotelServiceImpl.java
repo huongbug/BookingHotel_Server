@@ -70,6 +70,7 @@ public class HotelServiceImpl implements HotelService {
     //update thumbnail
     if(StringUtils.isEmpty(serviceUpdateDTO.getThumbnail())) {
       if(serviceUpdateDTO.getThumbnailFile() != null) {
+        uploadFile.removeImageFromUrl(currentService.get().getThumbnail());
         currentService.get().setThumbnail(uploadFile.getUrlFromFile(serviceUpdateDTO.getThumbnailFile()));
       } else {
         throw new InvalidException(ErrorMessage.Service.ERR_SERVICE_MUST_HAVE_THUMBNAIL);
