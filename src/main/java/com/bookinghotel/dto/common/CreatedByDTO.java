@@ -17,4 +17,6 @@ public class CreatedByDTO {
 
   private String lastName;
 
+  private String avatar;
+
 }

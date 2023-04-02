@@ -17,4 +17,6 @@ public class LastModifiedByDTO {
 
   private String lastName;
 
+  private String avatar;
+
 }
