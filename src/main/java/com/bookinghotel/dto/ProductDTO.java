@@ -1,5 +1,8 @@
 package com.bookinghotel.dto;
 
+import com.bookinghotel.dto.common.CreatedByDTO;
+import com.bookinghotel.dto.common.DateAuditingDTO;
+import com.bookinghotel.dto.common.LastModifiedByDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ProductDTO {
+public class ProductDTO extends DateAuditingDTO {
 
   private Long id;
 
@@ -18,5 +21,11 @@ public class ProductDTO {
   private String thumbnail;
 
   private String description;
+
+  private Long serviceId;
+
+  private CreatedByDTO createdBy;
+
+  private LastModifiedByDTO lastModifiedBy;
 
 }
