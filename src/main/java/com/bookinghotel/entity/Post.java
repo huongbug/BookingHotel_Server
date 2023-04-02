@@ -27,6 +27,10 @@ public class Post extends FlagUserDateAuditing {
 
   @Nationalized
   @Column(nullable = false)
+  private String title;
+
+  @Nationalized
+  @Column(nullable = false)
   private String content;
 
   //Link to table User
