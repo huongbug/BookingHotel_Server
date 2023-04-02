@@ -6,6 +6,7 @@ import com.bookinghotel.dto.ServiceUpdateDTO;
 import com.bookinghotel.dto.common.CommonResponseDTO;
 import com.bookinghotel.dto.pagination.PaginationResponseDTO;
 import com.bookinghotel.dto.pagination.PaginationSearchSortRequestDTO;
+import com.bookinghotel.security.UserPrincipal;
 
 public interface HotelService {
 
@@ -13,9 +14,9 @@ public interface HotelService {
 
   PaginationResponseDTO<ServiceDTO> getServices(PaginationSearchSortRequestDTO requestDTO);
 
-  ServiceDTO createService(ServiceCreateDTO serviceCreateDTO);
+  ServiceDTO createService(ServiceCreateDTO serviceCreateDTO, UserPrincipal principal);
 
-  ServiceDTO updateService(Long serviceId, ServiceUpdateDTO serviceUpdateDTO);
+  ServiceDTO updateService(Long serviceId, ServiceUpdateDTO serviceUpdateDTO, UserPrincipal principal);
 
   CommonResponseDTO deleteService(Long serviceId);
 

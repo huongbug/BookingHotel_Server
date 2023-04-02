@@ -12,19 +12,25 @@ import com.bookinghotel.dto.pagination.PaginationResponseDTO;
 import com.bookinghotel.dto.pagination.PaginationSearchSortRequestDTO;
 import com.bookinghotel.dto.pagination.PagingMeta;
 import com.bookinghotel.entity.Service;
+import com.bookinghotel.entity.User;
 import com.bookinghotel.exception.InvalidException;
 import com.bookinghotel.exception.NotFoundException;
 import com.bookinghotel.mapper.ServiceMapper;
+import com.bookinghotel.projection.ServiceProjection;
 import com.bookinghotel.repository.ServiceRepository;
+import com.bookinghotel.repository.UserRepository;
+import com.bookinghotel.security.UserPrincipal;
 import com.bookinghotel.service.HotelService;
 import com.bookinghotel.util.PaginationUtil;
 import com.bookinghotel.util.UploadFileUtil;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,39 +40,42 @@ public class HotelServiceImpl implements HotelService {
 
   private final ServiceRepository serviceRepository;
 
+  private final UserRepository userRepository;
+
   private final ServiceMapper serviceMapper;
 
   private final UploadFileUtil uploadFile;
 
   @Override
   public ServiceDTO getServiceById(Long serviceId) {
-    Optional<Service> service = serviceRepository.findById(serviceId);
+    ServiceProjection service = serviceRepository.findServiceById(serviceId);
     checkNotFoundServiceById(service, serviceId);
-    return serviceMapper.toServiceDTO(service.get());
+    return serviceMapper.serviceProjectionToServiceDTO(service);
   }
 
   @Override
   public PaginationResponseDTO<ServiceDTO> getServices(PaginationSearchSortRequestDTO requestDTO) {
     //Pagination
     Pageable pageable = PaginationUtil.buildPageable(requestDTO, SortByDataConstant.SERVICE);
-    Page<Service> services = serviceRepository.findAllByKey(pageable, requestDTO.getKeyword());
+    Page<ServiceProjection> services = serviceRepository.findAllByKey(pageable, requestDTO.getKeyword());
     //Create Output
     PagingMeta meta = PaginationUtil.buildPagingMeta(requestDTO, SortByDataConstant.SERVICE, services);
-    List<ServiceDTO> serviceDTOs = serviceMapper.toServiceDTOs(services.getContent());
-    return new PaginationResponseDTO<ServiceDTO>(meta, serviceDTOs);
+    return new PaginationResponseDTO<ServiceDTO>(meta, toServiceDTOs(services));
   }
 
   @Override
-  public ServiceDTO createService(ServiceCreateDTO serviceCreateDTO) {
+  public ServiceDTO createService(ServiceCreateDTO serviceCreateDTO, UserPrincipal principal) {
+    User creator = userRepository.getUser(principal);
     Service service = serviceMapper.createDtoToProduct(serviceCreateDTO);
     service.setThumbnail(uploadFile.getUrlFromFile(serviceCreateDTO.getThumbnailFile()));
-    return serviceMapper.toServiceDTO(serviceRepository.save(service));
+    return serviceMapper.toServiceDTO(serviceRepository.save(service), creator, creator);
   }
 
   @Override
-  public ServiceDTO updateService(Long serviceId, ServiceUpdateDTO serviceUpdateDTO) {
+  public ServiceDTO updateService(Long serviceId, ServiceUpdateDTO serviceUpdateDTO, UserPrincipal principal) {
     Optional<Service> currentService = serviceRepository.findById(serviceId);
     checkNotFoundServiceById(currentService, serviceId);
+    serviceMapper.updateProductFromDTO(serviceUpdateDTO, currentService.get());
     //update thumbnail
     if(StringUtils.isEmpty(serviceUpdateDTO.getThumbnail())) {
       if(serviceUpdateDTO.getThumbnailFile() != null) {
@@ -76,8 +85,9 @@ public class HotelServiceImpl implements HotelService {
         throw new InvalidException(ErrorMessage.Service.ERR_SERVICE_MUST_HAVE_THUMBNAIL);
       }
     }
-    serviceMapper.updateProductFromDTO(serviceUpdateDTO, currentService.get());
-    return serviceMapper.toServiceDTO(serviceRepository.save(currentService.get()));
+    User updater = userRepository.getUser(principal);
+    User creator = userRepository.findById(currentService.get().getCreatedBy()).get();
+    return serviceMapper.toServiceDTO(serviceRepository.save(currentService.get()), creator, updater);
   }
 
   @Override
@@ -95,8 +105,22 @@ public class HotelServiceImpl implements HotelService {
     serviceRepository.deleteByDeleteFlag(isDeleteFlag, daysToDeleteRecords);
   }
 
+  private List<ServiceDTO> toServiceDTOs(Page<ServiceProjection> serviceProjections) {
+    List<ServiceDTO> serviceDTOs = new LinkedList<>();
+    for(ServiceProjection serviceProjection : serviceProjections) {
+      serviceDTOs.add(serviceMapper.serviceProjectionToServiceDTO(serviceProjection));
+    }
+    return serviceDTOs;
+  }
+
   private void checkNotFoundServiceById(Optional<Service> service, Long serviceId) {
     if (service.isEmpty()) {
+      throw new NotFoundException(String.format(ErrorMessage.Product.ERR_NOT_FOUND_ID, serviceId));
+    }
+  }
+
+  private void checkNotFoundServiceById(ServiceProjection serviceProjection, Long serviceId) {
+    if (ObjectUtils.isEmpty(serviceProjection)) {
       throw new NotFoundException(String.format(ErrorMessage.Product.ERR_NOT_FOUND_ID, serviceId));
     }
   }
