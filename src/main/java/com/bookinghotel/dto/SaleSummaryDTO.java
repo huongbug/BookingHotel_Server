@@ -1,8 +1,5 @@
 package com.bookinghotel.dto;
 
-import com.bookinghotel.dto.common.CreatedByDTO;
-import com.bookinghotel.dto.common.DateAuditingDTO;
-import com.bookinghotel.dto.common.LastModifiedByDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-public class SaleDTO extends DateAuditingDTO {
+public class SaleSummaryDTO {
 
   private Long id;
 
@@ -23,9 +20,5 @@ public class SaleDTO extends DateAuditingDTO {
   private LocalDateTime dayEnd;
 
   private Integer salePercent;
-
-  private CreatedByDTO createdBy;
-
-  private LastModifiedByDTO lastModifiedBy;
 
 }

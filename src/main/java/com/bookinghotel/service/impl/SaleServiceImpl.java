@@ -13,12 +13,15 @@ import com.bookinghotel.dto.pagination.PaginationSearchSortRequestDTO;
 import com.bookinghotel.dto.pagination.PagingMeta;
 import com.bookinghotel.entity.Room;
 import com.bookinghotel.entity.Sale;
-import com.bookinghotel.exception.InternalServerException;
+import com.bookinghotel.entity.User;
 import com.bookinghotel.exception.InvalidException;
 import com.bookinghotel.exception.NotFoundException;
 import com.bookinghotel.mapper.SaleMapper;
+import com.bookinghotel.projection.SaleProjection;
 import com.bookinghotel.repository.RoomRepository;
 import com.bookinghotel.repository.SaleRepository;
+import com.bookinghotel.repository.UserRepository;
+import com.bookinghotel.security.UserPrincipal;
 import com.bookinghotel.service.SaleService;
 import com.bookinghotel.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +31,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,38 +43,42 @@ public class SaleServiceImpl implements SaleService {
 
   private final RoomRepository roomRepository;
 
+  private final UserRepository userRepository;
+
   private final SaleMapper saleMapper;
 
   @Override
   public SaleDTO getSale(Long saleId) {
-    Optional<Sale> sale = saleRepository.findById(saleId);
+    SaleProjection sale = saleRepository.findSaleById(saleId);
     checkNotFoundSaleById(sale, saleId);
-    return saleMapper.toSaleDTO(sale.get());
+    return saleMapper.saleProjectionToSaleDTO(sale);
   }
 
   @Override
   public PaginationResponseDTO<SaleDTO> getSales(PaginationSearchSortRequestDTO requestDTO) {
     //Pagination
     Pageable pageable = PaginationUtil.buildPageable(requestDTO, SortByDataConstant.SALE);
-    Page<Sale> sales = saleRepository.findAllByKey(requestDTO.getKeyword(), pageable);
+    Page<SaleProjection> sales = saleRepository.findAllByKey(requestDTO.getKeyword(), pageable);
     //Create Output
     PagingMeta meta = PaginationUtil.buildPagingMeta(requestDTO, SortByDataConstant.SALE, sales);
-    List<SaleDTO> saleDTOs = saleMapper.toSaleDTOs(sales.getContent());
-    return new PaginationResponseDTO<SaleDTO>(meta, saleDTOs);
+    return new PaginationResponseDTO<SaleDTO>(meta, toSaleDTOs(sales));
   }
 
   @Override
-  public SaleDTO createSale(SaleCreateDTO createDTO) {
+  public SaleDTO createSale(SaleCreateDTO createDTO, UserPrincipal principal) {
+    User creator = userRepository.getUser(principal);
     Sale sale = saleMapper.createDtoToSale(createDTO);
-    return saleMapper.toSaleDTO(saleRepository.save(sale));
+    return saleMapper.toSaleDTO(saleRepository.save(sale), creator, creator);
   }
 
   @Override
-  public SaleDTO updateSale(Long saleId, SaleUpdateDTO updateDTO) {
+  public SaleDTO updateSale(Long saleId, SaleUpdateDTO updateDTO, UserPrincipal principal) {
     Optional<Sale> currentSale = saleRepository.findById(saleId);
     checkNotFoundSaleById(currentSale, saleId);
     saleMapper.updateSaleFromDTO(updateDTO, currentSale.get());
-    return saleMapper.toSaleDTO(saleRepository.save(currentSale.get()));
+    User updater = userRepository.getUser(principal);
+    User creator = userRepository.findById(currentSale.get().getCreatedBy()).get();
+    return saleMapper.toSaleDTO(saleRepository.save(currentSale.get()), creator, updater);
   }
 
   @Override
@@ -120,8 +128,22 @@ public class SaleServiceImpl implements SaleService {
     saleRepository.deleteByDeleteFlag(isDeleteFlag, daysToDeleteRecords);
   }
 
+  private List<SaleDTO> toSaleDTOs(Page<SaleProjection> saleProjections) {
+    List<SaleDTO> saleDTOs = new LinkedList<>();
+    for(SaleProjection saleProjection : saleProjections) {
+      saleDTOs.add(saleMapper.saleProjectionToSaleDTO(saleProjection));
+    }
+    return saleDTOs;
+  }
+
   private void checkNotFoundSaleById(Optional<Sale> sale, Long saleId) {
     if (sale.isEmpty()) {
+      throw new NotFoundException(String.format(ErrorMessage.Sale.ERR_NOT_FOUND_ID, saleId));
+    }
+  }
+
+  private void checkNotFoundSaleById(SaleProjection saleProjection, Long saleId) {
+    if (ObjectUtils.isEmpty(saleProjection)) {
       throw new NotFoundException(String.format(ErrorMessage.Sale.ERR_NOT_FOUND_ID, saleId));
     }
   }

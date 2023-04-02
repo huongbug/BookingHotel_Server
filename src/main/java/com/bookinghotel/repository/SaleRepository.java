@@ -1,6 +1,7 @@
 package com.bookinghotel.repository;
 
 import com.bookinghotel.entity.Sale;
+import com.bookinghotel.projection.SaleProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,10 +19,45 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
   @Query("SELECT s FROM Sale s WHERE s.id = ?1 AND s.deleteFlag = false")
   Optional<Sale> findById(Long saleId);
 
-  @Query(value = "SELECT * FROM sales s WHERE (:keyword is null or s.sale_percent LIKE CONCAT('%', :keyword, '%')) AND s.delete_flag = 0",
-      countQuery = "SELECT COUNT(*) FROM sales s WHERE (:keyword is null or s.sale_percent LIKE CONCAT('%', :keyword, '%')) AND s.delete_flag = 0",
+  @Query(value = "SELECT s.id, s.day_start AS dayStart, s.day_end AS dayEnd, " +
+      "s.sale_percent AS salePercent, s.created_date AS createdDate, s.last_modified_date AS lastModifiedDate, " +
+      "createdBy.id AS createdById, " +
+      "createdBy.first_name AS createdByFirstName, " +
+      "createdBy.last_name AS createdByLastName, " +
+      "createdBy.avatar AS createdByAvatar, " +
+      "lastModifiedBy.id AS lastModifiedById, " +
+      "lastModifiedBy.first_name AS lastModifiedByFirstName, " +
+      "lastModifiedBy.last_name AS lastModifiedByLastName, " +
+      "lastModifiedBy.avatar AS lastModifiedByAvatar " +
+      "FROM sales s " +
+      "LEFT JOIN users createdBy ON s.created_by = createdBy.id " +
+      "LEFT JOIN users lastModifiedBy ON s.last_modified_by = lastModifiedBy.id " +
+      "WHERE s.delete_flag = 0 AND s.id = ?1",
       nativeQuery = true)
-  Page<Sale> findAllByKey(@Param("keyword") String keyword, Pageable pageable);
+  SaleProjection findSaleById(Long saleId);
+
+  @Query(value = "SELECT s.id, s.day_start AS dayStart, s.day_end AS dayEnd, " +
+      "s.sale_percent AS salePercent, s.created_date AS createdDate, s.last_modified_date AS lastModifiedDate, " +
+      "createdBy.id AS createdById, " +
+      "createdBy.first_name AS createdByFirstName, " +
+      "createdBy.last_name AS createdByLastName, " +
+      "createdBy.avatar AS createdByAvatar, " +
+      "lastModifiedBy.id AS lastModifiedById, " +
+      "lastModifiedBy.first_name AS lastModifiedByFirstName, " +
+      "lastModifiedBy.last_name AS lastModifiedByLastName, " +
+      "lastModifiedBy.avatar AS lastModifiedByAvatar " +
+      "FROM sales s " +
+      "LEFT JOIN users createdBy ON s.created_by = createdBy.id " +
+      "LEFT JOIN users lastModifiedBy ON s.last_modified_by = lastModifiedBy.id " +
+      "WHERE (:keyword is null or s.sale_percent LIKE CONCAT('%', :keyword, '%')) " +
+      "AND s.delete_flag = 0",
+      countQuery = "SELECT COUNT(*) FROM sales s " +
+          "LEFT JOIN users createdBy ON s.created_by = createdBy.id " +
+          "LEFT JOIN users lastModifiedBy ON s.last_modified_by = lastModifiedBy.id " +
+          "WHERE (:keyword is null or s.sale_percent LIKE CONCAT('%', :keyword, '%')) " +
+          "AND s.delete_flag = 0",
+      nativeQuery = true)
+  Page<SaleProjection> findAllByKey(@Param("keyword") String keyword, Pageable pageable);
 
   @Transactional
   @Modifying

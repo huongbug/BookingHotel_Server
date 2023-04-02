@@ -6,6 +6,7 @@ import com.bookinghotel.dto.SaleUpdateDTO;
 import com.bookinghotel.dto.common.CommonResponseDTO;
 import com.bookinghotel.dto.pagination.PaginationResponseDTO;
 import com.bookinghotel.dto.pagination.PaginationSearchSortRequestDTO;
+import com.bookinghotel.security.UserPrincipal;
 
 import java.util.List;
 
@@ -15,9 +16,9 @@ public interface SaleService {
 
   PaginationResponseDTO<SaleDTO> getSales(PaginationSearchSortRequestDTO requestDTO);
 
-  SaleDTO createSale(SaleCreateDTO createDTO);
+  SaleDTO createSale(SaleCreateDTO createDTO, UserPrincipal principal);
 
-  SaleDTO updateSale(Long saleId, SaleUpdateDTO updateDTO);
+  SaleDTO updateSale(Long saleId, SaleUpdateDTO updateDTO, UserPrincipal principal);
 
   CommonResponseDTO deleteSale(Long saleId);
 

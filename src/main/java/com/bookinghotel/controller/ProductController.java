@@ -8,8 +8,11 @@ import com.bookinghotel.dto.ProductCreateDTO;
 import com.bookinghotel.dto.ProductUpdateDTO;
 import com.bookinghotel.dto.pagination.PaginationSearchSortRequestDTO;
 import com.bookinghotel.security.AuthorizationInfo;
+import com.bookinghotel.security.CurrentUserLogin;
+import com.bookinghotel.security.UserPrincipal;
 import com.bookinghotel.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
@@ -41,16 +44,21 @@ public class ProductController {
   @Operation(summary = "API create product")
   @AuthorizationInfo(role = { RoleConstant.ADMIN })
   @PostMapping(value = UrlConstant.Product.CREATE_PRODUCT, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<?> createProductById(@Valid @ModelAttribute ProductCreateDTO productCreateDTO) {
-    return VsResponseUtil.ok(productService.createProduct(productCreateDTO));
+  public ResponseEntity<?> createProductById(@Valid @ModelAttribute ProductCreateDTO productCreateDTO,
+                                             @Parameter(name = "principal", hidden = true)
+                                             @CurrentUserLogin UserPrincipal principal) {
+    return VsResponseUtil.ok(productService.createProduct(productCreateDTO, principal));
   }
 
   @Tag(name = "product-controller-admin")
   @Operation(summary = "API update product by id")
   @AuthorizationInfo(role = { RoleConstant.ADMIN })
   @PatchMapping(value = UrlConstant.Product.UPDATE_PRODUCT, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<?> updateProductById(@PathVariable Long productId, @Valid @ModelAttribute ProductUpdateDTO productUpdateDTO) {
-    return VsResponseUtil.ok(productService.updateProduct(productId, productUpdateDTO));
+  public ResponseEntity<?> updateProductById(@PathVariable Long productId,
+                                             @Valid @ModelAttribute ProductUpdateDTO productUpdateDTO,
+                                             @Parameter(name = "principal", hidden = true)
+                                             @CurrentUserLogin UserPrincipal principal) {
+    return VsResponseUtil.ok(productService.updateProduct(productId, productUpdateDTO, principal));
   }
 
   @Tag(name = "product-controller-admin")

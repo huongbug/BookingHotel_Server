@@ -8,8 +8,11 @@ import com.bookinghotel.dto.SaleCreateDTO;
 import com.bookinghotel.dto.SaleUpdateDTO;
 import com.bookinghotel.dto.pagination.PaginationSearchSortRequestDTO;
 import com.bookinghotel.security.AuthorizationInfo;
+import com.bookinghotel.security.CurrentUserLogin;
+import com.bookinghotel.security.UserPrincipal;
 import com.bookinghotel.service.SaleService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import lombok.RequiredArgsConstructor;
@@ -44,15 +47,19 @@ public class SaleController {
   @Operation(summary = "API create sale")
   @AuthorizationInfo(role = { RoleConstant.ADMIN })
   @PostMapping(UrlConstant.Sale.CREATE_SALE)
-  public ResponseEntity<?> createSale(@Valid @RequestBody SaleCreateDTO saleCreateDTO) {
-    return VsResponseUtil.ok(saleService.createSale(saleCreateDTO));
+  public ResponseEntity<?> createSale(@Valid @RequestBody SaleCreateDTO saleCreateDTO,
+                                      @Parameter(name = "principal", hidden = true)
+                                      @CurrentUserLogin UserPrincipal principal) {
+    return VsResponseUtil.ok(saleService.createSale(saleCreateDTO, principal));
   }
 
   @Operation(summary = "API update sale by id")
   @AuthorizationInfo(role = { RoleConstant.ADMIN })
   @PutMapping(UrlConstant.Sale.UPDATE_SALE)
-  public ResponseEntity<?> updateSaleById(@PathVariable Long saleId, @Valid @RequestBody SaleUpdateDTO saleUpdateDTO) {
-    return VsResponseUtil.ok(saleService.updateSale(saleId, saleUpdateDTO));
+  public ResponseEntity<?> updateSaleById(@PathVariable Long saleId, @Valid @RequestBody SaleUpdateDTO saleUpdateDTO,
+                                          @Parameter(name = "principal", hidden = true)
+                                          @CurrentUserLogin UserPrincipal principal) {
+    return VsResponseUtil.ok(saleService.updateSale(saleId, saleUpdateDTO, principal));
   }
 
   @Operation(summary = "API delete sale by id")
