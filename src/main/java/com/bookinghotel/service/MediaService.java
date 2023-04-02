@@ -1,7 +1,9 @@
 package com.bookinghotel.service;
 
+import com.bookinghotel.dto.PostUpdateDTO;
 import com.bookinghotel.dto.RoomUpdateDTO;
 import com.bookinghotel.entity.Media;
+import com.bookinghotel.entity.Post;
 import com.bookinghotel.entity.Room;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,11 +14,20 @@ public interface MediaService {
 
   void saveMedia(Media media);
 
-  Set<Media> getMediaByRoom(Long roomId);
+  List<Media> getMediaByRoom(Long roomId);
 
   Set<Media> createMediaForRoom(Room room, List<MultipartFile> files);
 
+  List<Media> getMediaByPost(Long postId);
+
+  Set<Media> createMediaForPost(Post post, List<MultipartFile> files);
+
   //Delete media if not found MediaDTO in RoomUpdateDTO
-  void deleteMediaFromRoomUpdate(Long roomId, RoomUpdateDTO roomUpdateDTO);
+  Room deleteMediaFromRoomUpdate(Room room, RoomUpdateDTO roomUpdateDTO);
+
+  //Delete media if not found MediaDTO in PostUpdateDTO
+  Post deleteMediaFromPostUpdate(Post post, PostUpdateDTO postUpdateDTO);
+
+  void deleteMediaFlagFalse(Set<Media> mediaDeleteFlag);
 
 }

@@ -15,10 +15,23 @@ public interface MediaRepository extends JpaRepository<Media, Long> {
 
   //room
   @Query("SELECT m FROM Media m WHERE m.room.id = ?1 AND m.deleteFlag = false")
+  List<Media> findByRoomId(Long roomId);
+
+  @Query("SELECT m FROM Media m WHERE m.room.id = ?1 AND m.deleteFlag = false")
   Set<Media> findByRoomToSet(Long roomId);
 
-  @Query("SELECT m FROM Media m WHERE m.room.id = ?1 AND m NOT IN ?2 AND m.deleteFlag = false")
-  List<Media> findByRoomIdAndNotInMedia(Long roomId, List<Media> list);
+  @Query("SELECT m FROM Media m WHERE m.room.id = ?1 AND m.id NOT IN ?2 AND m.deleteFlag = false")
+  List<Media> findByRoomIdAndNotInMedia(Long roomId, List<Long> mediaIds);
+
+  //post
+  @Query("SELECT m FROM Media m WHERE m.post.id = ?1 AND m.deleteFlag = false")
+  List<Media> findByPostId(Long postId);
+
+  @Query("SELECT m FROM Media m WHERE m.post.id = ?1 AND m.deleteFlag = false")
+  Set<Media> findByPostToSet(Long postId);
+
+  @Query("SELECT m FROM Media m WHERE m.post.id = ?1 AND m.id NOT IN ?2 AND m.deleteFlag = false")
+  List<Media> findByPostIdAndNotInMedia(Long postId, List<Long> mediaIds);
 
   @Transactional
   @Modifying
