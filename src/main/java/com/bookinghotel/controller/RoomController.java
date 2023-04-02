@@ -10,8 +10,11 @@ import com.bookinghotel.dto.RoomFilterDTO;
 import com.bookinghotel.dto.RoomUpdateDTO;
 import com.bookinghotel.dto.pagination.PaginationSearchSortRequestDTO;
 import com.bookinghotel.security.AuthorizationInfo;
+import com.bookinghotel.security.CurrentUserLogin;
+import com.bookinghotel.security.UserPrincipal;
 import com.bookinghotel.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
@@ -53,16 +56,21 @@ public class RoomController {
   @Operation(summary = "API create room")
   @AuthorizationInfo(role = { RoleConstant.ADMIN })
   @PostMapping(value = UrlConstant.Room.CREATE_ROOM, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<?> createRoom(@Valid @ModelAttribute RoomCreateDTO roomCreateDTO) {
-    return VsResponseUtil.ok(roomService.createRoom(roomCreateDTO));
+  public ResponseEntity<?> createRoom(@Valid @ModelAttribute RoomCreateDTO roomCreateDTO,
+                                      @Parameter(name = "principal", hidden = true)
+                                      @CurrentUserLogin UserPrincipal principal) {
+    return VsResponseUtil.ok(roomService.createRoom(roomCreateDTO, principal));
   }
 
   @Tag(name = "room-controller-admin")
   @Operation(summary = "API update room by id")
   @AuthorizationInfo(role = { RoleConstant.ADMIN })
   @PutMapping(value = UrlConstant.Room.UPDATE_ROOM, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<?> updateRoomById(@PathVariable Long roomId, @Valid @ModelAttribute RoomUpdateDTO roomUpdateDTO) {
-    return VsResponseUtil.ok(roomService.updateRoom(roomId, roomUpdateDTO));
+  public ResponseEntity<?> updateRoomById(@PathVariable Long roomId,
+                                          @Valid @ModelAttribute RoomUpdateDTO roomUpdateDTO,
+                                          @Parameter(name = "principal", hidden = true)
+                                          @CurrentUserLogin UserPrincipal principal) {
+    return VsResponseUtil.ok(roomService.updateRoom(roomId, roomUpdateDTO, principal));
   }
 
   @Tag(name = "room-controller-admin")

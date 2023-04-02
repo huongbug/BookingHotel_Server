@@ -7,6 +7,7 @@ import com.bookinghotel.dto.RoomUpdateDTO;
 import com.bookinghotel.dto.common.CommonResponseDTO;
 import com.bookinghotel.dto.pagination.PaginationResponseDTO;
 import com.bookinghotel.dto.pagination.PaginationSearchSortRequestDTO;
+import com.bookinghotel.security.UserPrincipal;
 
 public interface RoomService {
 
@@ -16,9 +17,9 @@ public interface RoomService {
 
   PaginationResponseDTO<RoomDTO> getRoomsAvailable(PaginationSearchSortRequestDTO requestDTO, RoomFilterDTO roomFilterDTO);
 
-  RoomDTO createRoom(RoomCreateDTO roomCreateDTO);
+  RoomDTO createRoom(RoomCreateDTO roomCreateDTO, UserPrincipal currentUser);
 
-  RoomDTO updateRoom(Long roomId, RoomUpdateDTO roomUpdateDTO);
+  RoomDTO updateRoom(Long roomId, RoomUpdateDTO roomUpdateDTO, UserPrincipal currentUser);
 
   CommonResponseDTO deleteRoom(Long roomId);
 

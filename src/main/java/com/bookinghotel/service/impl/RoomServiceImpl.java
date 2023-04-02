@@ -14,20 +14,25 @@ import com.bookinghotel.dto.pagination.PaginationSearchSortRequestDTO;
 import com.bookinghotel.dto.pagination.PagingMeta;
 import com.bookinghotel.entity.Media;
 import com.bookinghotel.entity.Room;
+import com.bookinghotel.entity.User;
 import com.bookinghotel.exception.NotFoundException;
+import com.bookinghotel.mapper.MediaMapper;
 import com.bookinghotel.mapper.RoomMapper;
+import com.bookinghotel.projection.RoomProjection;
 import com.bookinghotel.repository.RoomRepository;
+import com.bookinghotel.repository.UserRepository;
+import com.bookinghotel.security.UserPrincipal;
 import com.bookinghotel.service.MediaService;
 import com.bookinghotel.service.RoomService;
 import com.bookinghotel.util.PaginationUtil;
-import com.bookinghotel.util.UploadFileUtil;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -40,26 +45,27 @@ public class RoomServiceImpl implements RoomService {
 
   private final MediaService mediaService;
 
+  private final UserRepository userRepository;
+
   private final RoomMapper roomMapper;
 
-  private final UploadFileUtil uploadFile;
+  private final MediaMapper mediaMapper;
 
   @Override
   public RoomDTO getRoom(Long roomId) {
-    Optional<Room> room = roomRepository.findById(roomId);
+    RoomProjection room = roomRepository.findRoomById(roomId);
     checkNotFoundRoomById(room, roomId);
-    return roomMapper.toRoomDTO(room.get());
+    return toRoomDTO(room);
   }
 
   @Override
   public PaginationResponseDTO<RoomDTO> getRooms(PaginationSearchSortRequestDTO requestDTO, String filter) {
     //Pagination
     Pageable pageable = PaginationUtil.buildPageable(requestDTO, SortByDataConstant.ROOM);
-    Page<Room> rooms = roomRepository.findAllByKey(requestDTO.getKeyword(), filter, pageable);
+    Page<RoomProjection> rooms = roomRepository.findAllByKey(requestDTO.getKeyword(), filter, pageable);
     //Create Output
     PagingMeta meta = PaginationUtil.buildPagingMeta(requestDTO, SortByDataConstant.ROOM, rooms);
-    List<RoomDTO> roomDTOs = roomMapper.toRoomDTOs(rooms.getContent());
-    return new PaginationResponseDTO<RoomDTO>(meta, roomDTOs);
+    return new PaginationResponseDTO<RoomDTO>(meta, toRoomDTOs(rooms));
   }
 
   @Override
@@ -67,39 +73,40 @@ public class RoomServiceImpl implements RoomService {
     String roomType = roomFilter.getRoomType() == null ? null : roomFilter.getRoomType().getValue();
     //Pagination
     Pageable pageable = PaginationUtil.buildPageable(requestDTO, SortByDataConstant.ROOM);
-    Page<Room> rooms = roomRepository.findAllAvailable(requestDTO.getKeyword(), roomFilter, roomType, pageable);
+    Page<RoomProjection> rooms = roomRepository.findAllAvailable(requestDTO.getKeyword(), roomFilter, roomType, pageable);
     //Create Output
     PagingMeta meta = PaginationUtil.buildPagingMeta(requestDTO, SortByDataConstant.ROOM, rooms);
-    List<RoomDTO> roomDTOs = roomMapper.toRoomDTOs(rooms.getContent());
-    return new PaginationResponseDTO<RoomDTO>(meta, roomDTOs);
+    return new PaginationResponseDTO<RoomDTO>(meta, toRoomDTOs(rooms));
   }
-
 
   @Override
   @Transactional
-  public RoomDTO createRoom(RoomCreateDTO roomCreateDTO) {
+  public RoomDTO createRoom(RoomCreateDTO roomCreateDTO, UserPrincipal currentUser) {
+    User creator = userRepository.getUser(currentUser);
     Room room = roomMapper.createDtoToRoom(roomCreateDTO);
     roomRepository.save(room);
     Set<Media> medias = mediaService.createMediaForRoom(room, roomCreateDTO.getFiles());
     room.setMedias(medias);
-    return roomMapper.toRoomDTO(roomRepository.save(room));
+    return roomMapper.toRoomDTO(roomRepository.save(room), creator, creator);
   }
 
   @Override
   @Transactional
-  public RoomDTO updateRoom(Long roomId, RoomUpdateDTO roomUpdateDTO) {
+  public RoomDTO updateRoom(Long roomId, RoomUpdateDTO roomUpdateDTO, UserPrincipal currentUser) {
     Optional<Room> currentRoom = roomRepository.findById(roomId);
     checkNotFoundRoomById(currentRoom, roomId);
+    roomMapper.updateRoomFromDTO(roomUpdateDTO, currentRoom.get());
+    User updater = userRepository.getUser(currentUser);
     //Delete media if not found in mediaDTO
-    mediaService.deleteMediaFromRoomUpdate(roomId, roomUpdateDTO);
+    Room roomUpdate = mediaService.deleteMediaFromRoomUpdate(currentRoom.get(), roomUpdateDTO);
     //add file if exist
     if(roomUpdateDTO.getFiles() != null) {
       Set<Media> medias = mediaService.createMediaForRoom(currentRoom.get(), roomUpdateDTO.getFiles());
-      currentRoom.get().getMedias().addAll(medias);
+      roomUpdate.getMedias().addAll(medias);
+      roomRepository.save(roomUpdate);
     }
-    roomMapper.updateRoomFromDTO(roomUpdateDTO, currentRoom.get());
-    currentRoom.get().setMedias(mediaService.getMediaByRoom(roomId));
-    return roomMapper.toRoomDTO(roomRepository.save(currentRoom.get()));
+    User creator = userRepository.findById(roomUpdate.getCreatedBy()).get();
+    return roomMapper.toRoomDTO(roomUpdate, creator, updater);
   }
 
   @Override
@@ -109,13 +116,8 @@ public class RoomServiceImpl implements RoomService {
     checkNotFoundRoomById(currentRoom, roomId);
     currentRoom.get().setDeleteFlag(CommonConstant.TRUE);
     //set deleteFlag Media
-    Set<Media> mediaDeleteFlag = mediaService.getMediaByRoom(roomId);
-    if (CollectionUtils.isNotEmpty(mediaDeleteFlag)) {
-      mediaDeleteFlag.forEach(item -> {
-        item.setDeleteFlag(CommonConstant.TRUE);
-        mediaService.saveMedia(item);
-      });
-    }
+    Set<Media> mediaDeleteFlag = currentRoom.get().getMedias();
+    mediaService.deleteMediaFlagFalse(mediaDeleteFlag);
     roomRepository.save(currentRoom.get());
     return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.DELETE_SUCCESS);
   }
@@ -126,8 +128,29 @@ public class RoomServiceImpl implements RoomService {
     roomRepository.deleteByDeleteFlag(isDeleteFlag, daysToDeleteRecords);
   }
 
+  private List<RoomDTO> toRoomDTOs(Page<RoomProjection> roomProjections) {
+    List<RoomDTO> roomDTOs = new LinkedList<>();
+    for(RoomProjection roomProjection : roomProjections) {
+      roomDTOs.add(toRoomDTO(roomProjection));
+    }
+    return roomDTOs;
+  }
+
+  private RoomDTO toRoomDTO(RoomProjection roomProjection) {
+    RoomDTO roomDTO = roomMapper.roomProjectionToRoomDTO(roomProjection);
+    List<Media> medias = mediaService.getMediaByRoom(roomDTO.getId());
+    roomDTO.setMedias(mediaMapper.toMediaDTOs(medias));
+    return roomDTO;
+  }
+
   private void checkNotFoundRoomById(Optional<Room> room, Long roomId) {
     if (room.isEmpty()) {
+      throw new NotFoundException(String.format(ErrorMessage.Room.ERR_NOT_FOUND_ID, roomId));
+    }
+  }
+
+  private void checkNotFoundRoomById(RoomProjection room, Long roomId) {
+    if (ObjectUtils.isEmpty(room)) {
       throw new NotFoundException(String.format(ErrorMessage.Room.ERR_NOT_FOUND_ID, roomId));
     }
   }

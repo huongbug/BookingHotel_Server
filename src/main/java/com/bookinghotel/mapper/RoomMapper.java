@@ -1,50 +1,39 @@
 package com.bookinghotel.mapper;
 
-import com.bookinghotel.dto.MediaDTO;
 import com.bookinghotel.dto.RoomCreateDTO;
 import com.bookinghotel.dto.RoomDTO;
 import com.bookinghotel.dto.RoomUpdateDTO;
-import com.bookinghotel.entity.BookingRoomDetail;
-import com.bookinghotel.entity.Media;
 import com.bookinghotel.entity.Room;
+import com.bookinghotel.entity.User;
+import com.bookinghotel.projection.RoomProjection;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Mappings;
 
-import java.util.List;
-
 @Mapper(componentModel = "spring")
 public interface RoomMapper {
 
   @Mappings({
-      @Mapping(target = "sale.dayStart", source = "room.sale.dayStart"),
-      @Mapping(target = "sale.dayEnd", source = "room.sale.dayEnd"),
-      @Mapping(target = "sale.salePercent", source = "room.sale.salePercent")
+      @Mapping(target = "id", source = "room.id"),
+      @Mapping(target = "createdDate", source = "room.createdDate"),
+      @Mapping(target = "lastModifiedDate", source = "room.lastModifiedDate"),
+      @Mapping(target = "createdBy.id", source = "createdBy.id"),
+      @Mapping(target = "createdBy.firstName", source = "createdBy.firstName"),
+      @Mapping(target = "createdBy.lastName", source = "createdBy.lastName"),
+      @Mapping(target = "createdBy.avatar", source = "createdBy.avatar"),
+      @Mapping(target = "lastModifiedBy.id", source = "lastModifiedBy.id"),
+      @Mapping(target = "lastModifiedBy.firstName", source = "lastModifiedBy.firstName"),
+      @Mapping(target = "lastModifiedBy.lastName", source = "lastModifiedBy.lastName"),
+      @Mapping(target = "lastModifiedBy.avatar", source = "lastModifiedBy.avatar"),
   })
-  RoomDTO toRoomDTO(Room room);
-
-  List<RoomDTO> toRoomDTOs(List<Room> rooms);
-
-  @Mappings({
-      @Mapping(target = "id", source = "bookingRoomDetail.room.id"),
-      @Mapping(target = "title", source = "bookingRoomDetail.room.title"),
-      @Mapping(target = "price", source = "bookingRoomDetail.price"),
-      @Mapping(target = "type", source = "bookingRoomDetail.room.type"),
-      @Mapping(target = "maxNum", source = "bookingRoomDetail.room.maxNum"),
-      @Mapping(target = "floor", source = "bookingRoomDetail.room.floor"),
-      @Mapping(target = "description", source = "bookingRoomDetail.room.description"),
-      @Mapping(target = "medias", source = "medias")
-  })
-  RoomDTO toRoomDTO(BookingRoomDetail bookingRoomDetail, List<Media> medias);
-
-  List<MediaDTO> toMediaDTO(List<Media> medias);
-
-  MediaDTO toMediaDTO(Media media);
+  RoomDTO toRoomDTO(Room room, User createdBy, User lastModifiedBy);
 
   Room createDtoToRoom(RoomCreateDTO createDTO);
 
   @Mapping(target = "medias", ignore = true)
   void updateRoomFromDTO(RoomUpdateDTO updateDTO, @MappingTarget Room room);
+
+  RoomDTO roomProjectionToRoomDTO(RoomProjection projection);
 
 }

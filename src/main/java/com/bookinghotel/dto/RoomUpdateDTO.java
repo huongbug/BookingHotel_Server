@@ -37,7 +37,7 @@ public class RoomUpdateDTO {
   @NotBlank(message = ErrorMessage.NOT_BLANK_FIELD)
   private String description;
 
-  private List<MediaDTO> medias;
+  private List<Long> mediaIds;
 
   @ValidFiles
   private List<MultipartFile> files;
