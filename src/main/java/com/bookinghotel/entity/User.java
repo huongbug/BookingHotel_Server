@@ -63,6 +63,8 @@ public class User extends DateAuditing {
 
   private String avatar;
 
+  private Boolean locked;
+
   //Link to table Role
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "role_id", foreignKey = @ForeignKey(name = "FK_USER_ROLE"))
