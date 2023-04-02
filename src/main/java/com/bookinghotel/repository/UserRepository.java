@@ -32,6 +32,9 @@ public interface UserRepository extends JpaRepository<User, String> {
   Page<User> findAllByKey(@Param("keyword") String keyword, Pageable pageable);
 
   @Query("SELECT u FROM User u WHERE u.id = ?1 AND u.enabled = true")
+  Optional<User> findByIdAndEnabled(String id);
+
+  @Query("SELECT u FROM User u WHERE u.id = ?1")
   Optional<User> findById(String id);
 
   @Query("SELECT u FROM User u WHERE u.email = ?1 AND u.enabled = true")

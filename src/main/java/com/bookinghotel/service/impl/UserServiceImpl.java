@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserDTO updateUser(UserUpdateDTO userUpdateDTO, String userId, UserPrincipal principal) {
-    Optional<User> user = userRepository.findById(userId);
+    Optional<User> user = userRepository.findByIdAndEnabled(userId);
     checkNotFoundUserById(user, userId);
 
     if(!principal.getId().equals(userId)) {

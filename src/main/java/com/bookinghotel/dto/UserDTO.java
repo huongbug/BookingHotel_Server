@@ -1,5 +1,6 @@
 package com.bookinghotel.dto;
 
+import com.bookinghotel.dto.common.DateAuditingDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Setter
-public class UserDTO {
+public class UserDTO extends DateAuditingDTO {
 
   private String id;
 
@@ -32,5 +33,7 @@ public class UserDTO {
   private Boolean enabled;
 
   private String roleName;
+
+  private Boolean locked;
 
 }

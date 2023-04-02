@@ -1,13 +1,11 @@
 package com.bookinghotel.dto;
 
-import com.bookinghotel.constant.CommonConstant;
 import com.bookinghotel.constant.ErrorMessage;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
@@ -25,8 +23,7 @@ public class UserUpdateDTO {
 
   private String lastName;
 
-  @Schema(type = "string", pattern = CommonConstant.PATTERN_DATE, example = "2001-01-01")
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonConstant.PATTERN_DATE_TIME)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private LocalDate birthday;
 
   private String address;
