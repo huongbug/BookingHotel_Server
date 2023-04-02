@@ -101,4 +101,37 @@ public class UrlConstant {
     }
   }
 
+  public static class Post {
+    private static final String PRE_FIX = "/post";
+
+    public static final String GET_POSTS = PRE_FIX;
+    public static final String GET_POST = PRE_FIX + "/{postId}";
+
+    public static final String CREATE_POST = PRE_FIX + "/create";
+
+    public static final String UPDATE_POST = PRE_FIX + "/update/{postId}";
+
+    public static final String DELETE_POST = PRE_FIX + "/delete/{postId}";
+
+    private Post() {
+    }
+  }
+
+  public static class Booking {
+    private static final String PRE_FIX = "/booking";
+
+    public static final String GET_BOOKINGS_FOR_USER = PRE_FIX + "/user";
+    public static final String GET_BOOKINGS_FOR_ADMIN = PRE_FIX + "/admin";
+    public static final String GET_BOOKING = PRE_FIX + "/{bookingId}";
+
+    public static final String CREATE_BOOKING = PRE_FIX + "/create";
+
+    public static final String UPDATE_BOOKING = PRE_FIX + "/update/{bookingId}";
+
+    public static final String DELETE_BOOKING = PRE_FIX + "/delete/{bookingId}";
+
+    private Booking() {
+    }
+  }
+
 }
