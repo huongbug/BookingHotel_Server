@@ -9,8 +9,10 @@ import com.bookinghotel.dto.UserCreateDTO;
 import com.bookinghotel.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,8 +42,8 @@ public class AuthController {
   }
 
   @Operation(summary = "(1) API SignUp and send mail token")
-  @PostMapping(UrlConstant.Auth.SIGNUP)
-  public ResponseEntity<?> signUp(@Valid @RequestBody UserCreateDTO userCreateDTO) {
+  @PostMapping(value = UrlConstant.Auth.SIGNUP, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<?> signUp(@Valid @ModelAttribute UserCreateDTO userCreateDTO) {
     return VsResponseUtil.ok(authService.signUp(userCreateDTO));
   }
 
