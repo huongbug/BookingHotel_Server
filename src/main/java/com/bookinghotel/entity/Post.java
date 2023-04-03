@@ -30,6 +30,7 @@ public class Post extends FlagUserDateAuditing {
   private String title;
 
   @Nationalized
+  @Lob
   @Column(nullable = false)
   private String content;
 
