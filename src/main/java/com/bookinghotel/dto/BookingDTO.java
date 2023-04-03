@@ -2,7 +2,9 @@ package com.bookinghotel.dto;
 
 import com.bookinghotel.constant.BookingStatus;
 import com.bookinghotel.constant.CommonConstant;
+import com.bookinghotel.dto.common.CreatedByDTO;
 import com.bookinghotel.dto.common.DateAuditingDTO;
+import com.bookinghotel.dto.common.LastModifiedByDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -40,5 +42,9 @@ public class BookingDTO extends DateAuditingDTO {
   private List<BookingServiceDetailDTO> services = new LinkedList<>();
 
   private List<BookingSurchargeDTO> surcharges = new LinkedList<>();
+
+  private CreatedByDTO createdBy;
+
+  private LastModifiedByDTO lastModifiedBy;
 
 }
