@@ -1,6 +1,6 @@
 package com.bookinghotel.entity;
 
-import com.bookinghotel.entity.common.UserDateAuditing;
+import com.bookinghotel.entity.common.FlagUserDateAuditing;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,14 +15,14 @@ import javax.persistence.*;
 @Setter
 @Entity
 @Table(name = "room_ratings")
-public class RoomRating extends UserDateAuditing {
+public class RoomRating extends FlagUserDateAuditing {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Column(nullable = false)
-  private Integer value;
+  private Integer star;
 
   @Nationalized
   @Lob
