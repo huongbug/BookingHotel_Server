@@ -19,13 +19,11 @@ import java.time.LocalDate;
 public class RoomFilterDTO {
 
   @Parameter(description = "fromDate format yyyy-MM-dd")
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonConstant.PATTERN_DATE)
-  @DateTimeFormat(pattern = CommonConstant.PATTERN_DATE)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private LocalDate checkin = LocalDate.now();
 
   @Parameter(description = "toDate format yyyy-MM-dd")
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonConstant.PATTERN_DATE)
-  @DateTimeFormat(pattern = CommonConstant.PATTERN_DATE)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private LocalDate checkout = LocalDate.now().plusDays(1);
 
   private RoomType roomType;
