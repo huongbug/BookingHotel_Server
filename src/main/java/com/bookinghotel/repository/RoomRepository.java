@@ -108,7 +108,8 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
       "WHERE r.id NOT IN (SELECT id FROM data_check) " +
       "AND (:#{#roomFilter.maxNum} is null or r.max_num LIKE CONCAT('%', :#{#roomFilter.maxNum}, '%')) " +
       "AND (:typeRoom is null or r.type LIKE CONCAT('%', :typeRoom, '%')) " +
-      "AND (:keyword is null or r.title LIKE CONCAT('%', :keyword, '%'))",
+      "AND (:keyword is null or r.title LIKE CONCAT('%', :keyword, '%')) " +
+      "AND r.delete_flag = 0",
       countQuery = "WITH data_check_checkin AS ( " +
           "SELECT r.* FROM rooms r " +
           "INNER JOIN booking_room_details brd ON brd.room_id = r.id " +
@@ -137,7 +138,8 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
           "WHERE r.id NOT IN (SELECT id FROM data_check) " +
           "AND (:#{#roomFilter.maxNum} is null or r.max_num LIKE CONCAT('%', :#{#roomFilter.maxNum}, '%')) " +
           "AND (:typeRoom is null or r.type LIKE CONCAT('%', :typeRoom, '%')) " +
-          "AND (:keyword is null or r.title LIKE CONCAT('%', :keyword, '%'))",
+          "AND (:keyword is null or r.title LIKE CONCAT('%', :keyword, '%'))" +
+          " AND r.delete_flag = 0",
       nativeQuery = true)
   Page<RoomProjection> findAllAvailable(@Param("keyword") String keyword, @Param("roomFilter") RoomFilterDTO roomFilter,
                               @Param("typeRoom") String typeRoom, Pageable pageable);
