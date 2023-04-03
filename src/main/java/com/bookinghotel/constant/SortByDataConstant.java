@@ -57,6 +57,19 @@ public enum SortByDataConstant implements SortByInterface {
       }
     }
   },
+  ROOM_RATING {
+    @Override
+    public String getSortBy(String sortBy) {
+      switch (sortBy) {
+        case "star":
+          return "star";
+        case "lastModifiedDate":
+          return "last_modified_date";
+        default:
+          return "created_date";
+      }
+    }
+  },
   POST {
     @Override
     public String getSortBy(String sortBy) {

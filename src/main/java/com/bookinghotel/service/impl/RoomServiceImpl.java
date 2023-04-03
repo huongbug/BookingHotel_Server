@@ -87,7 +87,7 @@ public class RoomServiceImpl implements RoomService {
     roomRepository.save(room);
     Set<Media> medias = mediaService.createMediaForRoom(room, roomCreateDTO.getFiles());
     room.setMedias(medias);
-    return roomMapper.toRoomDTO(roomRepository.save(room), creator, creator);
+    return roomMapper.toRoomDTO(room, creator, creator);
   }
 
   @Override
@@ -96,7 +96,6 @@ public class RoomServiceImpl implements RoomService {
     Optional<Room> currentRoom = roomRepository.findById(roomId);
     checkNotFoundRoomById(currentRoom, roomId);
     roomMapper.updateRoomFromDTO(roomUpdateDTO, currentRoom.get());
-    User updater = userRepository.getUser(currentUser);
     //Delete media if not found in mediaDTO
     Room roomUpdate = mediaService.deleteMediaFromRoomUpdate(currentRoom.get(), roomUpdateDTO);
     //add file if exist
@@ -106,6 +105,7 @@ public class RoomServiceImpl implements RoomService {
       roomRepository.save(roomUpdate);
     }
     User creator = userRepository.findById(roomUpdate.getCreatedBy()).get();
+    User updater = userRepository.getUser(currentUser);
     return roomMapper.toRoomDTO(roomUpdate, creator, updater);
   }
 

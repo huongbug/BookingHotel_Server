@@ -38,14 +38,29 @@ public class UrlConstant {
     private static final String PRE_FIX = "/room";
 
     public static final String GET_ROOMS = PRE_FIX;
-    public static final String GET_ROOMS_AVAILABLE = PRE_FIX + "/available";
     public static final String GET_ROOM = PRE_FIX + "/{roomId}";
+    public static final String GET_ROOMS_AVAILABLE = PRE_FIX + "/available";
+    public static final String GET_ROOM_RATINGS_BY_ROOM = PRE_FIX + "/{roomId}/room-ratings";
 
     public static final String CREATE_ROOM = PRE_FIX + "/create";
     public static final String UPDATE_ROOM = PRE_FIX + "/update/{roomId}";
     public static final String DELETE_ROOM = PRE_FIX + "/delete/{roomId}";
 
     private Room() {
+    }
+  }
+
+  public static class RoomRating {
+    private static final String PRE_FIX = "/room-rating";
+
+    public static final String GET_ROOM_RATINGS = PRE_FIX;
+    public static final String GET_ROOM_RATING = PRE_FIX + "/{roomRatingId}";
+
+    public static final String CREATE_ROOM_RATING = PRE_FIX + "/create/{roomId}";
+    public static final String UPDATE_ROOM_RATING = PRE_FIX + "/update/{roomRatingId}";
+    public static final String DELETE_ROOM_RATING = PRE_FIX + "/delete/{roomRatingId}";
+
+    private RoomRating() {
     }
   }
 

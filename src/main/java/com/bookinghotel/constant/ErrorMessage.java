@@ -45,6 +45,11 @@ public class ErrorMessage {
     public static final String ROOM_NO_SALE = "Room %s not for sale";
   }
 
+  public static class RoomRating {
+    public static final String ERR_NOT_FOUND_ID = "Room rating not found with id: %s";
+    public static final String ERR_CAN_NOT_UPDATE_OR_DELETED = "This room rating is not yours and cannot be updated or deleted";
+  }
+
   public static class Sale {
     public static final String ERR_NOT_FOUND_ID = "Sale not found with id: %s";
   }
@@ -66,6 +71,5 @@ public class ErrorMessage {
   public static class Post {
     public static final String ERR_NOT_FOUND_ID = "Post not found with id: %s";
   }
-
 
 }

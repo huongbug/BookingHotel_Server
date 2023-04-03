@@ -9,9 +9,11 @@ import com.bookinghotel.dto.RoomCreateDTO;
 import com.bookinghotel.dto.RoomFilterDTO;
 import com.bookinghotel.dto.RoomUpdateDTO;
 import com.bookinghotel.dto.pagination.PaginationSearchSortRequestDTO;
+import com.bookinghotel.dto.pagination.PaginationSortRequestDTO;
 import com.bookinghotel.security.AuthorizationInfo;
 import com.bookinghotel.security.CurrentUserLogin;
 import com.bookinghotel.security.UserPrincipal;
+import com.bookinghotel.service.RoomRatingService;
 import com.bookinghotel.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -29,6 +31,8 @@ import javax.validation.Valid;
 public class RoomController {
 
   private final RoomService roomService;
+
+  private final RoomRatingService roomRatingService;
 
   @Operation(summary = "API get room by id")
   @GetMapping(UrlConstant.Room.GET_ROOM)
@@ -50,6 +54,14 @@ public class RoomController {
   public ResponseEntity<?> getRoomsAvailable(@Valid @ParameterObject PaginationSearchSortRequestDTO pagination,
                                              @ParameterObject RoomFilterDTO roomFilterDTO) {
     return VsResponseUtil.ok(roomService.getRoomsAvailable(pagination, roomFilterDTO));
+  }
+
+  @Operation(summary = "API get all room rating by room id")
+  @GetMapping(UrlConstant.Room.GET_ROOM_RATINGS_BY_ROOM)
+  public ResponseEntity<?> getRoomRatingsByRoom(@PathVariable Long roomId,
+                                                @Valid @ParameterObject PaginationSortRequestDTO requestDTO,
+                                                @RequestParam(required = false) Integer star) {
+    return VsResponseUtil.ok(roomRatingService.getRoomRatingsByRoom(requestDTO, star, roomId));
   }
 
   @Tag(name = "room-controller-admin")
