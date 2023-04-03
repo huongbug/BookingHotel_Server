@@ -32,6 +32,8 @@ public class UserDTO extends DateAuditingDTO {
 
   private Boolean enabled;
 
+  private String avatar;
+
   private String roleName;
 
   private Boolean locked;
