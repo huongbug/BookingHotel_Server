@@ -86,6 +86,9 @@ public class User extends DateAuditing {
     if (this.enabled == null) {
       this.enabled = Boolean.FALSE;
     }
+    if (this.locked == null) {
+      this.locked = Boolean.FALSE;
+    }
   }
 
   public User(String email, String phoneNumber, String password, String firstName, String lastName,
