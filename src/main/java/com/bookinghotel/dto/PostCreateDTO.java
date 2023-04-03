@@ -19,6 +19,9 @@ import java.util.List;
 public class PostCreateDTO {
 
   @NotBlank(message = ErrorMessage.NOT_BLANK_FIELD)
+  private String title;
+
+  @NotBlank(message = ErrorMessage.NOT_BLANK_FIELD)
   private String content;
 
   @ValidFiles
