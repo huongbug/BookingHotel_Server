@@ -14,6 +14,7 @@ public class UserInfoProperties {
   private String password;
   private String lastName;
   private String firstName;
+  private String gender;
   private String birthday;
   private String address;
   private String avatar;
