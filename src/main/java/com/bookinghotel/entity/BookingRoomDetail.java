@@ -34,6 +34,8 @@ public class BookingRoomDetail extends UserDateAuditing {
   @Column(nullable = false)
   private Long price;
 
+  private Integer salePercent;
+
   public BookingRoomDetail(Booking booking, Room room) {
     this.id = new BookingRoomDetailId(booking.getId(), room.getId());
     this.booking = booking;
