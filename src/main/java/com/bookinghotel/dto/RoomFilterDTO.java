@@ -1,8 +1,6 @@
 package com.bookinghotel.dto;
 
-import com.bookinghotel.constant.CommonConstant;
 import com.bookinghotel.constant.RoomType;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
