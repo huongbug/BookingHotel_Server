@@ -25,7 +25,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -58,10 +57,10 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public PaginationResponseDTO<UserDTO> getUsers(PaginationSearchSortRequestDTO requestDTO) {
+  public PaginationResponseDTO<UserDTO> getCustomers(PaginationSearchSortRequestDTO requestDTO, Boolean isLocked) {
     //Pagination
     Pageable pageable = PaginationUtil.buildPageable(requestDTO, SortByDataConstant.USER);
-    Page<User> users = userRepository.findAllByKey(requestDTO.getKeyword(), pageable);
+    Page<User> users = userRepository.findAllCustomer(requestDTO.getKeyword(), isLocked, pageable);
     //Create Output
     PagingMeta meta = PaginationUtil.buildPagingMeta(requestDTO, SortByDataConstant.USER, users);
     List<UserDTO> userDTOs = userMapper.toUserDTOs(users.getContent());
@@ -80,40 +79,27 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public User createAdmin(UserCreateDTO userCreateDTO) {
-    User user = userMapper.toUser(userCreateDTO);
-    user.setPassword(passwordEncoder.encode(userCreateDTO.getPassword()));
-    user.setRole(roleRepository.findByRoleName(RoleConstant.ADMIN));
-    if(userCreateDTO.getAvatarFile() != null) {
-      user.setAvatar(uploadFile.getUrlFromFile(userCreateDTO.getAvatarFile()));
-    }
-    return userRepository.save(user);
-  }
-
-  @Override
   public UserDTO updateUser(UserUpdateDTO userUpdateDTO, String userId, UserPrincipal principal) {
     Optional<User> user = userRepository.findById(userId);
     checkNotFoundUserById(user, userId);
-
-    if(!principal.getId().equals(userId)) {
-      boolean isValid = false;
-      for(GrantedAuthority authority : principal.getAuthorities()) {
-        if(authority.getAuthority().equals(RoleConstant.ADMIN)) {
-          isValid = true;
-          break;
-        }
-      }
-      if(!isValid) {
-        throw new ForbiddenException(ErrorMessage.FORBIDDEN_UD);
-      }
-    }
+    checkPermissionToUpdateUser(user.get(), principal);
     userMapper.updateUserFromDTO(userUpdateDTO, user.get());
+    if(userUpdateDTO.getFileAvatar() != null) {
+      if(user.get().getAvatar() != null) {
+        uploadFile.removeImageFromUrl(user.get().getAvatar());
+      }
+      user.get().setAvatar(uploadFile.getUrlFromFile(userUpdateDTO.getFileAvatar()));
+    }
     return userMapper.toUserDTO(userRepository.save(user.get()));
   }
 
   @Override
   public CommonResponseDTO lockUser(String userId) {
-    return null;
+    Optional<User> user = userRepository.findById(userId);
+    checkNotFoundUserById(user, userId);
+    user.get().setIsLocked(CommonConstant.TRUE);
+    userRepository.save(user.get());
+    return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.LOCK_SUCCESS);
   }
 
   @Override
@@ -124,18 +110,13 @@ public class UserServiceImpl implements UserService {
     return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.DELETE_SUCCESS);
   }
 
-  @Override
-  public CommonResponseDTO changeAvatar(MultipartFile avatar, UserPrincipal principal) {
-    User user = userRepository.getUser(principal);
-    try {
-      if(user.getAvatar() != null) {
-        uploadFile.removeImageFromUrl(user.getAvatar());
+  private void checkPermissionToUpdateUser(User currentUserUpdate, UserPrincipal currentUser) {
+    if(!currentUserUpdate.getId().equals(currentUser.getId())) {
+      for(GrantedAuthority authority : currentUser.getAuthorities()) {
+        if(!authority.getAuthority().equals(RoleConstant.ADMIN)) {
+          throw new ForbiddenException(ErrorMessage.User.ERR_CAN_NOT_UPDATE);
+        }
       }
-      user.setAvatar(uploadFile.getUrlFromFile(avatar));
-      userRepository.save(user);
-      return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.UPDATE_SUCCESS);
-    } catch (Exception e) {
-      return new CommonResponseDTO(CommonConstant.FALSE, e.getMessage());
     }
   }
 

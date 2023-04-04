@@ -18,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -45,11 +44,12 @@ public class UserController {
   }
 
   @Tag(name = "user-controller-admin")
-  @Operation(summary = "API get all user")
+  @Operation(summary = "API get all customer")
   @AuthorizationInfo(role = { RoleConstant.ADMIN })
   @GetMapping(UrlConstant.User.GET_USERS)
-  public ResponseEntity<?> getUsers(@Valid @ParameterObject PaginationSearchSortRequestDTO requestDTO) {
-    return VsResponseUtil.ok(userService.getUsers(requestDTO));
+  public ResponseEntity<?> getCustomers(@Valid @ParameterObject PaginationSearchSortRequestDTO requestDTO,
+                                        @RequestParam Boolean isLocked) {
+    return VsResponseUtil.ok(userService.getCustomers(requestDTO, isLocked));
   }
 
   @Tags({@Tag(name = "user-controller-admin"), @Tag(name = "user-controller")})
@@ -67,15 +67,6 @@ public class UserController {
   @DeleteMapping(UrlConstant.User.DELETE_USER)
   public ResponseEntity<?> deleteUserById(@PathVariable String userId) {
     return VsResponseUtil.ok(userService.deleteUser(userId));
-  }
-
-  @Tags({@Tag(name = "user-controller-admin"), @Tag(name = "user-controller")})
-  @Operation(summary = "API change avatar user current login")
-  @AuthorizationInfo(role = { RoleConstant.ADMIN, RoleConstant.USER })
-  @PatchMapping(UrlConstant.User.CHANGE_AVT_USER)
-  public ResponseEntity<?> changeAvatarUser(@ModelAttribute MultipartFile avatar,
-                                          @Parameter(name = "principal", hidden = true) @CurrentUserLogin UserPrincipal principal) {
-    return VsResponseUtil.ok(userService.changeAvatar(avatar, principal));
   }
 
 }

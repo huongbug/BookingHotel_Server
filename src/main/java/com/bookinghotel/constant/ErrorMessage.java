@@ -35,6 +35,7 @@ public class ErrorMessage {
     public static final String ERR_NOT_FOUND_EMAIL_OR_PHONE = "User not found with this email or phone: %s";
     public static final String ERR_NOT_FOUND_ID = "User not found with id: %s";
     public static final String ERR_ACCOUNT_NOT_FOUND_BY_EMAIL = "User not found with email: %s";
+    public static final String ERR_CAN_NOT_UPDATE = "You cannot update other people's information";
   }
 
   public static class Room {

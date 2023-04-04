@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
@@ -26,6 +27,10 @@ public class UserUpdateDTO {
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private LocalDate birthday;
 
+  private String avatar;
+
   private String address;
+
+  private MultipartFile fileAvatar;
 
 }

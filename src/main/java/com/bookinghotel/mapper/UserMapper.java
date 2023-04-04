@@ -23,11 +23,7 @@ public interface UserMapper {
 
   List<UserDTO> toUserDTOs(List<User> user);
 
-  @Mapping(target = "phoneNumber", source = "updateDTO.phoneNumber")
-  @Mapping(target = "firstName", source = "updateDTO.firstName")
-  @Mapping(target = "lastName", source = "updateDTO.lastName")
-  @Mapping(target = "birthday", source = "updateDTO.birthday")
-  @Mapping(target = "address", source = "updateDTO.address")
+  @Mapping(target = "avatar", ignore = true)
   void updateUserFromDTO(UserUpdateDTO updateDTO, @MappingTarget User user);
 
   CreatedByDTO toCreatedByDTO(User creator);

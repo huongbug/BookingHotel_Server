@@ -17,20 +17,30 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
 
-  @Query(value = "SELECT * FROM users u WHERE (:keyword IS NULL OR u.id LIKE CONCAT('%', :keyword, '%')) " +
-      "OR (:keyword IS NULL OR u.last_name LIKE CONCAT('%', :keyword, '%')) " +
-      "OR (:keyword IS NULL OR u.first_name LIKE CONCAT('%', :keyword, '%')) " +
-      "OR (:keyword IS NULL OR u.email LIKE CONCAT('%', :keyword, '%')) " +
-      "OR (:keyword IS NULL OR u.phone_number LIKE CONCAT('%', :keyword, '%')) " +
-      "OR (:keyword IS NULL OR u.birthday LIKE CONCAT('%', :keyword, '%'))",
-      countQuery = "SELECT COUNT(*) FROM users u WHERE (:keyword IS NULL OR u.id LIKE CONCAT('%', :keyword, '%')) " +
-          "OR (:keyword IS NULL OR u.last_name LIKE CONCAT('%', :keyword, '%')) " +
-          "OR (:keyword IS NULL OR u.first_name LIKE CONCAT('%', :keyword, '%')) " +
-          "OR (:keyword IS NULL OR u.email LIKE CONCAT('%', :keyword, '%')) " +
-          "OR (:keyword IS NULL OR u.phone_number LIKE CONCAT('%', :keyword, '%')) " +
-          "OR (:keyword IS NULL OR u.birthday LIKE CONCAT('%', :keyword, '%'))",
+  @Query(value = "SELECT u.* FROM users u " +
+      "INNER JOIN roles r ON r.id = u.role_id " +
+      "WHERE (r.role_name = 'ROLE_USER' AND u.is_locked = :isLocked) " +
+      "AND ( " +
+      "COALESCE(:keyword, '') = '' " +
+      "OR u.last_name LIKE CONCAT('%', :keyword, '%')" +
+      "OR u.first_name LIKE CONCAT('%', :keyword, '%')" +
+      "OR u.email LIKE CONCAT('%', :keyword, '%')" +
+      "OR u.phone_number LIKE CONCAT('%', :keyword, '%')" +
+      "OR u.birthday LIKE CONCAT('%', :keyword, '%')" +
+      ")",
+      countQuery = "SELECT COUNT(*) FROM users u " +
+          "INNER JOIN roles r ON r.id = u.role_id " +
+          "WHERE (r.role_name = 'ROLE_USER' AND u.is_locked = :isLocked) " +
+          "AND ( " +
+          "COALESCE(:keyword, '') = '' " +
+          "OR u.last_name LIKE CONCAT('%', :keyword, '%')" +
+          "OR u.first_name LIKE CONCAT('%', :keyword, '%')" +
+          "OR u.email LIKE CONCAT('%', :keyword, '%')" +
+          "OR u.phone_number LIKE CONCAT('%', :keyword, '%')" +
+          "OR u.birthday LIKE CONCAT('%', :keyword, '%')" +
+          ")",
       nativeQuery = true)
-  Page<User> findAllByKey(@Param("keyword") String keyword, Pageable pageable);
+  Page<User> findAllCustomer(@Param("keyword") String keyword, @Param("isLocked") Boolean isLocked, Pageable pageable);
 
   @Query("SELECT u FROM User u WHERE u.id = ?1")
   Optional<User> findById(String id);
