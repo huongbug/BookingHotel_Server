@@ -18,14 +18,14 @@ public class VerificationToken {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(updatable = false, unique = true, nullable = false, columnDefinition = "CHAR(36)")
+  @Column(unique = true, nullable = false, columnDefinition = "CHAR(36)")
   private String token;
 
   @Column(nullable = false)
   private Date expirationTime;
 
   @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "FK_USER_TOKEN"))
+  @JoinColumn(name = "user_id", nullable = false, unique = true, foreignKey = @ForeignKey(name = "FK_USER_TOKEN"))
   private User user;
 
   public VerificationToken(User user, String token) {
