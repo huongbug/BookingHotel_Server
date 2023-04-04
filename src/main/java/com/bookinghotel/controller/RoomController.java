@@ -45,8 +45,10 @@ public class RoomController {
   @AuthorizationInfo(role = { RoleConstant.ADMIN })
   @GetMapping(UrlConstant.Room.GET_ROOMS)
   public ResponseEntity<?> getRooms(@Valid @ParameterObject PaginationSearchSortRequestDTO pagination,
-                                    @RequestParam(required = false) RoomType filter) {
-    return VsResponseUtil.ok(roomService.getRooms(pagination, filter == null ? null : filter.getValue()));
+                                    @RequestParam(required = false) RoomType roomType,
+                                    @RequestParam Boolean deleteFlag) {
+    String type = roomType == null ? null : roomType.getValue();
+    return VsResponseUtil.ok(roomService.getRooms(pagination, type, deleteFlag));
   }
 
   @Operation(summary = "API get all room available")

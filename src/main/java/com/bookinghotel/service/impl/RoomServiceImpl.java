@@ -59,13 +59,13 @@ public class RoomServiceImpl implements RoomService {
   }
 
   @Override
-  public PaginationResponseDTO<RoomDTO> getRooms(PaginationSearchSortRequestDTO requestDTO, String filter) {
+  public PaginationResponseDTO<RoomDTO> getRooms(PaginationSearchSortRequestDTO requestDTO, String roomType, Boolean deleteFlag) {
     //Pagination
     Pageable pageable = PaginationUtil.buildPageable(requestDTO, SortByDataConstant.ROOM);
-    Page<RoomProjection> rooms = roomRepository.findAllByKey(requestDTO.getKeyword(), filter, pageable);
+    Page<RoomProjection> rooms = roomRepository.findAllRoom(requestDTO.getKeyword(), roomType, deleteFlag, pageable);
     //Create Output
     PagingMeta meta = PaginationUtil.buildPagingMeta(requestDTO, SortByDataConstant.ROOM, rooms);
-    return new PaginationResponseDTO<RoomDTO>(meta, toRoomDTOs(rooms));
+    return new PaginationResponseDTO<RoomDTO>(meta, toRoomDTOs(rooms, deleteFlag));
   }
 
   @Override
@@ -132,6 +132,23 @@ public class RoomServiceImpl implements RoomService {
     List<RoomDTO> roomDTOs = new LinkedList<>();
     for(RoomProjection roomProjection : roomProjections) {
       roomDTOs.add(toRoomDTO(roomProjection));
+    }
+    return roomDTOs;
+  }
+
+  private List<RoomDTO> toRoomDTOs(Page<RoomProjection> roomProjections, Boolean deleteFlag) {
+    List<RoomDTO> roomDTOs = new LinkedList<>();
+    if(deleteFlag) {
+      for(RoomProjection roomProjection : roomProjections) {
+        RoomDTO roomDTO = roomMapper.roomProjectionToRoomDTO(roomProjection);
+        List<Media> medias = mediaService.getMediaByRoomAndIsDeleteFlag(roomDTO.getId());
+        roomDTO.setMedias(mediaMapper.toMediaDTOs(medias));
+        roomDTOs.add(roomDTO);
+      }
+    } else {
+      for(RoomProjection roomProjection : roomProjections) {
+        roomDTOs.add(toRoomDTO(roomProjection));
+      }
     }
     return roomDTOs;
   }

@@ -16,6 +16,8 @@ public interface MediaService {
 
   List<Media> getMediaByRoom(Long roomId);
 
+  List<Media> getMediaByRoomAndIsDeleteFlag(Long roomId);
+
   Set<Media> createMediaForRoom(Room room, List<MultipartFile> files);
 
   List<Media> getMediaByPost(Long postId);

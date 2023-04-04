@@ -17,6 +17,9 @@ public interface MediaRepository extends JpaRepository<Media, Long> {
   @Query("SELECT m FROM Media m WHERE m.room.id = ?1 AND m.deleteFlag = false")
   List<Media> findByRoomId(Long roomId);
 
+  @Query("SELECT m FROM Media m WHERE m.room.id = ?1 AND m.deleteFlag = true")
+  List<Media> findByRoomIdAndIsDeleteFlag(Long roomId);
+
   @Query("SELECT m FROM Media m WHERE m.room.id = ?1 AND m.deleteFlag = false")
   Set<Media> findByRoomToSet(Long roomId);
 

@@ -13,7 +13,7 @@ public interface RoomService {
 
   RoomDTO getRoom(Long roomId);
 
-  PaginationResponseDTO<RoomDTO> getRooms(PaginationSearchSortRequestDTO requestDTO, String filter);
+  PaginationResponseDTO<RoomDTO> getRooms(PaginationSearchSortRequestDTO requestDTO, String roomType, Boolean deleteFlag);
 
   PaginationResponseDTO<RoomDTO> getRoomsAvailable(PaginationSearchSortRequestDTO requestDTO, RoomFilterDTO roomFilterDTO);
 

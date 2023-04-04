@@ -57,17 +57,27 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
       "LEFT JOIN users createdBy ON r.created_by = createdBy.id " +
       "LEFT JOIN users lastModifiedBy ON r.last_modified_by = lastModifiedBy.id " +
       "LEFT JOIN sales s ON s.id = r.sale_id " +
-      "WHERE (:keyword is null or r.title LIKE CONCAT('%', :keyword, '%')) " +
-      "AND (:filter is null or r.type = :filter) AND r.delete_flag = 0",
+      "WHERE (:roomType IS NULL OR r.type LIKE CONCAT('%', :roomType, '%')) " +
+      "AND ( " +
+      "COALESCE(:keyword, '') = '' " +
+      "OR r.title LIKE CONCAT('%', :keyword, '%') " +
+      "OR r.price LIKE CONCAT('%', :keyword, '%') " +
+      ")" +
+      "AND r.delete_flag = :deleteFlag",
       countQuery = "SELECT COUNT(*) FROM rooms r " +
           "LEFT JOIN users createdBy ON r.created_by = createdBy.id " +
           "LEFT JOIN users lastModifiedBy ON r.last_modified_by = lastModifiedBy.id " +
           "LEFT JOIN sales s ON s.id = r.sale_id " +
-          "WHERE (:keyword is null or r.title LIKE CONCAT('%', :keyword, '%')) " +
-          "AND (:filter is null or r.type = :filter) AND r.delete_flag = 0",
+          "WHERE (:roomType IS NULL OR r.type LIKE CONCAT('%', :roomType, '%')) " +
+          "AND ( " +
+          "COALESCE(:keyword, '') = '' " +
+          "OR r.title LIKE CONCAT('%', :keyword, '%') " +
+          "OR r.price LIKE CONCAT('%', :keyword, '%') " +
+          ")" +
+          "AND r.delete_flag = :deleteFlag",
       nativeQuery = true)
-  Page<RoomProjection> findAllByKey(@Param("keyword") String keyword, @Param("filter") String filter,
-                                    Pageable pageable);
+  Page<RoomProjection> findAllRoom(@Param("keyword") String keyword, @Param("roomType") String roomType,
+                                   @Param("deleteFlag") Boolean deleteFlag, Pageable pageable);
 
   @Query(value =
       "WITH data_check_checkin AS ( " +
@@ -106,9 +116,11 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
       "LEFT JOIN users lastModifiedBy ON r.last_modified_by = lastModifiedBy.id " +
       "LEFT JOIN sales s ON s.id = r.sale_id " +
       "WHERE r.id NOT IN (SELECT id FROM data_check) " +
-      "AND (:#{#roomFilter.maxNum} is null or r.max_num LIKE CONCAT('%', :#{#roomFilter.maxNum}, '%')) " +
-      "AND (:typeRoom is null or r.type LIKE CONCAT('%', :typeRoom, '%')) " +
-      "AND (:keyword is null or r.title LIKE CONCAT('%', :keyword, '%')) " +
+      "AND (:#{#roomFilter.maxNum} IS NULL OR r.max_num LIKE CONCAT('%', :#{#roomFilter.maxNum}, '%')) " +
+      "AND (:typeRoom IS NULL OR r.type LIKE CONCAT('%', :typeRoom, '%')) " +
+      "AND (:keyword IS NULL OR r.title LIKE CONCAT('%', :keyword, '%')) " +
+      "AND (:keyword IS NULL OR r.type LIKE CONCAT('%', :keyword, '%')) " +
+      "AND (:keyword IS NULL OR r.price LIKE CONCAT('%', :keyword, '%')) " +
       "AND r.delete_flag = 0",
       countQuery = "WITH data_check_checkin AS ( " +
           "SELECT r.* FROM rooms r " +
@@ -136,10 +148,12 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
           "LEFT JOIN users lastModifiedBy ON r.last_modified_by = lastModifiedBy.id " +
           "LEFT JOIN sales s ON s.id = r.sale_id " +
           "WHERE r.id NOT IN (SELECT id FROM data_check) " +
-          "AND (:#{#roomFilter.maxNum} is null or r.max_num LIKE CONCAT('%', :#{#roomFilter.maxNum}, '%')) " +
-          "AND (:typeRoom is null or r.type LIKE CONCAT('%', :typeRoom, '%')) " +
-          "AND (:keyword is null or r.title LIKE CONCAT('%', :keyword, '%'))" +
-          " AND r.delete_flag = 0",
+          "AND (:#{#roomFilter.maxNum} IS NULL OR r.max_num LIKE CONCAT('%', :#{#roomFilter.maxNum}, '%')) " +
+          "AND (:typeRoom IS NULL OR r.type LIKE CONCAT('%', :typeRoom, '%')) " +
+          "AND (:keyword IS NULL OR r.title LIKE CONCAT('%', :keyword, '%')) " +
+          "AND (:keyword IS NULL OR r.type LIKE CONCAT('%', :keyword, '%')) " +
+          "AND (:keyword IS NULL OR r.price LIKE CONCAT('%', :keyword, '%')) " +
+          "AND r.delete_flag = 0",
       nativeQuery = true)
   Page<RoomProjection> findAllAvailable(@Param("keyword") String keyword, @Param("roomFilter") RoomFilterDTO roomFilter,
                               @Param("typeRoom") String typeRoom, Pageable pageable);

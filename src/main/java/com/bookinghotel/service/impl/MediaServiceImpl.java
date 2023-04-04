@@ -49,6 +49,11 @@ public class MediaServiceImpl implements MediaService {
   }
 
   @Override
+  public List<Media> getMediaByRoomAndIsDeleteFlag(Long roomId) {
+    return mediaRepository.findByRoomIdAndIsDeleteFlag(roomId);
+  }
+
+  @Override
   public Set<Media> createMediaForRoom(Room room, List<MultipartFile> files) {
     Set<Media> medias = new HashSet<>();
     for(MultipartFile file : files) {
