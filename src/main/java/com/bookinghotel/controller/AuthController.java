@@ -49,8 +49,9 @@ public class AuthController {
 
   @Operation(summary = "(2) API verify signup")
   @PostMapping(UrlConstant.Auth.VERIFY_SIGNUP)
-  public ResponseEntity<?> FormVerificationTokenSignUp(@RequestParam("token") String token) {
-    return VsResponseUtil.ok(authService.verifySignUp(token));
+  public ResponseEntity<?> FormVerificationTokenSignUp(@RequestParam("email") String email,
+                                                       @RequestParam("token") String token) {
+    return VsResponseUtil.ok(authService.verifySignUp(email, token));
   }
 
   @Operation(summary = "(1) API forgot password")

@@ -13,7 +13,7 @@ public interface AuthService {
 
   CommonResponseDTO signUp(UserCreateDTO userCreateDTO);
 
-  CommonResponseDTO verifySignUp(String token);
+  CommonResponseDTO verifySignUp(String email, String token);
 
   CommonResponseDTO forgotPassword(String email);
 

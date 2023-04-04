@@ -30,7 +30,7 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService, CustomU
   @Override
   @Transactional
   public UserDetails loadUserById(String id) {
-    User user = userRepository.findByIdAndEnabled(id)
+    User user = userRepository.findById(id)
         .orElseThrow(() -> new UsernameNotFoundException(String.format(ErrorMessage.User.ERR_NOT_FOUND_ID, id)));
     return UserPrincipal.create(user);
   }

@@ -7,6 +7,7 @@ import com.bookinghotel.exception.InvalidException;
 import com.bookinghotel.repository.VerificationTokenRepository;
 import com.bookinghotel.service.VerificationTokenService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
@@ -28,9 +29,17 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
 
   @Override
   public VerificationToken createVerificationToken(User user) {
+    VerificationToken verificationTokenCurrent = verificationTokenRepository.findByUserEmail(user.getEmail());
     UUID token = UUID.randomUUID();
-    VerificationToken verificationToken = new VerificationToken(user, token.toString());
-    return verificationTokenRepository.save(verificationToken);
+    if(ObjectUtils.isEmpty(verificationTokenCurrent)) {
+      VerificationToken verificationToken = new VerificationToken(user, token.toString());
+      return verificationTokenRepository.save(verificationToken);
+    } else {
+      verificationTokenCurrent.setToken(token.toString());
+      verificationTokenCurrent.setExpirationTime(verificationTokenCurrent.calculateExpirationDate());
+      verificationTokenRepository.save(verificationTokenCurrent);
+      return verificationTokenCurrent;
+    }
   }
 
   @Override
@@ -50,7 +59,7 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
   }
 
   private void checkVerificationToken(VerificationToken verificationToken) {
-    if (verificationToken == null) {
+    if (ObjectUtils.isEmpty(verificationToken)) {
       throw new InvalidException(ErrorMessage.Auth.INVALID_TOKEN);
     } else {
       Calendar cal = Calendar.getInstance();

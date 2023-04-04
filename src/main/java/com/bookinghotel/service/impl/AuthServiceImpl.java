@@ -18,10 +18,7 @@ import com.bookinghotel.service.UserService;
 import com.bookinghotel.service.VerificationTokenService;
 import com.bookinghotel.util.SendMailUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -59,6 +56,8 @@ public class AuthServiceImpl implements AuthService {
       SecurityContextHolder.getContext().setAuthentication(authentication);
       String jwt = jwtTokenProvider.generateToken(authentication);
       return new AuthenticationResponseDTO(CommonConstant.BEARER_TOKEN, jwt, null, authentication.getAuthorities());
+    } catch (LockedException e) {
+      throw new UnauthorizedException(ErrorMessage.Auth.ERR_ACCOUNT_LOCKED);
     } catch (DisabledException e) {
       throw new UnauthorizedException(ErrorMessage.Auth.ERR_ACCOUNT_NOT_ENABLED);
     } catch (BadCredentialsException e) {
@@ -68,34 +67,29 @@ public class AuthServiceImpl implements AuthService {
 
   @Override
   public CommonResponseDTO signUp(UserCreateDTO userCreateDTO) {
-    if (Boolean.TRUE.equals(userRepository.existsByEmail(userCreateDTO.getEmail()))) {
-      throw new DuplicateException(ErrorMessage.Auth.ERR_DUPLICATE_EMAIL);
-    }
-    //create user
-    User user = userService.createUser(userCreateDTO);
-    //create token
-    VerificationToken verificationToken = verificationTokenService.createVerificationToken(user);
-    //set data mail
-    DataMailDTO dataMailDTO = new DataMailDTO();
-    dataMailDTO.setTo(userCreateDTO.getEmail());
-    dataMailDTO.setSubject(CommonMessage.SUBJECT_REGISTER);
-    Map<String, Object> properties = new HashMap<>();
-    properties.put("name", userCreateDTO.getLastName() + " " + userCreateDTO.getFirstName());
-    properties.put("token", verificationToken.getToken());
-    try {
-      sendMail.sendEmailWithHTML(dataMailDTO, CommonMessage.SIGNUP_TEMPLATE, properties);
-      return new CommonResponseDTO(CommonConstant.TRUE, CommonConstant.EMPTY_STRING);
-    } catch (Exception ex) {
-      throw new InternalServerException(ErrorMessage.ERR_EXCEPTION_GENERAL);
+    Optional<User> findUser = userRepository.findByEmail(userCreateDTO.getEmail());
+    if(findUser.isPresent()) {
+      if(findUser.get().getIsEnable()) {
+        throw new DuplicateException(ErrorMessage.Auth.ERR_DUPLICATE_EMAIL);
+      } else {
+        VerificationToken verificationToken = verificationTokenService.createVerificationToken(findUser.get());
+        return sendMailSignUp(findUser.get(), verificationToken);
+      }
+    } else {
+      User user = userService.createUser(userCreateDTO);
+      VerificationToken verificationToken = verificationTokenService.createVerificationToken(user);
+      return sendMailSignUp(user, verificationToken);
     }
   }
 
   @Override
-  public CommonResponseDTO verifySignUp(String token) {
+  public CommonResponseDTO verifySignUp(String email, String token) {
+    Optional<User> user = userRepository.findByEmail(email);
+    checkNotFoundUserByEmail(user, email);
     VerificationToken verificationToken = verificationTokenService.getByToken(token);
-    User user = verificationToken.getUser();
-    user.setEnabled(CommonConstant.TRUE);
-    userRepository.save(user);
+    checkAccountNotEqualTokenVerify(user.get(), verificationToken);
+    user.get().setIsEnable(CommonConstant.TRUE);
+    userRepository.save(user.get());
     verificationTokenService.deleteToken(verificationToken.getId());
     return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.SIGNUP_SUCCESS);
   }
@@ -106,7 +100,6 @@ public class AuthServiceImpl implements AuthService {
     checkNotFoundUserByEmail(user, email);
     //create token
     VerificationToken verificationToken = verificationTokenService.createVerificationToken(user.get());
-
     //set data mail
     DataMailDTO dataMailDTO = new DataMailDTO();
     dataMailDTO.setTo(user.get().getEmail());
@@ -114,8 +107,9 @@ public class AuthServiceImpl implements AuthService {
     Map<String, Object> properties = new HashMap<>();
     properties.put("name", user.get().getLastName() + " " + user.get().getFirstName());
     properties.put("token", verificationToken.getToken());
+    dataMailDTO.setProperties(properties);
     try {
-      sendMail.sendEmailWithHTML(dataMailDTO, CommonMessage.FORGOT_PASSWORD_TEMPLATE, properties);
+      sendMail.sendEmailWithHTML(dataMailDTO, CommonMessage.FORGOT_PASSWORD_TEMPLATE);
       return new CommonResponseDTO(CommonConstant.TRUE, CommonConstant.EMPTY_STRING);
     } catch (Exception ex) {
       throw new InternalServerException(ErrorMessage.ERR_EXCEPTION_GENERAL);
@@ -127,7 +121,6 @@ public class AuthServiceImpl implements AuthService {
     Optional<User> user = userRepository.findByEmail(email);
     checkNotFoundUserByEmail(user, email);
     VerificationToken verificationToken = verificationTokenService.getByToken(token);
-
     checkAccountNotEqualTokenVerify(user.get(), verificationToken);
     if (passwordEncoder.matches(newPassword, user.get().getPassword())) {
       throw new DuplicateException(ErrorMessage.Auth.ERR_DUPLICATE_PASSWORD);
@@ -143,6 +136,27 @@ public class AuthServiceImpl implements AuthService {
     return new CommonResponseDTO(CommonConstant.TRUE, "Logged out successfully");
   }
 
+  private CommonResponseDTO sendMailSignUp(User user, VerificationToken verificationToken) {
+    try {
+      DataMailDTO dataMailDTO = setDataMailDtoToSignUp(user, verificationToken);
+      sendMail.sendEmailWithHTML(dataMailDTO, CommonMessage.SIGNUP_TEMPLATE);
+      return new CommonResponseDTO(CommonConstant.TRUE, CommonConstant.EMPTY_STRING);
+    } catch (Exception ex) {
+      throw new InternalServerException(ErrorMessage.ERR_EXCEPTION_GENERAL);
+    }
+  }
+
+  private DataMailDTO setDataMailDtoToSignUp(User user, VerificationToken verificationToken) {
+    DataMailDTO dataMailDTO = new DataMailDTO();
+    dataMailDTO.setTo(user.getEmail());
+    dataMailDTO.setSubject(CommonMessage.SUBJECT_REGISTER);
+    Map<String, Object> properties = new HashMap<>();
+    properties.put("name", user.getLastName() + " " + user.getFirstName());
+    properties.put("token", verificationToken.getToken());
+    dataMailDTO.setProperties(properties);
+    return dataMailDTO;
+  }
+
   private void checkAccountNotEqualTokenVerify(User user, VerificationToken token) {
     if(!Objects.equals(user.getId(), token.getUser().getId())) {
       throw new InvalidException(ErrorMessage.Auth.INCORRECT_TOKEN);
@@ -152,6 +166,13 @@ public class AuthServiceImpl implements AuthService {
   private void checkNotFoundUserByEmail(Optional<User> user, String email) {
     if (user.isEmpty()) {
       throw new NotFoundException(String.format(ErrorMessage.User.ERR_ACCOUNT_NOT_FOUND_BY_EMAIL, email));
+    } else {
+      if(!user.get().getIsEnable()) {
+        throw new InvalidException(ErrorMessage.Auth.ERR_ACCOUNT_NOT_ENABLED);
+      }
+      if(user.get().getIsLocked()) {
+        throw new InvalidException((ErrorMessage.Auth.ERR_ACCOUNT_LOCKED));
+      }
     }
   }
 

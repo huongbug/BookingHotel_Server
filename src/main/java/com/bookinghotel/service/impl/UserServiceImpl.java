@@ -10,6 +10,7 @@ import com.bookinghotel.dto.pagination.PaginationSearchSortRequestDTO;
 import com.bookinghotel.dto.pagination.PagingMeta;
 import com.bookinghotel.entity.User;
 import com.bookinghotel.exception.ForbiddenException;
+import com.bookinghotel.exception.InvalidException;
 import com.bookinghotel.exception.NotFoundException;
 import com.bookinghotel.mapper.UserMapper;
 import com.bookinghotel.repository.RoleRepository;
@@ -91,7 +92,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserDTO updateUser(UserUpdateDTO userUpdateDTO, String userId, UserPrincipal principal) {
-    Optional<User> user = userRepository.findByIdAndEnabled(userId);
+    Optional<User> user = userRepository.findById(userId);
     checkNotFoundUserById(user, userId);
 
     if(!principal.getId().equals(userId)) {
@@ -141,6 +142,13 @@ public class UserServiceImpl implements UserService {
   private void checkNotFoundUserById(Optional<User> user, String userId) {
     if (user.isEmpty()) {
       throw new NotFoundException(String.format(ErrorMessage.User.ERR_NOT_FOUND_ID, userId));
+    } else {
+      if(!user.get().getIsEnable()) {
+        throw new InvalidException(ErrorMessage.Auth.ERR_ACCOUNT_NOT_ENABLED);
+      }
+      if(user.get().getIsLocked()) {
+        throw new InvalidException((ErrorMessage.Auth.ERR_ACCOUNT_LOCKED));
+      }
     }
   }
 

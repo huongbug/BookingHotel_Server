@@ -23,6 +23,7 @@ public class ErrorMessage {
     public static final String ERR_DUPLICATE_EMAIL = "Email is already taken";
     public static final String ERR_DUPLICATE_PASSWORD = "The new password must be different from the old password";
     public static final String ERR_ACCOUNT_NOT_ENABLED = "This account is not enabled";
+    public static final String ERR_ACCOUNT_LOCKED = "This account has been locked";
 
     //error token verification
     public static final String INVALID_TOKEN = "Invalid token";

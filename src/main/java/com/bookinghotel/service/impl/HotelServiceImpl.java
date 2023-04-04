@@ -115,13 +115,13 @@ public class HotelServiceImpl implements HotelService {
 
   private void checkNotFoundServiceById(Optional<Service> service, Long serviceId) {
     if (service.isEmpty()) {
-      throw new NotFoundException(String.format(ErrorMessage.Product.ERR_NOT_FOUND_ID, serviceId));
+      throw new NotFoundException(String.format(ErrorMessage.Service.ERR_NOT_FOUND_ID, serviceId));
     }
   }
 
   private void checkNotFoundServiceById(ServiceProjection serviceProjection, Long serviceId) {
     if (ObjectUtils.isEmpty(serviceProjection)) {
-      throw new NotFoundException(String.format(ErrorMessage.Product.ERR_NOT_FOUND_ID, serviceId));
+      throw new NotFoundException(String.format(ErrorMessage.Service.ERR_NOT_FOUND_ID, serviceId));
     }
   }
 

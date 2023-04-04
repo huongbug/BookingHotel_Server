@@ -27,19 +27,22 @@ public class UserPrincipal implements UserDetails {
   @JsonIgnore
   private String password;
 
-  private final boolean enabled;
+  private final boolean isEnabled;
+
+  private final boolean isLocked;
 
   private final Collection<? extends GrantedAuthority> authorities;
 
   public UserPrincipal(String id, String firstName, String lastName, String email, String phone, String password,
-                       boolean enabled, Collection<? extends GrantedAuthority> authorities) {
+                       boolean isEnabled, boolean isLocked, Collection<? extends GrantedAuthority> authorities) {
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
     this.phone = phone;
     this.password = password;
-    this.enabled = enabled;
+    this.isEnabled = isEnabled;
+    this.isLocked = !isLocked;
 
     if (authorities == null) {
       this.authorities = null;
@@ -51,9 +54,8 @@ public class UserPrincipal implements UserDetails {
   public static UserPrincipal create(User user) {
     List<GrantedAuthority> authorities = new LinkedList<>();
     authorities.add(new SimpleGrantedAuthority(user.getRole().getRoleName()));
-
-    return new UserPrincipal(user.getId(), user.getFirstName(), user.getLastName(),
-        user.getEmail(), user.getPhoneNumber(), user.getPassword(), user.getEnabled(), authorities);
+    return new UserPrincipal(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(),
+        user.getPhoneNumber(), user.getPassword(), user.getIsEnable(), user.getIsLocked(), authorities);
   }
 
   public String getId() {
@@ -94,7 +96,7 @@ public class UserPrincipal implements UserDetails {
 
   @Override
   public boolean isAccountNonLocked() {
-    return true;
+    return isLocked;
   }
 
   @Override
@@ -104,7 +106,7 @@ public class UserPrincipal implements UserDetails {
 
   @Override
   public boolean isEnabled() {
-    return enabled;
+    return isEnabled;
   }
 
   public boolean equals(Object object) {
