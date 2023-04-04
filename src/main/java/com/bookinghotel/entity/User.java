@@ -59,16 +59,20 @@ public class User extends DateAuditing {
   private String address;
 
   @Column(nullable = false)
-  private Boolean enabled;
+  private Boolean isEnable;
 
   private String avatar;
 
-  private Boolean locked;
+  private Boolean isLocked;
 
   //Link to table Role
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "role_id", foreignKey = @ForeignKey(name = "FK_USER_ROLE"))
   private Role role;
+
+  //Link to table VerificationToken
+  @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+  private VerificationToken verificationToken;
 
   //Link to table Booking
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
@@ -83,16 +87,16 @@ public class User extends DateAuditing {
 
   @PrePersist
   public void prePersist() {
-    if (this.enabled == null) {
-      this.enabled = Boolean.FALSE;
+    if (this.isEnable == null) {
+      this.isEnable = Boolean.FALSE;
     }
-    if (this.locked == null) {
-      this.locked = Boolean.FALSE;
+    if (this.isLocked == null) {
+      this.isLocked = Boolean.FALSE;
     }
   }
 
   public User(String email, String phoneNumber, String password, String firstName, String lastName,
-              String gender, LocalDate birthday, String address, Boolean enabled, String avatar,Role role) {
+              String gender, LocalDate birthday, String address, Boolean enabled, String avatar, Role role) {
     this.email = email;
     this.phoneNumber = phoneNumber;
     this.password = password;
@@ -101,7 +105,7 @@ public class User extends DateAuditing {
     this.gender = gender;
     this.birthday = birthday;
     this.address = address;
-    this.enabled = enabled;
+    this.isEnable = enabled;
     this.avatar = avatar;
     this.role = role;
   }
