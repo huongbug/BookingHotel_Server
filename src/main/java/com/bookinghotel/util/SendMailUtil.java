@@ -23,7 +23,7 @@ public class SendMailUtil {
 
   private final TemplateEngine templateEngine;
 
-  public void sendEmailWithHTML(DataMailDTO mail, String template, Map<String, Object> properties) throws Exception {
+  public void sendEmailWithHTML(DataMailDTO mail, String template) throws Exception {
     MimeMessage message = mailSender.createMimeMessage();
     MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
         StandardCharsets.UTF_8.name());
@@ -31,7 +31,7 @@ public class SendMailUtil {
     helper.setSubject(mail.getSubject());
 
     Context context = new Context();
-    context.setVariables(properties);
+    context.setVariables(mail.getProperties());
     String htmlMsg = templateEngine.process(template, context);
     helper.setText(htmlMsg, true);
     mailSender.send(message);
