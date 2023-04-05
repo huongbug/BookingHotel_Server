@@ -40,8 +40,9 @@ public class SaleController {
   @Operation(summary = "API get all sale")
   @AuthorizationInfo(role = { RoleConstant.ADMIN })
   @GetMapping(UrlConstant.Sale.GET_SALES)
-  public ResponseEntity<?> getSales(@Valid @ParameterObject PaginationSearchSortRequestDTO requestDTO) {
-    return VsResponseUtil.ok(saleService.getSales(requestDTO));
+  public ResponseEntity<?> getSales(@Valid @ParameterObject PaginationSearchSortRequestDTO requestDTO,
+                                    @RequestParam Boolean deleteFlag) {
+    return VsResponseUtil.ok(saleService.getSales(requestDTO, deleteFlag));
   }
 
   @Operation(summary = "API create sale")

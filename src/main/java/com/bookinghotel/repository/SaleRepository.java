@@ -49,15 +49,15 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
       "FROM sales s " +
       "LEFT JOIN users createdBy ON s.created_by = createdBy.id " +
       "LEFT JOIN users lastModifiedBy ON s.last_modified_by = lastModifiedBy.id " +
-      "WHERE (:keyword is null or s.sale_percent LIKE CONCAT('%', :keyword, '%')) " +
-      "AND s.delete_flag = 0",
+      "WHERE (:keyword IS NULL or s.sale_percent LIKE CONCAT('%', :keyword, '%')) " +
+      "AND s.delete_flag = :deleteFlag",
       countQuery = "SELECT COUNT(*) FROM sales s " +
           "LEFT JOIN users createdBy ON s.created_by = createdBy.id " +
           "LEFT JOIN users lastModifiedBy ON s.last_modified_by = lastModifiedBy.id " +
-          "WHERE (:keyword is null or s.sale_percent LIKE CONCAT('%', :keyword, '%')) " +
-          "AND s.delete_flag = 0",
+          "WHERE (:keyword IS NULL or s.sale_percent LIKE CONCAT('%', :keyword, '%')) " +
+          "AND s.delete_flag = :deleteFlag",
       nativeQuery = true)
-  Page<SaleProjection> findAllByKey(@Param("keyword") String keyword, Pageable pageable);
+  Page<SaleProjection> findAllSale(@Param("keyword") String keyword, Boolean deleteFlag, Pageable pageable);
 
   @Transactional
   @Modifying

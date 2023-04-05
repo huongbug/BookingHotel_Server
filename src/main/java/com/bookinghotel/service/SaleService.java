@@ -14,7 +14,7 @@ public interface SaleService {
 
   SaleDTO getSale(Long saleId);
 
-  PaginationResponseDTO<SaleDTO> getSales(PaginationSearchSortRequestDTO requestDTO);
+  PaginationResponseDTO<SaleDTO> getSales(PaginationSearchSortRequestDTO requestDTO, Boolean deleteFlag);
 
   SaleDTO createSale(SaleCreateDTO createDTO, UserPrincipal principal);
 
