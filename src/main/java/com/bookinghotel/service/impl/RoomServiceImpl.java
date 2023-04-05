@@ -140,10 +140,7 @@ public class RoomServiceImpl implements RoomService {
     List<RoomDTO> roomDTOs = new LinkedList<>();
     if(deleteFlag) {
       for(RoomProjection roomProjection : roomProjections) {
-        RoomDTO roomDTO = roomMapper.roomProjectionToRoomDTO(roomProjection);
-        List<Media> medias = mediaService.getMediaByRoomAndIsDeleteFlag(roomDTO.getId());
-        roomDTO.setMedias(mediaMapper.toMediaDTOs(medias));
-        roomDTOs.add(roomDTO);
+        roomDTOs.add(toRoomDTOIsDeleteFlag(roomProjection));
       }
     } else {
       for(RoomProjection roomProjection : roomProjections) {
@@ -156,6 +153,13 @@ public class RoomServiceImpl implements RoomService {
   private RoomDTO toRoomDTO(RoomProjection roomProjection) {
     RoomDTO roomDTO = roomMapper.roomProjectionToRoomDTO(roomProjection);
     List<Media> medias = mediaService.getMediaByRoom(roomDTO.getId());
+    roomDTO.setMedias(mediaMapper.toMediaDTOs(medias));
+    return roomDTO;
+  }
+
+  private RoomDTO toRoomDTOIsDeleteFlag(RoomProjection roomProjection) {
+    RoomDTO roomDTO = roomMapper.roomProjectionToRoomDTO(roomProjection);
+    List<Media> medias = mediaService.getMediaByRoomAndIsDeleteFlag(roomDTO.getId());
     roomDTO.setMedias(mediaMapper.toMediaDTOs(medias));
     return roomDTO;
   }
