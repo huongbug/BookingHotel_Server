@@ -2,6 +2,7 @@ package com.bookinghotel.controller;
 
 import com.bookinghotel.base.RestApiV1;
 import com.bookinghotel.base.VsResponseUtil;
+import com.bookinghotel.constant.CommonConstant;
 import com.bookinghotel.constant.RoleConstant;
 import com.bookinghotel.constant.UrlConstant;
 import com.bookinghotel.dto.ProductCreateDTO;
@@ -34,10 +35,19 @@ public class ProductController {
     return VsResponseUtil.ok(productService.getProduct(productId));
   }
 
-  @Operation(summary = "API get all product")
+  @Tag(name = "product-controller-admin")
+  @Operation(summary = "API get all product for admin")
+  @AuthorizationInfo(role = { RoleConstant.ADMIN })
+  @GetMapping(UrlConstant.Product.GET_PRODUCTS_FOR_ADMIN)
+  public ResponseEntity<?> getProductsForAdmin(@Valid @ParameterObject PaginationSearchSortRequestDTO requestDTO,
+                                               @RequestParam Boolean deleteFlag) {
+    return VsResponseUtil.ok(productService.getProducts(requestDTO, deleteFlag));
+  }
+
+  @Operation(summary = "API get all product for user")
   @GetMapping(UrlConstant.Product.GET_PRODUCTS)
-  public ResponseEntity<?> getProducts(@Valid @ParameterObject PaginationSearchSortRequestDTO requestDTO) {
-    return VsResponseUtil.ok(productService.getProducts(requestDTO));
+  public ResponseEntity<?> getProductsForUser(@Valid @ParameterObject PaginationSearchSortRequestDTO requestDTO) {
+    return VsResponseUtil.ok(productService.getProducts(requestDTO, CommonConstant.FALSE));
   }
 
   @Tag(name = "product-controller-admin")

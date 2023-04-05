@@ -12,7 +12,7 @@ public interface ProductService {
 
   ProductDTO getProduct(Long productId);
 
-  PaginationResponseDTO<ProductDTO> getProducts(PaginationSearchSortRequestDTO requestDTO);
+  PaginationResponseDTO<ProductDTO> getProducts(PaginationSearchSortRequestDTO requestDTO, Boolean deleteFlag);
 
   PaginationResponseDTO<ProductDTO> getProductsByServiceId(Long serviceId, PaginationSearchSortRequestDTO requestDTO);
 

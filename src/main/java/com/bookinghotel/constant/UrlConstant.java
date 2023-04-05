@@ -105,6 +105,7 @@ public class UrlConstant {
     private static final String PRE_FIX = "/product";
 
     public static final String GET_PRODUCTS = PRE_FIX;
+    public static final String GET_PRODUCTS_FOR_ADMIN = PRE_FIX + "/admin";
     public static final String GET_PRODUCT = PRE_FIX + "/{productId}";
 
     public static final String CREATE_PRODUCT = PRE_FIX + "/create";
@@ -121,6 +122,7 @@ public class UrlConstant {
     private static final String PRE_FIX = "/post";
 
     public static final String GET_POSTS = PRE_FIX;
+    public static final String GET_POSTS_FOR_ADMIN = PRE_FIX + "/admin";
     public static final String GET_POST = PRE_FIX + "/{postId}";
 
     public static final String CREATE_POST = PRE_FIX + "/create";

@@ -54,10 +54,10 @@ public class ProductServiceImpl implements ProductService {
   }
 
   @Override
-  public PaginationResponseDTO<ProductDTO> getProducts(PaginationSearchSortRequestDTO requestDTO) {
+  public PaginationResponseDTO<ProductDTO> getProducts(PaginationSearchSortRequestDTO requestDTO, Boolean deleteFlag) {
     //Pagination
     Pageable pageable = PaginationUtil.buildPageable(requestDTO, SortByDataConstant.PRODUCT);
-    Page<ProductProjection> products = productRepository.findAllByKey(pageable, requestDTO.getKeyword());
+    Page<ProductProjection> products = productRepository.findAllProduct(requestDTO.getKeyword(), deleteFlag, pageable);
     //Create Output
     PagingMeta meta = PaginationUtil.buildPagingMeta(requestDTO, SortByDataConstant.PRODUCT, products);
     return new PaginationResponseDTO<ProductDTO>(meta, toProductDTOs(products));
@@ -67,7 +67,7 @@ public class ProductServiceImpl implements ProductService {
   public PaginationResponseDTO<ProductDTO> getProductsByServiceId(Long serviceId, PaginationSearchSortRequestDTO requestDTO) {
     //Pagination
     Pageable pageable = PaginationUtil.buildPageable(requestDTO, SortByDataConstant.PRODUCT);
-    Page<ProductProjection> products = productRepository.findAllByServiceId(pageable, serviceId,requestDTO.getKeyword());
+    Page<ProductProjection> products = productRepository.findAllByServiceId(pageable, serviceId, requestDTO.getKeyword());
     //Create Output
     PagingMeta meta = PaginationUtil.buildPagingMeta(requestDTO, SortByDataConstant.PRODUCT, products);
     return new PaginationResponseDTO<ProductDTO>(meta, toProductDTOs(products));
