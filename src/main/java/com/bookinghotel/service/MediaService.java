@@ -22,6 +22,8 @@ public interface MediaService {
 
   List<Media> getMediaByPost(Long postId);
 
+  List<Media> getMediaByPostAndIsDeleteFlag(Long postId);
+
   Set<Media> createMediaForPost(Post post, List<MultipartFile> files);
 
   //Delete media if not found MediaDTO in RoomUpdateDTO

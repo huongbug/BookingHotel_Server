@@ -72,6 +72,11 @@ public class MediaServiceImpl implements MediaService {
   }
 
   @Override
+  public List<Media> getMediaByPostAndIsDeleteFlag(Long postId) {
+    return mediaRepository.findByPostIdAndIsDeleteFlag(postId);
+  }
+
+  @Override
   public Set<Media> createMediaForPost(Post post, List<MultipartFile> files) {
     Set<Media> medias = new HashSet<>();
     for (MultipartFile file : files) {

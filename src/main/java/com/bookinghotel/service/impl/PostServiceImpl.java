@@ -59,13 +59,13 @@ public class PostServiceImpl implements PostService {
   }
 
   @Override
-  public PaginationResponseDTO<PostDTO> getPosts(PaginationSortRequestDTO requestDTO) {
+  public PaginationResponseDTO<PostDTO> getPosts(PaginationSortRequestDTO requestDTO, Boolean deleteFlag) {
     //Pagination
     Pageable pageable = PaginationUtil.buildPageable(requestDTO, SortByDataConstant.POST);
-    Page<PostProjection> posts = postRepository.findAllPost(pageable);
+    Page<PostProjection> posts = postRepository.findAllPost(deleteFlag, pageable);
     //Create Output
     PagingMeta meta = PaginationUtil.buildPagingMeta(requestDTO, SortByDataConstant.POST, posts);
-    return new PaginationResponseDTO<PostDTO>(meta, toPostDTOs(posts));
+    return new PaginationResponseDTO<PostDTO>(meta, toPostDTOs(posts, deleteFlag));
   }
 
   @Override
@@ -122,9 +122,30 @@ public class PostServiceImpl implements PostService {
     return postDTOs;
   }
 
-  private PostDTO toPostDTO(PostProjection roomProjection) {
-    PostDTO postDTO = postMapper.postProjectionToPostDTO(roomProjection);
+  private List<PostDTO> toPostDTOs(Page<PostProjection> postProjections, Boolean deleteFlag) {
+    List<PostDTO> postDTOs = new LinkedList<>();
+    if(deleteFlag) {
+      for(PostProjection postProjection : postProjections) {
+        postDTOs.add(toPostDTOIsDeleteFlag(postProjection));
+      }
+    } else  {
+      for(PostProjection postProjection : postProjections) {
+        postDTOs.add(toPostDTO(postProjection));
+      }
+    }
+    return postDTOs;
+  }
+
+  private PostDTO toPostDTO(PostProjection postProjection) {
+    PostDTO postDTO = postMapper.postProjectionToPostDTO(postProjection);
     List<Media> medias = mediaService.getMediaByPost(postDTO.getId());
+    postDTO.setMedias(mediaMapper.toMediaDTOs(medias));
+    return postDTO;
+  }
+
+  private PostDTO toPostDTOIsDeleteFlag(PostProjection postProjection) {
+    PostDTO postDTO = postMapper.postProjectionToPostDTO(postProjection);
+    List<Media> medias = mediaService.getMediaByPostAndIsDeleteFlag(postDTO.getId());
     postDTO.setMedias(mediaMapper.toMediaDTOs(medias));
     return postDTO;
   }

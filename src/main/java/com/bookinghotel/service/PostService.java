@@ -12,7 +12,7 @@ public interface PostService {
 
   PostDTO getPost(Long postId);
 
-  PaginationResponseDTO<PostDTO> getPosts(PaginationSortRequestDTO requestDTO);
+  PaginationResponseDTO<PostDTO> getPosts(PaginationSortRequestDTO requestDTO, Boolean deleteFlag);
 
   PostDTO createPost(PostCreateDTO createDTO, UserPrincipal currentUser);
 

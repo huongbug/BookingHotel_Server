@@ -2,6 +2,7 @@ package com.bookinghotel.controller;
 
 import com.bookinghotel.base.RestApiV1;
 import com.bookinghotel.base.VsResponseUtil;
+import com.bookinghotel.constant.CommonConstant;
 import com.bookinghotel.constant.RoleConstant;
 import com.bookinghotel.constant.UrlConstant;
 import com.bookinghotel.dto.PostCreateDTO;
@@ -34,10 +35,19 @@ public class PostController {
     return VsResponseUtil.ok(postService.getPost(postId));
   }
 
-  @Operation(summary = "API get all post")
+  @Tag(name = "post-controller-admin")
+  @Operation(summary = "API get all post for admin")
+  @AuthorizationInfo(role = { RoleConstant.ADMIN })
+  @GetMapping(UrlConstant.Post.GET_POSTS_FOR_ADMIN)
+  public ResponseEntity<?> getPosts(@Valid @ParameterObject PaginationSortRequestDTO requestDTO,
+                                    @RequestParam Boolean deleteFlag) {
+    return VsResponseUtil.ok(postService.getPosts(requestDTO, deleteFlag));
+  }
+
+  @Operation(summary = "API get all post for user")
   @GetMapping(UrlConstant.Post.GET_POSTS)
   public ResponseEntity<?> getPosts(@Valid @ParameterObject PaginationSortRequestDTO requestDTO) {
-    return VsResponseUtil.ok(postService.getPosts(requestDTO));
+    return VsResponseUtil.ok(postService.getPosts(requestDTO, CommonConstant.FALSE));
   }
 
   @Tag(name = "post-controller-admin")

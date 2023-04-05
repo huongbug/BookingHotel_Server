@@ -46,13 +46,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
       "FROM posts p " +
       "LEFT JOIN users createdBy ON p.created_by = createdBy.id " +
       "LEFT JOIN users lastModifiedBy ON p.last_modified_by = lastModifiedBy.id " +
-      "WHERE p.delete_flag = 0",
+      "WHERE p.delete_flag = :deleteFlag",
       countQuery = "SELECT COUNT(*) FROM posts p " +
           "LEFT JOIN users createdBy ON p.created_by = createdBy.id " +
           "LEFT JOIN users lastModifiedBy ON p.last_modified_by = lastModifiedBy.id " +
-          "WHERE p.delete_flag = 0",
+          "WHERE p.delete_flag = :deleteFlag",
       nativeQuery = true)
-  Page<PostProjection> findAllPost(Pageable pageable);
+  Page<PostProjection> findAllPost(Boolean deleteFlag, Pageable pageable);
 
   @Transactional
   @Modifying
