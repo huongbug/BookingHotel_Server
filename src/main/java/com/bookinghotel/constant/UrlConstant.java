@@ -87,6 +87,7 @@ public class UrlConstant {
     private static final String PRE_FIX = "/service";
 
     public static final String GET_SERVICES = PRE_FIX;
+    public static final String GET_SERVICES_FOR_ADMIN = PRE_FIX + "/admin";
     public static final String GET_SERVICE = PRE_FIX + "/{serviceId}";
     public static final String GET_PRODUCTS_BY_SERVICE = PRE_FIX + "/{serviceId}/products";
 

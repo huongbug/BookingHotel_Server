@@ -50,15 +50,23 @@ public interface ServiceRepository extends JpaRepository<Service, Long> {
       "FROM services s " +
       "LEFT JOIN users createdBy ON s.created_by = createdBy.id " +
       "LEFT JOIN users lastModifiedBy ON s.last_modified_by = lastModifiedBy.id " +
-      "WHERE (:keyword IS NULL OR s.title LIKE CONCAT('%', :keyword, '%')) " +
-      "AND s.delete_flag = 0",
+      "WHERE s.delete_flag = :deleteFlag " +
+      "AND ( " +
+      "COALESCE(:keyword, '') = '' " +
+      "OR s.title LIKE CONCAT('%', :keyword, '%') " +
+      "OR s.price LIKE CONCAT('%', :keyword, '%') " +
+      ")",
       countQuery = "SELECT COUNT(*) FROM services s " +
           "LEFT JOIN users createdBy ON s.created_by = createdBy.id " +
           "LEFT JOIN users lastModifiedBy ON s.last_modified_by = lastModifiedBy.id " +
-          "WHERE (:keyword IS NULL OR s.title LIKE CONCAT('%', :keyword, '%')) " +
-          "AND s.delete_flag = 0",
+          "WHERE s.delete_flag = :deleteFlag " +
+          "AND ( " +
+          "COALESCE(:keyword, '') = '' " +
+          "OR s.title LIKE CONCAT('%', :keyword, '%') " +
+          "OR s.price LIKE CONCAT('%', :keyword, '%') " +
+          ")",
       nativeQuery = true)
-  Page<ServiceProjection> findAllByKey(Pageable pageable, @Param("keyword") String keyword);
+  Page<ServiceProjection> findAllService(@Param("keyword") String keyword, @Param("deleteFlag") Boolean deleteFlag, Pageable pageable);
 
   @Query("SELECT s FROM Service s WHERE s.id IN ?1 AND s.deleteFlag = false")
   List<Service> findAllByIds(List<Long> ids);

@@ -54,10 +54,10 @@ public class HotelServiceImpl implements HotelService {
   }
 
   @Override
-  public PaginationResponseDTO<ServiceDTO> getServices(PaginationSearchSortRequestDTO requestDTO) {
+  public PaginationResponseDTO<ServiceDTO> getServices(PaginationSearchSortRequestDTO requestDTO, Boolean deleteFlag) {
     //Pagination
     Pageable pageable = PaginationUtil.buildPageable(requestDTO, SortByDataConstant.SERVICE);
-    Page<ServiceProjection> services = serviceRepository.findAllByKey(pageable, requestDTO.getKeyword());
+    Page<ServiceProjection> services = serviceRepository.findAllService(requestDTO.getKeyword(), deleteFlag, pageable);
     //Create Output
     PagingMeta meta = PaginationUtil.buildPagingMeta(requestDTO, SortByDataConstant.SERVICE, services);
     return new PaginationResponseDTO<ServiceDTO>(meta, toServiceDTOs(services));

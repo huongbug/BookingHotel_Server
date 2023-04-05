@@ -12,7 +12,7 @@ public interface HotelService {
 
   ServiceDTO getServiceById(Long serviceId);
 
-  PaginationResponseDTO<ServiceDTO> getServices(PaginationSearchSortRequestDTO requestDTO);
+  PaginationResponseDTO<ServiceDTO> getServices(PaginationSearchSortRequestDTO requestDTO, Boolean deleteFlag);
 
   ServiceDTO createService(ServiceCreateDTO serviceCreateDTO, UserPrincipal principal);
 
