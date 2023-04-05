@@ -97,7 +97,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public CommonResponseDTO lockUser(String userId) {
-    Optional<User> user = userRepository.findById(userId);
+    Optional<User> user = userRepository.findCustomerById(userId);
     checkLockUser(user, userId);
     user.get().setIsLocked(CommonConstant.TRUE);
     userRepository.save(user.get());
@@ -106,7 +106,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public CommonResponseDTO unlockUser(String userId) {
-    Optional<User> user = userRepository.findById(userId);
+    Optional<User> user = userRepository.findCustomerById(userId);
     checkUnlockUser(user, userId);
     user.get().setIsLocked(CommonConstant.FALSE);
     userRepository.save(user.get());
