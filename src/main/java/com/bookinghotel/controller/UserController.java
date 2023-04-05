@@ -62,11 +62,23 @@ public class UserController {
   }
 
   @Tag(name = "user-controller-admin")
+  @Operation(summary = "API lock and unlock user by id")
+  @AuthorizationInfo(role = { RoleConstant.ADMIN })
+  @PostMapping(UrlConstant.User.LOCK_UNLOCK_USER)
+  public ResponseEntity<?> lockAndUnlockUser(@PathVariable String userId, @RequestParam Boolean isLocked) {
+    if(isLocked) {
+      return VsResponseUtil.ok(userService.lockUser(userId));
+    } else {
+      return VsResponseUtil.ok(userService.unlockUser(userId));
+    }
+  }
+
+  @Tag(name = "user-controller-admin")
   @Operation(summary = "API delete user by id")
   @AuthorizationInfo(role = { RoleConstant.ADMIN })
   @DeleteMapping(UrlConstant.User.DELETE_USER)
   public ResponseEntity<?> deleteUserById(@PathVariable String userId) {
-    return VsResponseUtil.ok(userService.deleteUser(userId));
+    return VsResponseUtil.ok(userService.deleteUserPermanently(userId));
   }
 
 }

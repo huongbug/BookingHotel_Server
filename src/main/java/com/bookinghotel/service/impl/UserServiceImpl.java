@@ -46,7 +46,9 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserDTO getUserById(String userId) {
     Optional<User> user = userRepository.findById(userId);
-    checkNotFoundUserById(user, userId);
+    if (user.isEmpty()) {
+      throw new NotFoundException(String.format(ErrorMessage.User.ERR_NOT_FOUND_ID, userId));
+    }
     return userMapper.toUserDTO(user.get());
   }
 
@@ -96,16 +98,25 @@ public class UserServiceImpl implements UserService {
   @Override
   public CommonResponseDTO lockUser(String userId) {
     Optional<User> user = userRepository.findById(userId);
-    checkNotFoundUserById(user, userId);
+    checkLockUser(user, userId);
     user.get().setIsLocked(CommonConstant.TRUE);
     userRepository.save(user.get());
     return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.LOCK_SUCCESS);
   }
 
   @Override
-  public CommonResponseDTO deleteUser(String userId) {
+  public CommonResponseDTO unlockUser(String userId) {
     Optional<User> user = userRepository.findById(userId);
-    checkNotFoundUserById(user, userId);
+    checkUnlockUser(user, userId);
+    user.get().setIsLocked(CommonConstant.FALSE);
+    userRepository.save(user.get());
+    return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.UNLOCK_SUCCESS);
+  }
+
+  @Override
+  public CommonResponseDTO deleteUserPermanently(String userId) {
+    Optional<User> user = userRepository.findById(userId);
+    checkDeleteUserPermanently(user, userId);
     userRepository.delete(user.get());
     return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.DELETE_SUCCESS);
   }
@@ -125,10 +136,40 @@ public class UserServiceImpl implements UserService {
       throw new NotFoundException(String.format(ErrorMessage.User.ERR_NOT_FOUND_ID, userId));
     } else {
       if(!user.get().getIsEnable()) {
-        throw new InvalidException(ErrorMessage.Auth.ERR_ACCOUNT_NOT_ENABLED);
+        throw new InvalidException(ErrorMessage.User.ERR_USER_NOT_ENABLED);
       }
       if(user.get().getIsLocked()) {
-        throw new InvalidException((ErrorMessage.Auth.ERR_ACCOUNT_LOCKED));
+        throw new InvalidException((ErrorMessage.User.ERR_USER_IS_LOCKED));
+      }
+    }
+  }
+
+  private void checkLockUser(Optional<User> user, String userId) {
+    if (user.isEmpty()) {
+      throw new NotFoundException(String.format(ErrorMessage.User.ERR_NOT_FOUND_ID, userId));
+    } else {
+      if(user.get().getIsLocked()) {
+        throw new InvalidException((ErrorMessage.User.ERR_USER_IS_LOCKED));
+      }
+    }
+  }
+
+  private void checkUnlockUser(Optional<User> user, String userId) {
+    if (user.isEmpty()) {
+      throw new NotFoundException(String.format(ErrorMessage.User.ERR_NOT_FOUND_ID, userId));
+    } else {
+      if(!user.get().getIsLocked()) {
+        throw new InvalidException((ErrorMessage.User.ERR_USER_IS_NOT_LOCKED));
+      }
+    }
+  }
+
+  private void checkDeleteUserPermanently(Optional<User> user, String userId) {
+    if(user.isEmpty()) {
+      throw new NotFoundException(String.format(ErrorMessage.User.ERR_NOT_FOUND_ID, userId));
+    } else {
+      if(!user.get().getIsLocked()) {
+        throw new InvalidException((ErrorMessage.User.ERR_CAN_NOT_PERMANENTLY_DELETED));
       }
     }
   }

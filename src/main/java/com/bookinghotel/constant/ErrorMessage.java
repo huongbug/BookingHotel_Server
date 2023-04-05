@@ -36,6 +36,10 @@ public class ErrorMessage {
     public static final String ERR_NOT_FOUND_ID = "User not found with id: %s";
     public static final String ERR_ACCOUNT_NOT_FOUND_BY_EMAIL = "User not found with email: %s";
     public static final String ERR_CAN_NOT_UPDATE = "You cannot update other people's information";
+    public static final String ERR_CAN_NOT_PERMANENTLY_DELETED = "Non-locked users cannot be permanently deleted";
+    public static final String ERR_USER_NOT_ENABLED = "This account is not enabled";
+    public static final String ERR_USER_IS_LOCKED = "This account has been locked";
+    public static final String ERR_USER_IS_NOT_LOCKED = "This account has not been locked";
   }
 
   public static class Room {

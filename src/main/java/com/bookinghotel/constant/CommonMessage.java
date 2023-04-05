@@ -8,6 +8,7 @@ public class CommonMessage {
   public static final String UPDATE_SUCCESS = "Update successfully";
   public static final String DELETE_SUCCESS = "Delete successfully";
   public static final String LOCK_SUCCESS = "Lock successfully";
+  public static final String UNLOCK_SUCCESS = "Unlock successfully";
 
   //Mail
   public static final String SUBJECT_REGISTER = "Confirm account registration";

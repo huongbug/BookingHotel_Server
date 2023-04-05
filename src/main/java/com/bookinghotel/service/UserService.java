@@ -23,6 +23,8 @@ public interface UserService {
 
   CommonResponseDTO lockUser(String userId);
 
-  CommonResponseDTO deleteUser(String userId);
+  CommonResponseDTO unlockUser(String userId);
+
+  CommonResponseDTO deleteUserPermanently(String userId);
 
 }
