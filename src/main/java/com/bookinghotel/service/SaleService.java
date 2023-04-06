@@ -20,11 +20,15 @@ public interface SaleService {
 
   SaleDTO updateSale(Long saleId, SaleUpdateDTO updateDTO, UserPrincipal principal);
 
-  CommonResponseDTO deleteSale(Long saleId);
-
   CommonResponseDTO addSalesToRoom(Long saleId, List<Long> roomIds);
 
   CommonResponseDTO removeSaleFromRoom(Long saleId, Long roomId);
+
+  CommonResponseDTO deleteSale(Long saleId);
+
+  CommonResponseDTO deleteSalePermanently(Long saleId);
+
+  CommonResponseDTO restoreSale(Long saleId);
 
   void deleteSaleByDeleteFlag(Boolean isDeleteFlag, Integer daysToDeleteRecords);
 

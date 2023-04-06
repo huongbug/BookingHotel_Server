@@ -82,15 +82,6 @@ public class SaleServiceImpl implements SaleService {
   }
 
   @Override
-  public CommonResponseDTO deleteSale(Long saleId) {
-    Optional<Sale> sale = saleRepository.findById(saleId);
-    checkNotFoundSaleById(sale, saleId);
-    sale.get().setDeleteFlag(CommonConstant.TRUE);
-    saleRepository.save(sale.get());
-    return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.DELETE_SUCCESS);
-  }
-
-  @Override
   public CommonResponseDTO addSalesToRoom(Long saleId, List<Long> roomIds) {
     Optional<Sale> sale = saleRepository.findById(saleId);
     checkNotFoundSaleById(sale, saleId);
@@ -103,7 +94,7 @@ public class SaleServiceImpl implements SaleService {
         throw new InvalidException(String.format(ErrorMessage.Room.ROOM_HAS_BEEN_DISCOUNTED, room.getId()));
       }
     }
-    return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.CREATE_SUCCESS);
+    return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.ADD_SUCCESS);
   }
 
   @Override
@@ -123,6 +114,32 @@ public class SaleServiceImpl implements SaleService {
   }
 
   @Override
+  public CommonResponseDTO deleteSale(Long saleId) {
+    Optional<Sale> sale = saleRepository.findById(saleId);
+    checkNotFoundSaleById(sale, saleId);
+    sale.get().setDeleteFlag(CommonConstant.TRUE);
+    saleRepository.save(sale.get());
+    return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.DELETE_SUCCESS);
+  }
+
+  @Override
+  public CommonResponseDTO deleteSalePermanently(Long saleId) {
+    Optional<Sale> sale = saleRepository.findByIdAndIsDeleteFlag(saleId);
+    checkNotFoundSaleIsDeleteFlagById(sale, saleId);
+    saleRepository.delete(sale.get());
+    return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.DELETE_SUCCESS);
+  }
+
+  @Override
+  public CommonResponseDTO restoreSale(Long saleId) {
+    Optional<Sale> sale = saleRepository.findByIdAndIsDeleteFlag(saleId);
+    checkNotFoundSaleIsDeleteFlagById(sale, saleId);
+    sale.get().setDeleteFlag(CommonConstant.FALSE);
+    saleRepository.save(sale.get());
+    return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.RESTORE_SUCCESS);
+  }
+
+  @Override
   @Transactional
   public void deleteSaleByDeleteFlag(Boolean isDeleteFlag, Integer daysToDeleteRecords) {
     saleRepository.deleteByDeleteFlag(isDeleteFlag, daysToDeleteRecords);
@@ -139,6 +156,12 @@ public class SaleServiceImpl implements SaleService {
   private void checkNotFoundSaleById(Optional<Sale> sale, Long saleId) {
     if (sale.isEmpty()) {
       throw new NotFoundException(String.format(ErrorMessage.Sale.ERR_NOT_FOUND_ID, saleId));
+    }
+  }
+
+  private void checkNotFoundSaleIsDeleteFlagById(Optional<Sale> sale, Long saleId) {
+    if (sale.isEmpty()) {
+      throw new NotFoundException(String.format(ErrorMessage.Sale.ERR_NOT_FOUND_ID_IN_TRASH, saleId));
     }
   }
 

@@ -63,13 +63,6 @@ public class SaleController {
     return VsResponseUtil.ok(saleService.updateSale(saleId, saleUpdateDTO, principal));
   }
 
-  @Operation(summary = "API delete sale by id")
-  @AuthorizationInfo(role = { RoleConstant.ADMIN })
-  @DeleteMapping(UrlConstant.Sale.DELETE_SALE)
-  public ResponseEntity<?> deleteSaleById(@PathVariable Long saleId) {
-    return VsResponseUtil.ok(saleService.deleteSale(saleId));
-  }
-
   @Operation(summary = "API add sale to room")
   @AuthorizationInfo(role = { RoleConstant.ADMIN })
   @PostMapping(UrlConstant.Sale.ADD_SALE_TO_ROOM)
@@ -82,6 +75,27 @@ public class SaleController {
   @PostMapping(UrlConstant.Sale.REMOVE_SALE_FROM_ROOM)
   public ResponseEntity<?> removeSaleFromRoom(@PathVariable Long saleId, @PathVariable Long roomId) {
     return VsResponseUtil.ok(saleService.removeSaleFromRoom(saleId, roomId));
+  }
+
+  @Operation(summary = "API delete sale by id")
+  @AuthorizationInfo(role = { RoleConstant.ADMIN })
+  @DeleteMapping(UrlConstant.Sale.DELETE_SALE)
+  public ResponseEntity<?> deleteSaleById(@PathVariable Long saleId) {
+    return VsResponseUtil.ok(saleService.deleteSale(saleId));
+  }
+
+  @Operation(summary = "API delete sale permanently by id")
+  @AuthorizationInfo(role = { RoleConstant.ADMIN })
+  @DeleteMapping(UrlConstant.Sale.DELETE_SALE_PERMANENTLY)
+  public ResponseEntity<?> deleteSalePermanentlyById(@PathVariable Long saleId) {
+    return VsResponseUtil.ok(saleService.deleteSalePermanently(saleId));
+  }
+
+  @Operation(summary = "API restore sale by id")
+  @AuthorizationInfo(role = { RoleConstant.ADMIN })
+  @PostMapping(UrlConstant.Sale.RESTORE_SALE)
+  public ResponseEntity<?> restoreSaleById(@PathVariable Long saleId) {
+    return VsResponseUtil.ok(saleService.restoreSale(saleId));
   }
 
 }

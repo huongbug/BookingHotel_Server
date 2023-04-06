@@ -19,6 +19,9 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
   @Query("SELECT s FROM Sale s WHERE s.id = ?1 AND s.deleteFlag = false")
   Optional<Sale> findById(Long saleId);
 
+  @Query("SELECT s FROM Sale s WHERE s.id = ?1 AND s.deleteFlag = true")
+  Optional<Sale> findByIdAndIsDeleteFlag(Long saleId);
+
   @Query(value = "SELECT s.id, s.day_start AS dayStart, s.day_end AS dayEnd, " +
       "s.sale_percent AS salePercent, s.created_date AS createdDate, s.last_modified_date AS lastModifiedDate, " +
       "createdBy.id AS createdById, " +
