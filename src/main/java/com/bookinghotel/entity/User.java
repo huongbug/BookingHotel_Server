@@ -71,7 +71,7 @@ public class User extends DateAuditing {
   private Role role;
 
   //Link to table VerificationToken
-  @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
   private VerificationToken verificationToken;
 
   //Link to table Booking
