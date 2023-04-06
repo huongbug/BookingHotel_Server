@@ -95,4 +95,20 @@ public class RoomController {
     return VsResponseUtil.ok(roomService.deleteRoom(roomId));
   }
 
+  @Tag(name = "room-controller-admin")
+  @Operation(summary = "API delete room permanently by id")
+  @AuthorizationInfo(role = { RoleConstant.ADMIN })
+  @DeleteMapping(UrlConstant.Room.DELETE_ROOM_PERMANENTLY)
+  public ResponseEntity<?> deleteRoomPermanentlyById(@PathVariable Long roomId) {
+    return VsResponseUtil.ok(roomService.deleteRoomPermanently(roomId));
+  }
+
+  @Tag(name = "room-controller-admin")
+  @Operation(summary = "API restore room by id")
+  @AuthorizationInfo(role = { RoleConstant.ADMIN })
+  @PostMapping(UrlConstant.Room.RESTORE_ROOM)
+  public ResponseEntity<?> restoreRoomById(@PathVariable Long roomId) {
+    return VsResponseUtil.ok(roomService.restoreRoom(roomId));
+  }
+
 }

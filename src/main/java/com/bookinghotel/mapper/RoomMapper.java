@@ -2,10 +2,12 @@ package com.bookinghotel.mapper;
 
 import com.bookinghotel.dto.RoomCreateDTO;
 import com.bookinghotel.dto.RoomDTO;
+import com.bookinghotel.dto.RoomSummaryDTO;
 import com.bookinghotel.dto.RoomUpdateDTO;
 import com.bookinghotel.entity.Room;
 import com.bookinghotel.entity.User;
 import com.bookinghotel.projection.RoomProjection;
+import com.bookinghotel.projection.StatisticRoomBookedProjection;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -35,5 +37,7 @@ public interface RoomMapper {
   void updateRoomFromDTO(RoomUpdateDTO updateDTO, @MappingTarget Room room);
 
   RoomDTO roomProjectionToRoomDTO(RoomProjection projection);
+
+  RoomSummaryDTO statisticRoomToRoomDTO(StatisticRoomBookedProjection projection);
 
 }

@@ -3,8 +3,10 @@ package com.bookinghotel.repository;
 import com.bookinghotel.dto.RoomFilterDTO;
 import com.bookinghotel.entity.Room;
 import com.bookinghotel.projection.RoomProjection;
+import com.bookinghotel.projection.StatisticRoomBookedProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -22,7 +24,11 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
   @Query("SELECT r FROM Room r WHERE r.id = ?1 AND r.deleteFlag = false")
   Optional<Room> findById(Long id);
 
-  @Query(value = "SELECT r.id, r.title, r.price, r.type, r.max_num AS maxNum, r.floor, r.description, " +
+  @Query("SELECT r FROM Room r WHERE r.id = ?1 AND r.deleteFlag = true")
+  Optional<Room> findByIdAndIsDeleteFlag(Long id);
+
+  @Query(value = "SELECT r.id, r.title, r.price, r.type, r.max_num AS maxNum, r.floor, r.description," +
+      "r.created_date AS createdDate, r.last_modified_date AS lastModifiedDate, " +
       "s.id AS saleId, s.day_start AS saleDayStart, s.day_end AS saleDayEnd, s.sale_percent AS saleSalePercent, " +
       "createdBy.id AS createdById, " +
       "createdBy.first_name AS createdByFirstName, " +
@@ -44,6 +50,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
   List<Room> findAllByIds(List<Long> ids);
 
   @Query(value = "SELECT r.id, r.title, r.price, r.type, r.max_num AS maxNum, r.floor, r.description, " +
+      "r.created_date AS createdDate, r.last_modified_date AS lastModifiedDate, " +
       "s.id AS saleId, s.day_start AS saleDayStart, s.day_end AS saleDayEnd, s.sale_percent AS saleSalePercent, " +
       "createdBy.id AS createdById, " +
       "createdBy.first_name AS createdByFirstName, " +
@@ -102,6 +109,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
           "SELECT * FROM data_check_checkout data_2 " +
       ") " +
       "SELECT r.id, r.title, r.price, r.type, r.max_num AS maxNum, r.floor, r.description," +
+      "r.created_date AS createdDate, r.last_modified_date AS lastModifiedDate, " +
       "s.id AS saleId, s.day_start AS saleDayStart, s.day_end AS saleDayEnd, s.sale_percent AS saleSalePercent, " +
       "createdBy.id AS createdById, " +
       "createdBy.first_name AS createdByFirstName, " +
@@ -118,9 +126,12 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
       "WHERE r.id NOT IN (SELECT id FROM data_check) " +
       "AND (:#{#roomFilter.maxNum} IS NULL OR r.max_num LIKE CONCAT('%', :#{#roomFilter.maxNum}, '%')) " +
       "AND (:typeRoom IS NULL OR r.type LIKE CONCAT('%', :typeRoom, '%')) " +
-      "AND (:keyword IS NULL OR r.title LIKE CONCAT('%', :keyword, '%')) " +
-      "AND (:keyword IS NULL OR r.type LIKE CONCAT('%', :keyword, '%')) " +
-      "AND (:keyword IS NULL OR r.price LIKE CONCAT('%', :keyword, '%')) " +
+      "AND ( " +
+      "COALESCE(:keyword, '') = '' " +
+      "OR r.title LIKE CONCAT('%', :keyword, '%') " +
+      "OR r.type LIKE CONCAT('%', :keyword, '%') " +
+      "OR r.price LIKE CONCAT('%', :keyword, '%') " +
+      ")" +
       "AND r.delete_flag = 0",
       countQuery = "WITH data_check_checkin AS ( " +
           "SELECT r.* FROM rooms r " +
@@ -150,9 +161,12 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
           "WHERE r.id NOT IN (SELECT id FROM data_check) " +
           "AND (:#{#roomFilter.maxNum} IS NULL OR r.max_num LIKE CONCAT('%', :#{#roomFilter.maxNum}, '%')) " +
           "AND (:typeRoom IS NULL OR r.type LIKE CONCAT('%', :typeRoom, '%')) " +
-          "AND (:keyword IS NULL OR r.title LIKE CONCAT('%', :keyword, '%')) " +
-          "AND (:keyword IS NULL OR r.type LIKE CONCAT('%', :keyword, '%')) " +
-          "AND (:keyword IS NULL OR r.price LIKE CONCAT('%', :keyword, '%')) " +
+          "AND ( " +
+          "COALESCE(:keyword, '') = '' " +
+          "OR r.title LIKE CONCAT('%', :keyword, '%') " +
+          "OR r.type LIKE CONCAT('%', :keyword, '%') " +
+          "OR r.price LIKE CONCAT('%', :keyword, '%') " +
+          ")" +
           "AND r.delete_flag = 0",
       nativeQuery = true)
   Page<RoomProjection> findAllAvailable(@Param("keyword") String keyword, @Param("roomFilter") RoomFilterDTO roomFilter,
@@ -180,6 +194,40 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
       "SELECT * FROM data_check_checkout data_2",
       nativeQuery = true)
   List<Room> findAllUnavailable(@Param("checkin") LocalDateTime checkin, @Param("checkout") LocalDateTime checkout);
+
+  @Query(value = "SELECT r.id, r.title, r.price, r.type, r.max_num AS maxNum, r.floor, r.description, " +
+      "r.created_date AS createdDate, r.last_modified_date AS lastModifiedDate, COUNT(b.id) AS `value` " +
+      "FROM rooms r " +
+      "LEFT JOIN booking_room_details brd ON brd.room_id = r.id " +
+      "LEFT JOIN bookings b ON b.id = brd.booking_id " +
+      "WHERE (b.id IS NULL OR (MONTH(b.created_date) = :month AND YEAR(b.created_date) = :year)) " +
+      "AND ( " +
+      "COALESCE(:keyword, '') = '' " +
+      "OR r.title LIKE CONCAT('%', :keyword, '%') " +
+      "OR r.type LIKE CONCAT('%', :keyword, '%') " +
+      "OR r.price LIKE CONCAT('%', :keyword, '%') " +
+      ")" +
+      "GROUP BY r.id " +
+      "ORDER BY " +
+      "CASE WHEN :sortType = 'ASC' THEN COUNT(b.id) END ASC, " +
+      "CASE WHEN :sortType = 'DESC' THEN COUNT(b.id) END DESC",
+      countQuery = "SELECT COUNT(*) FROM rooms r " +
+          "LEFT JOIN booking_room_details brd ON brd.room_id = r.id " +
+          "LEFT JOIN bookings b ON b.id = brd.booking_id " +
+          "WHERE (b.id IS NULL OR (MONTH(b.created_date) = :month AND YEAR(b.created_date) = :year)) " +
+          "AND ( " +
+          "COALESCE(:keyword, '') = '' " +
+          "OR r.title LIKE CONCAT('%', :keyword, '%') " +
+          "OR r.type LIKE CONCAT('%', :keyword, '%') " +
+          "OR r.price LIKE CONCAT('%', :keyword, '%') " +
+          ") " +
+          "ORDER BY " +
+          "CASE WHEN :sortType = 'ASC' THEN COUNT(b.id) END ASC, " +
+          "CASE WHEN :sortType = 'DESC' THEN COUNT(b.id) END DESC",
+      nativeQuery = true)
+  Page<StatisticRoomBookedProjection> statisticRoomBookedForMonth(@Param("month") Integer month, @Param("year") Integer year,
+                                                                  @Param("keyword") String keyword, @Param("sortType") String sortType,
+                                                                  Pageable pageable);
 
   @Transactional
   @Modifying

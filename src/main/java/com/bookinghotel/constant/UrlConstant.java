@@ -46,6 +46,8 @@ public class UrlConstant {
     public static final String CREATE_ROOM = PRE_FIX + "/create";
     public static final String UPDATE_ROOM = PRE_FIX + "/update/{roomId}";
     public static final String DELETE_ROOM = PRE_FIX + "/delete/{roomId}";
+    public static final String DELETE_ROOM_PERMANENTLY = PRE_FIX + "/delete/trash/{roomId}";
+    public static final String RESTORE_ROOM = PRE_FIX + "/restore/{roomId}";
 
     private Room() {
     }

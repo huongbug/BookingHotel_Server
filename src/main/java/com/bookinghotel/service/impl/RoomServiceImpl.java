@@ -123,6 +123,23 @@ public class RoomServiceImpl implements RoomService {
   }
 
   @Override
+  public CommonResponseDTO deleteRoomPermanently(Long roomId) {
+    Optional<Room> room = roomRepository.findByIdAndIsDeleteFlag(roomId);
+    checkNotFoundRoomIsDeleteFlagById(room, roomId);
+    roomRepository.delete(room.get());
+    return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.DELETE_SUCCESS);
+  }
+
+  @Override
+  public CommonResponseDTO restoreRoom(Long roomId) {
+    Optional<Room> room = roomRepository.findByIdAndIsDeleteFlag(roomId);
+    checkNotFoundRoomIsDeleteFlagById(room, roomId);
+    room.get().setDeleteFlag(CommonConstant.FALSE);
+    roomRepository.save(room.get());
+    return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.RESTORE_SUCCESS);
+  }
+
+  @Override
   @Transactional
   public void deleteRoomByDeleteFlag(Boolean isDeleteFlag, Integer daysToDeleteRecords) {
     roomRepository.deleteByDeleteFlag(isDeleteFlag, daysToDeleteRecords);
@@ -167,6 +184,12 @@ public class RoomServiceImpl implements RoomService {
   private void checkNotFoundRoomById(Optional<Room> room, Long roomId) {
     if (room.isEmpty()) {
       throw new NotFoundException(String.format(ErrorMessage.Room.ERR_NOT_FOUND_ID, roomId));
+    }
+  }
+
+  private void checkNotFoundRoomIsDeleteFlagById(Optional<Room> room, Long roomId) {
+    if (room.isEmpty()) {
+      throw new NotFoundException(String.format(ErrorMessage.Room.ERR_NOT_FOUND_ID_IN_TRASH, roomId));
     }
   }
 

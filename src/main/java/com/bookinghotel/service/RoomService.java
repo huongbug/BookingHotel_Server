@@ -23,6 +23,10 @@ public interface RoomService {
 
   CommonResponseDTO deleteRoom(Long roomId);
 
+  CommonResponseDTO deleteRoomPermanently(Long roomId);
+
+  CommonResponseDTO restoreRoom(Long roomId);
+
   void deleteRoomByDeleteFlag(Boolean isDeleteFlag, Integer daysToDeleteRecords);
 
 }
