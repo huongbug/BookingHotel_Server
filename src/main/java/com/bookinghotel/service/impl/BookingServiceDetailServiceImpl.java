@@ -1,18 +1,17 @@
 package com.bookinghotel.service.impl;
 
+import com.bookinghotel.constant.ErrorMessage;
 import com.bookinghotel.dto.BookingServiceDTO;
 import com.bookinghotel.entity.Booking;
 import com.bookinghotel.entity.BookingServiceDetail;
 import com.bookinghotel.entity.Service;
+import com.bookinghotel.exception.NotFoundException;
 import com.bookinghotel.repository.BookingServiceDetailRepository;
 import com.bookinghotel.repository.ServiceRepository;
 import com.bookinghotel.service.BookingServiceDetailService;
 import lombok.RequiredArgsConstructor;
 
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @RequiredArgsConstructor
 @org.springframework.stereotype.Service
@@ -44,11 +43,19 @@ public class BookingServiceDetailServiceImpl implements BookingServiceDetailServ
   }
 
   private List<Service> getServicesFromBookingServiceDTOs(List<BookingServiceDTO> bookingServiceDTOs) {
-    List<Long> serviceIds = new LinkedList<>();
-    for (BookingServiceDTO bookingCreate : bookingServiceDTOs) {
-      serviceIds.add(bookingCreate.getServiceId());
+    List<Service> services = new LinkedList<>();
+    for(BookingServiceDTO bookingServiceDTO : bookingServiceDTOs) {
+      Optional<Service> service = serviceRepository.findById(bookingServiceDTO.getServiceId());
+      checkNotFoundServiceById(service, bookingServiceDTO.getServiceId());
+      services.add(service.get());
     }
-    return serviceRepository.findAllByIds(serviceIds);
+    return services;
+  }
+
+  private void checkNotFoundServiceById(Optional<Service> service, Long serviceId) {
+    if (service.isEmpty()) {
+      throw new NotFoundException(String.format(ErrorMessage.Service.ERR_NOT_FOUND_ID, serviceId));
+    }
   }
 
 }

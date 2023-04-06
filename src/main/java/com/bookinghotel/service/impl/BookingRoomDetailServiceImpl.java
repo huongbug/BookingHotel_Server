@@ -3,6 +3,8 @@ package com.bookinghotel.service.impl;
 import com.bookinghotel.constant.CommonConstant;
 import com.bookinghotel.constant.ErrorMessage;
 import com.bookinghotel.entity.*;
+import com.bookinghotel.exception.InvalidException;
+import com.bookinghotel.exception.NotFoundException;
 import com.bookinghotel.exception.VsException;
 import com.bookinghotel.repository.BookingRoomDetailRepository;
 import com.bookinghotel.repository.RoomRepository;
@@ -24,20 +26,29 @@ public class BookingRoomDetailServiceImpl implements BookingRoomDetailService {
 
   @Override
   public Set<BookingRoomDetail> createBookingRoomDetails(Booking booking, List<Long> roomIds) {
-    List<Room> bookingRooms = roomRepository.findAllByIds(roomIds);
+    List<Room> bookingRooms = new LinkedList<>();
+    for(Long id : roomIds) {
+      Optional<Room> room = roomRepository.findById(id);
+      checkNotFoundRoomById(room, id);
+      bookingRooms.add(room.get());
+    }
     checkRoomAvailable(bookingRooms, booking.getExpectedCheckIn(), booking.getExpectedCheckOut());
     Set<BookingRoomDetail> bookingRoomDetails = new LinkedHashSet<>();
     LocalDateTime now = LocalDateTime.now();
-    for (Room room : bookingRooms) {
-      BookingRoomDetail bookingRoomDetail = new BookingRoomDetail(booking, room);
-      bookingRoomDetail.setPrice(room.getPrice());
-      Sale sale = room.getSale();
-      if (ObjectUtils.isNotEmpty(sale) && sale.getDeleteFlag().equals(CommonConstant.FALSE)
-          && sale.getDayStart().isBefore(now) && now.isAfter(sale.getDayEnd())) {
-        bookingRoomDetail.setSalePercent(sale.getSalePercent());
+    if(bookingRooms.size() > 0) {
+      for (Room room : bookingRooms) {
+        BookingRoomDetail bookingRoomDetail = new BookingRoomDetail(booking, room);
+        bookingRoomDetail.setPrice(room.getPrice());
+        Sale sale = room.getSale();
+        if (ObjectUtils.isNotEmpty(sale) && sale.getDeleteFlag().equals(CommonConstant.FALSE)
+            && sale.getDayStart().isBefore(now) && now.isAfter(sale.getDayEnd())) {
+          bookingRoomDetail.setSalePercent(sale.getSalePercent());
+        }
+        bookingRoomDetailRepository.save(bookingRoomDetail);
+        bookingRoomDetails.add(bookingRoomDetail);
       }
-      bookingRoomDetailRepository.save(bookingRoomDetail);
-      bookingRoomDetails.add(bookingRoomDetail);
+    } else {
+      throw new InvalidException(ErrorMessage.Booking.ERR_BOOKING_NOT_ROOM);
     }
     return bookingRoomDetails;
   }
@@ -54,6 +65,12 @@ public class BookingRoomDetailServiceImpl implements BookingRoomDetailService {
     }
     if(result.size() > 0) {
       throw new VsException(HttpStatus.BAD_REQUEST, result);
+    }
+  }
+
+  private void checkNotFoundRoomById(Optional<Room> room, Long roomId) {
+    if (room.isEmpty()) {
+      throw new NotFoundException(String.format(ErrorMessage.Room.ERR_NOT_FOUND_ID, roomId));
     }
   }
 

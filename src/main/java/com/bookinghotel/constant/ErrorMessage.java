@@ -72,6 +72,9 @@ public class ErrorMessage {
 
   public static class Booking {
     public static final String ERR_NOT_FOUND_ID = "Booking not found with id: %s";
+    public static final String ERR_BOOKING_NOT_ROOM = "The room in the booking cannot be left empty";
+    public static final String ERR_CAN_NOT_CANCEL_BOOKING = "You can only cancel your booking one day in advance";
+    public static final String ERR_NO_PERMISSION_TO_CANCEL_BOOKING = "This booking is not yours and cannot be cancelled";
   }
 
   public static class Post {

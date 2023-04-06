@@ -1,9 +1,6 @@
 package com.bookinghotel.service.impl;
 
-import com.bookinghotel.constant.BookingStatus;
-import com.bookinghotel.constant.CommonConstant;
-import com.bookinghotel.constant.ErrorMessage;
-import com.bookinghotel.constant.SortByDataConstant;
+import com.bookinghotel.constant.*;
 import com.bookinghotel.dto.*;
 import com.bookinghotel.dto.common.CommonResponseDTO;
 import com.bookinghotel.dto.common.DateFilterDTO;
@@ -28,6 +25,7 @@ import com.bookinghotel.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -68,7 +66,7 @@ public class BookingServiceImpl implements BookingService {
   public PaginationResponseDTO<BookingDTO> getBookingsForUser(PaginationSortRequestDTO requestDTO, UserPrincipal principal) {
     //Pagination
     Pageable pageable = PaginationUtil.buildPageable(requestDTO, SortByDataConstant.BOOKING);
-    Page<Booking> bookings = bookingRepository.findAllForUser(pageable, principal.getId());
+    Page<Booking> bookings = bookingRepository.findAllForUser(principal.getId(), pageable);
     //Create Output
     PagingMeta meta = PaginationUtil.buildPagingMeta(requestDTO, SortByDataConstant.BOOKING, bookings);
     List<BookingDTO> bookingDTOs = mapperToBookingDTOs(bookings.getContent());
@@ -76,10 +74,11 @@ public class BookingServiceImpl implements BookingService {
   }
 
   @Override
-  public PaginationResponseDTO<BookingDTO> getBookingsForAdmin(PaginationSortRequestDTO requestDTO, DateFilterDTO filterDTO) {
+  public PaginationResponseDTO<BookingDTO> getBookingsForAdmin(PaginationSortRequestDTO requestDTO, BookingFilterDTO filterDTO) {
+    String bookingStatus = filterDTO.getBookingStatus() == null ? null : filterDTO.getBookingStatus().toString();
     //Pagination
     Pageable pageable = PaginationUtil.buildPageable(requestDTO, SortByDataConstant.BOOKING);
-    Page<Booking> bookings = bookingRepository.findAllForAdmin(pageable, filterDTO);
+    Page<Booking> bookings = bookingRepository.findAllForAdmin(filterDTO, bookingStatus, pageable);
     //Create Output
     PagingMeta meta = PaginationUtil.buildPagingMeta(requestDTO, SortByDataConstant.BOOKING, bookings);
     List<BookingDTO> bookingDTOs = mapperToBookingDTOs(bookings.getContent());
@@ -112,25 +111,49 @@ public class BookingServiceImpl implements BookingService {
   }
 
   @Override
-  public BookingDTO checkIn(Long bookingId) {
+  public BookingDTO checkIn(Long bookingId, UserPrincipal principal) {
     Optional<Booking> booking = bookingRepository.findById(bookingId);
     checkNotFoundBookingById(booking, bookingId);
-    return null;
+    User updater = userRepository.getUser(principal);
+    LocalDateTime now = LocalDateTime.now();
+    booking.get().setCheckIn(now);
+    booking.get().setStatus(BookingStatus.CHECKED_IN);
+    bookingRepository.save(booking.get());
+    Optional<User> creator = userRepository.findById(booking.get().getCreatedBy());
+    return mapperToBookingDTO(booking.get(), creator.get(), updater);
   }
 
   @Override
-  public BookingDTO checkOutAndPayment(Long bookingId) {
+  public BookingDTO checkOutAndPayment(Long bookingId, UserPrincipal principal) {
     Optional<Booking> booking = bookingRepository.findById(bookingId);
     checkNotFoundBookingById(booking, bookingId);
-    return null;
+    User updater = userRepository.getUser(principal);
+    LocalDateTime now = LocalDateTime.now();
+    booking.get().setCheckOut(now);
+    booking.get().setStatus(BookingStatus.CHECKED_OUT);
+    bookingRepository.save(booking.get());
+    Optional<User> creator = userRepository.findById(booking.get().getCreatedBy());
+    return mapperToBookingDTO(booking.get(), creator.get(), updater);
   }
 
   @Override
-  public CommonResponseDTO cancelBooking(Long bookingId, String note) {
-    return null;
+  public CommonResponseDTO cancelBooking(Long bookingId, String note, UserPrincipal principal) {
+    Optional<Booking> booking = bookingRepository.findById(bookingId);
+    checkNotFoundBookingById(booking, bookingId);
+    checkPermissionCancelBooking(booking.get(), principal);
+    LocalDateTime now = LocalDateTime.now();
+    long totalHours = ChronoUnit.HOURS.between(booking.get().getExpectedCheckIn(), now);
+    if(totalHours > CommonConstant.HOURS_IN_A_DAY) {
+      throw new InvalidException(ErrorMessage.Booking.ERR_CAN_NOT_CANCEL_BOOKING);
+    }
+    booking.get().setStatus(BookingStatus.CANCEL);
+    booking.get().setNote(note);
+    bookingRepository.save(booking.get());
+    return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.CANCEL_SUCCESS);
   }
 
-  private List<BookingDTO> mapperToBookingDTOs(List<Booking> bookings) {
+  @Override
+  public List<BookingDTO> mapperToBookingDTOs(List<Booking> bookings) {
     List<BookingDTO> bookingDTOs = new LinkedList<>();
     for (Booking booking : bookings) {
       Optional<User> creator = userRepository.findById(booking.getCreatedBy());
@@ -174,7 +197,8 @@ public class BookingServiceImpl implements BookingService {
     return bookingDTO;
   }
 
-  private Long calculateTotalRoomPrice(Booking booking) {
+  @Override
+  public Long calculateTotalRoomPrice(Booking booking) {
     long totalRoomPrice = 0L;
     Long totalDay = Math.round(ChronoUnit.HOURS.between(booking.getExpectedCheckIn(), booking.getExpectedCheckOut()) / 24d);
     for (BookingRoomDetail bookingRoomDetail : booking.getBookingRoomDetails()) {
@@ -188,7 +212,17 @@ public class BookingServiceImpl implements BookingService {
     return totalRoomPrice;
   }
 
-  private List<BookingSurchargeDTO> calculateSurcharge(Booking booking) {
+  @Override
+  public Long calculateTotalServicePrice(Booking booking) {
+    long totalServicePrice = 0L;
+    for (BookingServiceDetail bookingServiceDetail : booking.getBookingServiceDetails()) {
+      totalServicePrice += (bookingServiceDetail.getPrice() * bookingServiceDetail.getAmount());
+    }
+    return totalServicePrice;
+  }
+
+  @Override
+  public List<BookingSurchargeDTO> calculateSurcharge(Booking booking) {
     List<BookingSurchargeDTO> roomSurcharges = new LinkedList<>();
     if(booking.getCheckIn() != null && !booking.getCheckIn().equals(LocalDateTime.MIN)) {
       roomSurcharges.add(calculateTotalCheckInSurcharge(booking));
@@ -259,14 +293,6 @@ public class BookingServiceImpl implements BookingService {
     return checkOutSurcharge;
   }
 
-  private Long calculateTotalServicePrice(Booking booking) {
-    long totalServicePrice = 0L;
-    for (BookingServiceDetail bookingServiceDetail : booking.getBookingServiceDetails()) {
-      totalServicePrice += (bookingServiceDetail.getPrice() * bookingServiceDetail.getAmount());
-    }
-    return totalServicePrice;
-  }
-
   private void checkExpectedCheckIn(LocalDate now, LocalDateTime expectedCheckIn, LocalDateTime expectedCheckOut) {
     LocalDate checkInLocalDate = expectedCheckIn.toLocalDate();
     LocalTime checkInLocalTime = expectedCheckIn.toLocalTime();
@@ -285,6 +311,16 @@ public class BookingServiceImpl implements BookingService {
         || checkOutLocalDate.isBefore(now) || checkOutLocalDate.equals(now)
         || !checkOutLocalTime.equals(CommonConstant.TIME_12H00)) {
       throw new InvalidException(ErrorMessage.INVALID_DATE_CHECK_OUT);
+    }
+  }
+
+  private void checkPermissionCancelBooking(Booking booking, UserPrincipal currentUser) {
+    if(!booking.getUser().getId().equals(currentUser.getId())) {
+      for(GrantedAuthority authority : currentUser.getAuthorities()) {
+        if(!authority.getAuthority().equals(RoleConstant.ADMIN)) {
+          throw new InvalidException(ErrorMessage.Booking.ERR_NO_PERMISSION_TO_CANCEL_BOOKING);
+        }
+      }
     }
   }
 

@@ -62,6 +62,37 @@ public class BookingController {
     return VsResponseUtil.ok(bookingService.createBooking(bookingCreateDTO, principal));
   }
 
+  @Tag(name = "booking-controller-admin")
+  @Operation(summary = "API checkin booking")
+  @AuthorizationInfo(role = { RoleConstant.ADMIN })
+  @PostMapping(value = UrlConstant.Booking.CHECK_IN_BOOKING)
+  public ResponseEntity<?> checkIn(@PathVariable Long bookingId,
+                                   @Parameter(name = "principal", hidden = true)
+                                   @CurrentUserLogin UserPrincipal principal) {
+    return VsResponseUtil.ok(bookingService.checkIn(bookingId, principal));
+  }
+
+  @Tag(name = "booking-controller-admin")
+  @Operation(summary = "API checkout and payment booking")
+  @AuthorizationInfo(role = { RoleConstant.ADMIN })
+  @PostMapping(value = UrlConstant.Booking.CHECK_OUT_PAYMENT)
+  public ResponseEntity<?> checkOutAndPayment(@PathVariable Long bookingId,
+                                              @Parameter(name = "principal", hidden = true)
+                                              @CurrentUserLogin UserPrincipal principal) {
+    return VsResponseUtil.ok(bookingService.checkOutAndPayment(bookingId, principal));
+  }
+
+  @Tag(name = "booking-controller-admin")
+  @Operation(summary = "API cancel booking")
+  @AuthorizationInfo(role = { RoleConstant.ADMIN, RoleConstant.USER })
+  @PostMapping(value = UrlConstant.Booking.CANCEL_BOOKING)
+  public ResponseEntity<?> cancelBooking(@PathVariable Long bookingId,
+                                         @RequestParam String note,
+                                         @Parameter(name = "principal", hidden = true)
+                                         @CurrentUserLogin UserPrincipal principal) {
+    return VsResponseUtil.ok(bookingService.cancelBooking(bookingId, note, principal));
+  }
+
 }
 
 

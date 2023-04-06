@@ -12,6 +12,9 @@ public class CommonConstant {
   public static final Long ZERO_VALUE = 0L;
   public static final Long ONE_VALUE = 1L;
 
+  public static final Integer DAYS_TO_DELETE_RECORDS = 30;
+  public static final Integer HOURS_IN_A_DAY = 24;
+
   public static final String EMPTY_STRING = "";
   public static final String BEARER_TOKEN = "Bearer";
   public static final boolean TRUE = true;
