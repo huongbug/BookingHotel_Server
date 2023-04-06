@@ -34,7 +34,7 @@ public class UserDTO extends DateAuditingDTO {
 
   private String roleName;
 
-  private Boolean isEnabled;
+  private Boolean isEnable;
 
   private Boolean isLocked;
 
