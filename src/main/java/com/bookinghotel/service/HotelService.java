@@ -20,6 +20,10 @@ public interface HotelService {
 
   CommonResponseDTO deleteService(Long serviceId);
 
+  CommonResponseDTO deleteServicePermanently(Long serviceId);
+
+  CommonResponseDTO restoreService(Long serviceId);
+
   void deleteServiceByDeleteFlag(Boolean isDeleteFlag, Integer daysToDeleteRecords);
 
 }

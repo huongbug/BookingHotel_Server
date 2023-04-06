@@ -88,4 +88,20 @@ public class HotelServiceController {
     return VsResponseUtil.ok(hotelService.deleteService(serviceId));
   }
 
+  @Tag(name = "hotel-service-controller-admin")
+  @Operation(summary = "API delete service permanently by id")
+  @AuthorizationInfo(role = { RoleConstant.ADMIN })
+  @DeleteMapping(UrlConstant.Service.DELETE_SERVICE_PERMANENTLY)
+  public ResponseEntity<?> deleteServicePermanentlyById(@PathVariable Long serviceId) {
+    return VsResponseUtil.ok(hotelService.deleteServicePermanently(serviceId));
+  }
+
+  @Tag(name = "hotel-service-controller-admin")
+  @Operation(summary = "API restore service by id")
+  @AuthorizationInfo(role = { RoleConstant.ADMIN })
+  @PostMapping(UrlConstant.Service.RESTORE_SERVICE)
+  public ResponseEntity<?> restoreServiceById(@PathVariable Long serviceId) {
+    return VsResponseUtil.ok(hotelService.restoreService(serviceId));
+  }
+
 }

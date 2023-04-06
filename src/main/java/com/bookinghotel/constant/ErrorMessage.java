@@ -62,6 +62,7 @@ public class ErrorMessage {
 
   public static class Service {
     public static final String ERR_NOT_FOUND_ID = "Service not found with id: %s";
+    public static final String ERR_NOT_FOUND_ID_IN_TRASH = "Service not found with id: %s in the trash";
     public static final String ERR_SERVICE_MUST_HAVE_THUMBNAIL = "Service must have a thumbnail";
   }
 

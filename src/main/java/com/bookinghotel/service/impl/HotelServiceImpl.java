@@ -100,6 +100,23 @@ public class HotelServiceImpl implements HotelService {
   }
 
   @Override
+  public CommonResponseDTO deleteServicePermanently(Long serviceId) {
+    Optional<Service> service = serviceRepository.findByIdAndIsDeleteFlag(serviceId);
+    checkNotFoundServiceIsDeleteFlagById(service, serviceId);
+    serviceRepository.delete(service.get());
+    return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.DELETE_SUCCESS);
+  }
+
+  @Override
+  public CommonResponseDTO restoreService(Long serviceId) {
+    Optional<Service> service = serviceRepository.findByIdAndIsDeleteFlag(serviceId);
+    checkNotFoundServiceIsDeleteFlagById(service, serviceId);
+    service.get().setDeleteFlag(CommonConstant.FALSE);
+    serviceRepository.save(service.get());
+    return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.RESTORE_SUCCESS);
+  }
+
+  @Override
   @Transactional
   public void deleteServiceByDeleteFlag(Boolean isDeleteFlag, Integer daysToDeleteRecords) {
     serviceRepository.deleteByDeleteFlag(isDeleteFlag, daysToDeleteRecords);
@@ -116,6 +133,12 @@ public class HotelServiceImpl implements HotelService {
   private void checkNotFoundServiceById(Optional<Service> service, Long serviceId) {
     if (service.isEmpty()) {
       throw new NotFoundException(String.format(ErrorMessage.Service.ERR_NOT_FOUND_ID, serviceId));
+    }
+  }
+
+  private void checkNotFoundServiceIsDeleteFlagById(Optional<Service> service, Long serviceId) {
+    if (service.isEmpty()) {
+      throw new NotFoundException(String.format(ErrorMessage.Service.ERR_NOT_FOUND_ID_IN_TRASH, serviceId));
     }
   }
 

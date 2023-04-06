@@ -93,10 +93,10 @@ public class UrlConstant {
     public static final String GET_PRODUCTS_BY_SERVICE = PRE_FIX + "/{serviceId}/products";
 
     public static final String CREATE_SERVICE = PRE_FIX + "/create";
-
     public static final String UPDATE_SERVICE = PRE_FIX + "/update/{serviceId}";
-
     public static final String DELETE_SERVICE = PRE_FIX + "/delete/{serviceId}";
+    public static final String DELETE_SERVICE_PERMANENTLY = PRE_FIX + "/delete/trash/{serviceId}";
+    public static final String RESTORE_SERVICE = PRE_FIX + "/restore/{serviceId}";
 
     private Service() {
     }
