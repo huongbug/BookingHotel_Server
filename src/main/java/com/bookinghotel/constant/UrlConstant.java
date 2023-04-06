@@ -127,10 +127,10 @@ public class UrlConstant {
     public static final String GET_POST = PRE_FIX + "/{postId}";
 
     public static final String CREATE_POST = PRE_FIX + "/create";
-
     public static final String UPDATE_POST = PRE_FIX + "/update/{postId}";
-
     public static final String DELETE_POST = PRE_FIX + "/delete/{postId}";
+    public static final String DELETE_POST_PERMANENTLY = PRE_FIX + "/delete/trash/{postId}";
+    public static final String RESTORE_POST = PRE_FIX + "/restore/{postId}";
 
     private Post() {
     }

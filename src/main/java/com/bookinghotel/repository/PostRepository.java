@@ -18,6 +18,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
   @Query("SELECT p FROM Post p WHERE p.id = ?1 AND p.deleteFlag = false")
   Optional<Post> findById(Long postId);
 
+  @Query("SELECT p FROM Post p WHERE p.id = ?1 AND p.deleteFlag = true")
+  Optional<Post> findByIdAndIsDeleteFlag(Long postId);
+
   @Query(value = "SELECT p.id, p.title, p.content, p.created_date AS createdDate, p.last_modified_date AS lastModifiedDate, " +
       "createdBy.id AS createdById, " +
       "createdBy.first_name AS createdByFirstName, " +

@@ -114,6 +114,23 @@ public class PostServiceImpl implements PostService {
     return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.DELETE_SUCCESS);
   }
 
+  @Override
+  public CommonResponseDTO deletePostPermanently(Long postId) {
+    Optional<Post> room = postRepository.findByIdAndIsDeleteFlag(postId);
+    checkNotFoundPostIsDeleteFlagById(room, postId);
+    postRepository.delete(room.get());
+    return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.DELETE_SUCCESS);
+  }
+
+  @Override
+  public CommonResponseDTO restorePost(Long postId) {
+    Optional<Post> room = postRepository.findByIdAndIsDeleteFlag(postId);
+    checkNotFoundPostIsDeleteFlagById(room, postId);
+    room.get().setDeleteFlag(CommonConstant.FALSE);
+    postRepository.save(room.get());
+    return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.RESTORE_SUCCESS);
+  }
+
   private List<PostDTO> toPostDTOs(Page<PostProjection> postProjections) {
     List<PostDTO> postDTOs = new LinkedList<>();
     for(PostProjection postProjection : postProjections) {
@@ -159,6 +176,12 @@ public class PostServiceImpl implements PostService {
   private void checkNotFoundPostById(Optional<Post> post, Long postId) {
     if (post.isEmpty()) {
       throw new NotFoundException(String.format(ErrorMessage.Post.ERR_NOT_FOUND_ID, postId));
+    }
+  }
+
+  private void checkNotFoundPostIsDeleteFlagById(Optional<Post> post, Long postId) {
+    if (post.isEmpty()) {
+      throw new NotFoundException(String.format(ErrorMessage.Post.ERR_NOT_FOUND_ID_IN_TRASH, postId));
     }
   }
 

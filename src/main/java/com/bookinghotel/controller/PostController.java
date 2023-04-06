@@ -79,4 +79,20 @@ public class PostController {
     return VsResponseUtil.ok(postService.deletePost(postId));
   }
 
+  @Tag(name = "post-controller-admin")
+  @Operation(summary = "API delete post permanently by id")
+  @AuthorizationInfo(role = { RoleConstant.ADMIN })
+  @DeleteMapping(UrlConstant.Post.DELETE_POST_PERMANENTLY)
+  public ResponseEntity<?> deletePostPermanentlyById(@PathVariable Long postId) {
+    return VsResponseUtil.ok(postService.deletePostPermanently(postId));
+  }
+
+  @Tag(name = "post-controller-admin")
+  @Operation(summary = "API restore post by id")
+  @AuthorizationInfo(role = { RoleConstant.ADMIN })
+  @PostMapping(UrlConstant.Post.RESTORE_POST)
+  public ResponseEntity<?> restorePostById(@PathVariable Long postId) {
+    return VsResponseUtil.ok(postService.restorePost(postId));
+  }
+
 }

@@ -20,6 +20,10 @@ public interface PostService {
 
   CommonResponseDTO deletePost(Long postId);
 
+  CommonResponseDTO deletePostPermanently(Long postId);
+
+  CommonResponseDTO restorePost(Long postId);
+
   void deletePostByDeleteFlag(Boolean isDeleteFlag, Integer daysToDeleteRecords);
 
 }
