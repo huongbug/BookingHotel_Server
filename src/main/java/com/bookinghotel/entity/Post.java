@@ -35,7 +35,7 @@ public class Post extends FlagUserDateAuditing {
   private String content;
 
   //Link to table User
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_POST_USER"))
   private User user;
 

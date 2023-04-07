@@ -49,7 +49,7 @@ public class Room extends FlagUserDateAuditing {
   private String description;
 
   //Link to table Sale
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "sale_id", foreignKey = @ForeignKey(name = "FK_ROOM_SALE"))
   private Sale sale;
 

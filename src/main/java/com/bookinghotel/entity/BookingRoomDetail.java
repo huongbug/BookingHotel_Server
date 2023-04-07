@@ -20,13 +20,13 @@ public class BookingRoomDetail extends UserDateAuditing {
   BookingRoomDetailId id;
 
   //Link to table Booking
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @MapsId("bookingId")
   @JoinColumn(name = "booking_id", foreignKey = @ForeignKey(name = "FK_BOOKING_ROOM_DETAIL_BOOKING"))
   private Booking booking;
 
   //Link to table Room
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @MapsId("roomId")
   @JoinColumn(name = "room_id", foreignKey = @ForeignKey(name = "FK_BOOKING_ROOM_DETAIL_ROOM"))
   private Room room;
