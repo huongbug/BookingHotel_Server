@@ -28,6 +28,8 @@ public interface BookingService {
 
   CommonResponseDTO cancelBooking(Long bookingId, String note, UserPrincipal principal);
 
+  void lockUserRefuseToCheckIn();
+
   List<BookingDTO> mapperToBookingDTOs(List<Booking> bookings);
 
   Long calculateTotalRoomPrice(Booking booking);

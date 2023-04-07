@@ -17,10 +17,10 @@ public class DateTimeFilterDTO {
 
   @Parameter(description = "fromDate format yyyy-MM-dd HH:mm:ss")
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-  private LocalDateTime fromDate;
+  private LocalDateTime fromDateTime;
 
   @Parameter(description = "toDate format yyyy-MM-dd HH:mm:ss")
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-  private LocalDateTime toDate;
+  private LocalDateTime toDateTime;
 
 }

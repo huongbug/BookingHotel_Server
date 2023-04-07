@@ -1,9 +1,10 @@
 package com.bookinghotel.service.impl;
 
+import com.bookinghotel.config.UserInfoProperties;
 import com.bookinghotel.constant.*;
 import com.bookinghotel.dto.*;
 import com.bookinghotel.dto.common.CommonResponseDTO;
-import com.bookinghotel.dto.common.DateFilterDTO;
+import com.bookinghotel.dto.common.DataMailDTO;
 import com.bookinghotel.dto.pagination.PaginationResponseDTO;
 import com.bookinghotel.dto.pagination.PaginationSortRequestDTO;
 import com.bookinghotel.dto.pagination.PagingMeta;
@@ -11,6 +12,7 @@ import com.bookinghotel.entity.Booking;
 import com.bookinghotel.entity.BookingRoomDetail;
 import com.bookinghotel.entity.BookingServiceDetail;
 import com.bookinghotel.entity.User;
+import com.bookinghotel.exception.InternalServerException;
 import com.bookinghotel.exception.InvalidException;
 import com.bookinghotel.exception.NotFoundException;
 import com.bookinghotel.mapper.BookingMapper;
@@ -22,7 +24,9 @@ import com.bookinghotel.service.BookingRoomDetailService;
 import com.bookinghotel.service.BookingService;
 import com.bookinghotel.service.BookingServiceDetailService;
 import com.bookinghotel.util.PaginationUtil;
+import com.bookinghotel.util.SendMailUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,11 +36,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
+@Log4j2
 @RequiredArgsConstructor
 @org.springframework.stereotype.Service
 public class BookingServiceImpl implements BookingService {
@@ -52,6 +54,10 @@ public class BookingServiceImpl implements BookingService {
   private final BookingMapper bookingMapper;
 
   private final UserMapper userMapper;
+
+  private final SendMailUtil sendMail;
+
+  private final UserInfoProperties userInfoProperties;
 
   @Override
   public BookingDTO getBookingById(Long bookingId) {
@@ -150,6 +156,37 @@ public class BookingServiceImpl implements BookingService {
     booking.get().setNote(note);
     bookingRepository.save(booking.get());
     return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.CANCEL_SUCCESS);
+  }
+
+  @Override
+  public void lockUserRefuseToCheckIn() {
+    LocalDateTime now = LocalDateTime.now();
+    //set data mail
+    DataMailDTO dataMailDTO = new DataMailDTO();
+    dataMailDTO.setSubject(CommonMessage.SUBJECT_ACCOUNT_LOCK_NOTICE);
+    List<Booking> bookings = bookingRepository.findBookingUserByStatus(BookingStatus.PENDING.toString());
+    for(Booking booking : bookings) {
+      if(booking.getExpectedCheckIn().isBefore(now)) {
+        User userBooking = booking.getUser();
+        userBooking.setIsLocked(CommonConstant.TRUE);
+        userRepository.save(userBooking);
+        booking.setStatus(BookingStatus.CANCEL);
+        booking.setNote("Customer refuse to check in");
+        bookingRepository.save(booking);
+        //set data mail
+        dataMailDTO.setTo(userBooking.getEmail());
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("name", userBooking.getLastName() + " " + userBooking.getFirstName());
+        properties.put("hotline", userInfoProperties.getHotline());
+        dataMailDTO.setProperties(properties);
+        try {
+          sendMail.sendEmailWithHTML(dataMailDTO, CommonMessage.ACCOUNT_LOCK_NOTICE_TEMPLATE);
+          log.info(String.format("Successfully locked account %s refusal to check in", userBooking.getEmail()));
+        } catch (Exception ex) {
+          throw new InternalServerException(ErrorMessage.ERR_EXCEPTION_GENERAL);
+        }
+      }
+    }
   }
 
   @Override
