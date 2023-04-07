@@ -4,6 +4,8 @@ import com.bookinghotel.constant.ErrorMessage;
 import com.bookinghotel.entity.User;
 import com.bookinghotel.exception.InvalidException;
 import com.bookinghotel.exception.NotFoundException;
+import com.bookinghotel.projection.StatisticCustomerTopBookingProjection;
+import com.bookinghotel.projection.StatisticRoomBookedProjection;
 import com.bookinghotel.security.UserPrincipal;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +14,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -41,6 +44,18 @@ public interface UserRepository extends JpaRepository<User, String> {
           ")",
       nativeQuery = true)
   Page<User> findAllCustomer(@Param("keyword") String keyword, @Param("isLocked") Boolean isLocked, Pageable pageable);
+
+  @Query(value = "SELECT u.id, u.email, u.phone_number AS phoneNumber, u.first_name AS firstName, u.last_name AS lastName," +
+      "u.gender, u.birthday, u.address, u.avatar, u.is_enable AS isEnable, u.is_locked AS isLocked, r.role_name AS roleName," +
+      "u.created_date AS createdDate, u.last_modified_date AS lastModifiedDate, COUNT(b.id) AS `value` FROM users u " +
+      "INNER JOIN roles r ON r.id = u.role_id " +
+      "INNER JOIN bookings b on b.user_id = u.id " +
+      "WHERE r.role_name = 'ROLE_USER' AND u.is_enable = 1 AND u.is_locked = 0 AND b.status NOT IN ('PENDING','CANCEL') " +
+      "GROUP BY u.id " +
+      "ORDER BY COUNT(b.id) DESC " +
+      "LIMIT 10",
+      nativeQuery = true)
+  List<StatisticCustomerTopBookingProjection> findAllCustomerTopBooking();
 
   @Query("SELECT u FROM User u WHERE u.id = ?1")
   Optional<User> findById(String id);

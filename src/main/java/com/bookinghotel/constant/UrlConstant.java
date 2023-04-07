@@ -28,7 +28,6 @@ public class UrlConstant {
 
     public static final String UPDATE_USER = PRE_FIX + "/update/{userId}";
     public static final String DELETE_USER = PRE_FIX + "/delete/{userId}";
-
     public static final String LOCK_UNLOCK_USER = PRE_FIX + "/lock-unlock/{userId}";
 
     private User() {
@@ -112,10 +111,10 @@ public class UrlConstant {
     public static final String GET_PRODUCT = PRE_FIX + "/{productId}";
 
     public static final String CREATE_PRODUCT = PRE_FIX + "/create";
-
     public static final String UPDATE_PRODUCT = PRE_FIX + "/update/{productId}";
-
     public static final String DELETE_PRODUCTS = PRE_FIX + "/delete/{productId}";
+    public static final String DELETE_PRODUCT_PERMANENTLY = PRE_FIX + "/delete/trash/{productId}";
+    public static final String RESTORE_PRODUCT = PRE_FIX + "/restore/{productId}";
 
     private Product() {
     }
@@ -146,12 +145,23 @@ public class UrlConstant {
     public static final String GET_BOOKING = PRE_FIX + "/{bookingId}";
 
     public static final String CREATE_BOOKING = PRE_FIX + "/create";
-
-    public static final String UPDATE_BOOKING = PRE_FIX + "/update/{bookingId}";
-
-    public static final String DELETE_BOOKING = PRE_FIX + "/delete/{bookingId}";
+    public static final String CHECK_IN_BOOKING = PRE_FIX + "/check-in/{bookingId}";
+    public static final String CHECK_OUT_PAYMENT = PRE_FIX + "/check-out/{bookingId}";
+    public static final String CANCEL_BOOKING = PRE_FIX + "/cancel/{bookingId}";
 
     private Booking() {
+    }
+  }
+
+  public static class Statistic {
+    private static final String PRE_FIX = "/statistic";
+
+    public static final String STATISTIC_ROOM_BOOKED_MONTH = PRE_FIX + "/room-booked-month";
+    public static final String STATISTIC_CUSTOMER_TOP_BOOKING = PRE_FIX + "/top-booking";
+    public static final String STATISTIC_REVENUE = PRE_FIX + "/revenue";
+    public static final String STATISTIC_BOOKING_BY_STATUS = PRE_FIX + "/booking-status";
+
+    private Statistic() {
     }
   }
 

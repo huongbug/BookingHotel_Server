@@ -6,6 +6,7 @@ import com.bookinghotel.dto.UserUpdateDTO;
 import com.bookinghotel.dto.common.CreatedByDTO;
 import com.bookinghotel.dto.common.LastModifiedByDTO;
 import com.bookinghotel.entity.User;
+import com.bookinghotel.projection.StatisticCustomerTopBookingProjection;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -29,5 +30,7 @@ public interface UserMapper {
   CreatedByDTO toCreatedByDTO(User creator);
 
   LastModifiedByDTO toLastModifiedByDTO(User updater);
+
+  UserDTO statisticCustomerTopBookingProjectionToUserDTO(StatisticCustomerTopBookingProjection projection);
 
 }
