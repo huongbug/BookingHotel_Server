@@ -36,6 +36,7 @@ public interface RoomMapper {
   @Mapping(target = "medias", ignore = true)
   void updateRoomFromDTO(RoomUpdateDTO updateDTO, @MappingTarget Room room);
 
+  @Mapping(target = "isAvailable", ignore = true)
   RoomDTO roomProjectionToRoomDTO(RoomProjection projection);
 
   RoomSummaryDTO statisticRoomToRoomDTO(StatisticRoomBookedProjection projection);

@@ -6,6 +6,7 @@ import com.bookinghotel.dto.common.CreatedByDTO;
 import com.bookinghotel.dto.common.LastModifiedByDTO;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 public interface RoomProjection {
@@ -27,6 +28,8 @@ public interface RoomProjection {
   LocalDateTime getCreatedDate();
 
   LocalDateTime getLastModifiedDate();
+
+  BigInteger getIsAvailable();
 
   @Value("#{new com.bookinghotel.dto.SaleSummaryDTO(target.saleId, target.saleDayStart, target.saleDayEnd, target.saleSalePercent)}")
   SaleSummaryDTO getSale();

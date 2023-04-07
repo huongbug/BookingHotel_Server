@@ -9,6 +9,7 @@ import com.bookinghotel.dto.RoomDTO;
 import com.bookinghotel.dto.RoomFilterDTO;
 import com.bookinghotel.dto.RoomUpdateDTO;
 import com.bookinghotel.dto.common.CommonResponseDTO;
+import com.bookinghotel.dto.common.DateTimeFilterDTO;
 import com.bookinghotel.dto.pagination.PaginationResponseDTO;
 import com.bookinghotel.dto.pagination.PaginationSearchSortRequestDTO;
 import com.bookinghotel.dto.pagination.PagingMeta;
@@ -32,6 +33,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -71,9 +74,12 @@ public class RoomServiceImpl implements RoomService {
   @Override
   public PaginationResponseDTO<RoomDTO> getRoomsAvailable(PaginationSearchSortRequestDTO requestDTO, RoomFilterDTO roomFilter) {
     String roomType = roomFilter.getRoomType() == null ? null : roomFilter.getRoomType().getValue();
+    DateTimeFilterDTO filter =  new DateTimeFilterDTO();
+    filter.setFromDateTime(LocalDateTime.of(roomFilter.getCheckin(), CommonConstant.TIME_14H00));
+    filter.setToDateTime(LocalDateTime.of(roomFilter.getCheckin(), CommonConstant.TIME_12H00));
     //Pagination
     Pageable pageable = PaginationUtil.buildPageable(requestDTO, SortByDataConstant.ROOM);
-    Page<RoomProjection> rooms = roomRepository.findAllAvailable(requestDTO.getKeyword(), roomFilter, roomType, pageable);
+    Page<RoomProjection> rooms = roomRepository.findAllAvailable(requestDTO.getKeyword(), roomFilter.getMaxNum(), roomType, filter, pageable);
     //Create Output
     PagingMeta meta = PaginationUtil.buildPagingMeta(requestDTO, SortByDataConstant.ROOM, rooms);
     return new PaginationResponseDTO<RoomDTO>(meta, toRoomDTOs(rooms));
@@ -169,6 +175,7 @@ public class RoomServiceImpl implements RoomService {
 
   private RoomDTO toRoomDTO(RoomProjection roomProjection) {
     RoomDTO roomDTO = roomMapper.roomProjectionToRoomDTO(roomProjection);
+    roomDTO.setIsAvailable(!roomProjection.getIsAvailable().equals(BigInteger.ZERO));
     List<Media> medias = mediaService.getMediaByRoom(roomDTO.getId());
     roomDTO.setMedias(mediaMapper.toMediaDTOs(medias));
     return roomDTO;

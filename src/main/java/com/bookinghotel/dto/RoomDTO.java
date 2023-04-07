@@ -33,6 +33,8 @@ public class RoomDTO extends DateAuditingDTO {
 
   private SaleSummaryDTO sale;
 
+  private Boolean isAvailable;
+
   private CreatedByDTO createdBy;
 
   private LastModifiedByDTO lastModifiedBy;

@@ -1,12 +1,11 @@
 package com.bookinghotel.repository;
 
-import com.bookinghotel.dto.RoomFilterDTO;
+import com.bookinghotel.dto.common.DateTimeFilterDTO;
 import com.bookinghotel.entity.Room;
 import com.bookinghotel.projection.RoomProjection;
 import com.bookinghotel.projection.StatisticRoomBookedProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -91,25 +90,26 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
           "SELECT r.* FROM rooms r " +
           "INNER JOIN booking_room_details brd ON brd.room_id = r.id " +
           "INNER JOIN bookings b ON b.id = brd.booking_id " +
-          "WHERE b.expected_check_in <= :#{#roomFilter.checkin} " +
-          "AND b.expected_check_out >= DATE_SUB(:#{#roomFilter.checkin}, INTERVAL 2 HOUR) " +
+          "WHERE b.expected_check_in <= :#{#filter.fromDateTime} " +
+          "AND b.expected_check_out >= DATE_SUB(:#{#filter.fromDateTime}, INTERVAL 2 HOUR) " +
           "AND b.status NOT IN ('CANCEL', 'CHECKED_OUT') " +
       "), " +
       "data_check_checkout AS ( " +
           "SELECT r.* FROM rooms r " +
           "INNER JOIN booking_room_details brd ON brd.room_id = r.id " +
           "INNER JOIN bookings b ON b.id = brd.booking_id " +
-          "WHERE b.expected_check_in <= DATE_ADD(:#{#roomFilter.checkout}, INTERVAL 2 HOUR) " +
-          "AND b.expected_check_out >= :#{#roomFilter.checkout} " +
+          "WHERE b.expected_check_in <= DATE_ADD(:#{#filter.toDateTime}, INTERVAL 2 HOUR) " +
+          "AND b.expected_check_out >= :#{#filter.toDateTime} " +
           "AND b.status NOT IN ('CANCEL', 'CHECKED_OUT') " +
       "), " +
-      "data_check AS ( " +
+      "data_unavailable AS ( " +
           "SELECT * FROM data_check_checkin data_1 " +
           "UNION " +
           "SELECT * FROM data_check_checkout data_2 " +
       ") " +
       "SELECT r.id, r.title, r.price, r.type, r.max_num AS maxNum, r.floor, r.description," +
       "r.created_date AS createdDate, r.last_modified_date AS lastModifiedDate, " +
+      "CASE WHEN r.id IN (SELECT id FROM data_unavailable) THEN FALSE ELSE TRUE END AS isAvailable," +
       "s.id AS saleId, s.day_start AS saleDayStart, s.day_end AS saleDayEnd, s.sale_percent AS saleSalePercent, " +
       "createdBy.id AS createdById, " +
       "createdBy.first_name AS createdByFirstName, " +
@@ -123,8 +123,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
       "LEFT JOIN users createdBy ON r.created_by = createdBy.id " +
       "LEFT JOIN users lastModifiedBy ON r.last_modified_by = lastModifiedBy.id " +
       "LEFT JOIN sales s ON s.id = r.sale_id " +
-      "WHERE r.id NOT IN (SELECT id FROM data_check) " +
-      "AND (:#{#roomFilter.maxNum} IS NULL OR r.max_num LIKE CONCAT('%', :#{#roomFilter.maxNum}, '%')) " +
+      "WHERE (:maxNum IS NULL OR r.max_num = :maxNum) " +
       "AND (:typeRoom IS NULL OR r.type LIKE CONCAT('%', :typeRoom, '%')) " +
       "AND ( " +
       "COALESCE(:keyword, '') = '' " +
@@ -137,19 +136,19 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
           "SELECT r.* FROM rooms r " +
           "INNER JOIN booking_room_details brd ON brd.room_id = r.id " +
           "INNER JOIN bookings b ON b.id = brd.booking_id " +
-          "WHERE b.expected_check_in <= :#{#roomFilter.checkin} " +
-          "AND b.expected_check_out >= DATE_SUB(:#{#roomFilter.checkin}, INTERVAL 2 HOUR) " +
+          "WHERE b.expected_check_in <= :#{#filter.fromDateTime} " +
+          "AND b.expected_check_out >= DATE_SUB(:#{#filter.fromDateTime}, INTERVAL 2 HOUR) " +
           "AND b.status NOT IN ('CANCEL', 'CHECKED_OUT') " +
           "), " +
           "data_check_checkout AS ( " +
           "SELECT r.* FROM rooms r " +
           "INNER JOIN booking_room_details brd ON brd.room_id = r.id " +
           "INNER JOIN bookings b ON b.id = brd.booking_id " +
-          "WHERE b.expected_check_in <= DATE_ADD(:#{#roomFilter.checkout}, INTERVAL 2 HOUR) " +
-          "AND b.expected_check_out >= :#{#roomFilter.checkout} " +
+          "WHERE b.expected_check_in <= DATE_ADD(:#{#filter.toDateTime}, INTERVAL 2 HOUR) " +
+          "AND b.expected_check_out >= :#{#filter.toDateTime} " +
           "AND b.status NOT IN ('CANCEL', 'CHECKED_OUT') " +
           "), " +
-          "data_check AS ( " +
+          "data_unavailable AS ( " +
           "SELECT * FROM data_check_checkin data_1 " +
           "UNION " +
           "SELECT * FROM data_check_checkout data_2 " +
@@ -158,8 +157,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
           "LEFT JOIN users createdBy ON r.created_by = createdBy.id " +
           "LEFT JOIN users lastModifiedBy ON r.last_modified_by = lastModifiedBy.id " +
           "LEFT JOIN sales s ON s.id = r.sale_id " +
-          "WHERE r.id NOT IN (SELECT id FROM data_check) " +
-          "AND (:#{#roomFilter.maxNum} IS NULL OR r.max_num LIKE CONCAT('%', :#{#roomFilter.maxNum}, '%')) " +
+          "WHERE (:maxNum IS NULL OR r.max_num = :maxNum) " +
           "AND (:typeRoom IS NULL OR r.type LIKE CONCAT('%', :typeRoom, '%')) " +
           "AND ( " +
           "COALESCE(:keyword, '') = '' " +
@@ -169,8 +167,9 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
           ")" +
           "AND r.delete_flag = 0",
       nativeQuery = true)
-  Page<RoomProjection> findAllAvailable(@Param("keyword") String keyword, @Param("roomFilter") RoomFilterDTO roomFilter,
-                              @Param("typeRoom") String typeRoom, Pageable pageable);
+  Page<RoomProjection> findAllAvailable(@Param("keyword") String keyword, @Param("maxNum") Integer maxNum,
+                                        @Param("typeRoom") String typeRoom, @Param("filter") DateTimeFilterDTO filter,
+                                        Pageable pageable);
 
   @Query(value =
       "WITH data_check_checkin AS ( " +
