@@ -18,5 +18,6 @@ public class UserInfoProperties {
   private String birthday;
   private String address;
   private String avatar;
+  private String hotline;
 
 }
