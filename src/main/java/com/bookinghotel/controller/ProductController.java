@@ -79,4 +79,20 @@ public class ProductController {
     return VsResponseUtil.ok(productService.deleteProduct(productId));
   }
 
+  @Tag(name = "product-controller-admin")
+  @Operation(summary = "API delete product permanently by id")
+  @AuthorizationInfo(role = { RoleConstant.ADMIN })
+  @DeleteMapping(UrlConstant.Product.DELETE_PRODUCT_PERMANENTLY)
+  public ResponseEntity<?> deleteProductPermanentlyById(@PathVariable Long productId) {
+    return VsResponseUtil.ok(productService.deleteProductPermanently(productId));
+  }
+
+  @Tag(name = "product-controller-admin")
+  @Operation(summary = "API restore product by id")
+  @AuthorizationInfo(role = { RoleConstant.ADMIN })
+  @PostMapping(UrlConstant.Product.RESTORE_PRODUCT)
+  public ResponseEntity<?> restoreProductById(@PathVariable Long productId) {
+    return VsResponseUtil.ok(productService.restoreProduct(productId));
+  }
+
 }

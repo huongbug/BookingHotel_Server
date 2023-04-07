@@ -22,4 +22,8 @@ public interface ProductService {
 
   CommonResponseDTO deleteProduct(Long productId);
 
+  CommonResponseDTO deleteProductPermanently(Long productId);
+
+  CommonResponseDTO restoreProduct(Long productId);
+
 }

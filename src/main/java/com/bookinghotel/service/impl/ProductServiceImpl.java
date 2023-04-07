@@ -12,6 +12,7 @@ import com.bookinghotel.dto.pagination.PaginationResponseDTO;
 import com.bookinghotel.dto.pagination.PaginationSearchSortRequestDTO;
 import com.bookinghotel.dto.pagination.PagingMeta;
 import com.bookinghotel.entity.Product;
+import com.bookinghotel.entity.Room;
 import com.bookinghotel.entity.User;
 import com.bookinghotel.exception.InvalidException;
 import com.bookinghotel.exception.NotFoundException;
@@ -109,6 +110,23 @@ public class ProductServiceImpl implements ProductService {
     return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.DELETE_SUCCESS);
   }
 
+  @Override
+  public CommonResponseDTO deleteProductPermanently(Long productId) {
+    Optional<Product> product = productRepository.findByIdAndIsDeleteFlag(productId);
+    checkNotFoundProductIsDeleteFlagById(product, productId);
+    productRepository.delete(product.get());
+    return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.DELETE_SUCCESS);
+  }
+
+  @Override
+  public CommonResponseDTO restoreProduct(Long productId) {
+    Optional<Product> product = productRepository.findByIdAndIsDeleteFlag(productId);
+    checkNotFoundProductIsDeleteFlagById(product, productId);
+    product.get().setDeleteFlag(CommonConstant.FALSE);
+    productRepository.save(product.get());
+    return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.RESTORE_SUCCESS);
+  }
+
   private List<ProductDTO> toProductDTOs(Page<ProductProjection> productProjections) {
     List<ProductDTO> productDTOs = new LinkedList<>();
     for(ProductProjection productProjection : productProjections) {
@@ -120,6 +138,12 @@ public class ProductServiceImpl implements ProductService {
   private void checkNotFoundProductById(Optional<Product> product, Long productId) {
     if (product.isEmpty()) {
       throw new NotFoundException(String.format(ErrorMessage.Product.ERR_NOT_FOUND_ID, productId));
+    }
+  }
+
+  private void checkNotFoundProductIsDeleteFlagById(Optional<Product> product, Long productId) {
+    if (product.isEmpty()) {
+      throw new NotFoundException(String.format(ErrorMessage.Product.ERR_NOT_FOUND_ID_IN_TRASH, productId));
     }
   }
 

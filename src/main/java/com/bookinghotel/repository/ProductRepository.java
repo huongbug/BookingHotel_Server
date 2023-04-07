@@ -19,6 +19,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
   @Query("SELECT p FROM Product p WHERE p.id = ?1 AND p.deleteFlag = false")
   Optional<Product> findById(Long id);
 
+  @Query("SELECT p FROM Product p WHERE p.id = ?1 AND p.deleteFlag = true")
+  Optional<Product> findByIdAndIsDeleteFlag(Long id);
+
   @Query(value = "SELECT p.id, p.name, p.thumbnail, p.description, " +
       "p.created_date AS createdDate, p.last_modified_date AS lastModifiedDate, " +
       "createdBy.id AS createdById, " +
