@@ -29,12 +29,12 @@ public class RoomRating extends FlagUserDateAuditing {
   private String comment;
 
   //Link to table Room
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "room_id", foreignKey = @ForeignKey(name = "FK_ROOM_RATING_ROOM"))
   private Room room;
 
   //Link to table User
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_ROOM_RATING_USER"))
   private User user;
 
