@@ -55,6 +55,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers("/api/v1/room-rating/**").permitAll()
         .antMatchers("/api/v1/service/**").permitAll()
         .antMatchers("/api/v1/product/**").permitAll()
+        .antMatchers("/api/v1/statistic/**").permitAll()
         .anyRequest().authenticated()
         .and()
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
