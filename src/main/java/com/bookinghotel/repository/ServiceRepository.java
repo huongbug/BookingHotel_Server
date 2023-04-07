@@ -20,6 +20,9 @@ public interface ServiceRepository extends JpaRepository<Service, Long> {
   @Query("SELECT s FROM Service s WHERE s.id = ?1 AND s.deleteFlag = false")
   Optional<Service> findById(Long id);
 
+  @Query("SELECT s FROM Service s WHERE s.id = ?1 AND s.deleteFlag = true")
+  Optional<Service> findByIdAndIsDeleteFlag(Long id);
+
   @Query(value = "SELECT s.id, s.title, s.thumbnail, s.price, " +
       "s.description, s.created_date AS createdDate, s.last_modified_date AS lastModifiedDate, " +
       "createdBy.id AS createdById, " +
