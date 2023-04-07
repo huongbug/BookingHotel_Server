@@ -60,7 +60,7 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
           "WHERE (:keyword IS NULL or s.sale_percent LIKE CONCAT('%', :keyword, '%')) " +
           "AND s.delete_flag = :deleteFlag",
       nativeQuery = true)
-  Page<SaleProjection> findAllSale(@Param("keyword") String keyword, Boolean deleteFlag, Pageable pageable);
+  Page<SaleProjection> findAllSale(@Param("keyword") String keyword, @Param("deleteFlag") Boolean deleteFlag, Pageable pageable);
 
   @Transactional
   @Modifying
