@@ -82,17 +82,16 @@ public class SaleServiceImpl implements SaleService {
   }
 
   @Override
-  public CommonResponseDTO addSalesToRoom(Long saleId, List<Long> roomIds) {
+  public CommonResponseDTO addSalesToRoom(Long saleId, Long roomId) {
     Optional<Sale> sale = saleRepository.findById(saleId);
     checkNotFoundSaleById(sale, saleId);
-    List<Room> rooms = roomRepository.findAllByIds(roomIds);
-    for(Room room : rooms) {
-      if(ObjectUtils.isEmpty(room.getSale())) {
-        room.setSale(sale.get());
-        roomRepository.save(room);
-      } else {
-        throw new InvalidException(String.format(ErrorMessage.Room.ROOM_HAS_BEEN_DISCOUNTED, room.getId()));
-      }
+    Optional<Room> room = roomRepository.findById(roomId);
+    checkNotFoundRoomById(room, roomId);
+    if(ObjectUtils.isEmpty(room.get().getSale())) {
+      room.get().setSale(sale.get());
+      roomRepository.save(room.get());
+    } else {
+      throw new InvalidException(String.format(ErrorMessage.Room.ROOM_HAS_BEEN_DISCOUNTED, roomId));
     }
     return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.ADD_SUCCESS);
   }

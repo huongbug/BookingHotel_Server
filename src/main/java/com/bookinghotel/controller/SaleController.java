@@ -66,8 +66,8 @@ public class SaleController {
   @Operation(summary = "API add sale to room")
   @AuthorizationInfo(role = { RoleConstant.ADMIN })
   @PostMapping(UrlConstant.Sale.ADD_SALE_TO_ROOM)
-  public ResponseEntity<?> addSaleToRoom(@PathVariable Long saleId, @RequestBody List<Long> roomIds) {
-    return VsResponseUtil.ok(saleService.addSalesToRoom(saleId, roomIds));
+  public ResponseEntity<?> addSaleToRoom(@PathVariable Long saleId, @PathVariable Long roomId) {
+    return VsResponseUtil.ok(saleService.addSalesToRoom(saleId, roomId));
   }
 
   @Operation(summary = "API remove sale from room")
