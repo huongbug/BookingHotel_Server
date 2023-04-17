@@ -4,12 +4,14 @@ import com.bookinghotel.exception.UploadImageException;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Map;
 
+@Log4j2
 @Component
 @RequiredArgsConstructor
 public class UploadFileUtil {
@@ -35,8 +37,12 @@ public class UploadFileUtil {
   }
 
   public void removeImageFromUrl(String url) {
+    int startIndex = url.lastIndexOf("/") + 1;
+    int endIndex = url.lastIndexOf(".");
+    String publicId = url.substring(startIndex, endIndex);
     try {
-      cloudinary.uploader().destroy(url, ObjectUtils.emptyMap());
+      Map result = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+      log.info(String.format("Remove image public id %s %s", publicId, result.toString()));
     } catch (IOException e) {
       throw new UploadImageException("Remove image failed!");
     }
