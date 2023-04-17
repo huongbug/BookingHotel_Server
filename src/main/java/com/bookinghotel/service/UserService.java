@@ -21,6 +21,8 @@ public interface UserService {
 
   UserDTO updateUser(UserUpdateDTO userUpdateDTO, String userId, UserPrincipal principal);
 
+  CommonResponseDTO changePassword(String oldPassword, String newPassword, UserPrincipal principal);
+
   CommonResponseDTO lockUser(String userId);
 
   CommonResponseDTO unlockUser(String userId);

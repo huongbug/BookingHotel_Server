@@ -96,6 +96,20 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public CommonResponseDTO changePassword(String oldPassword, String newPassword, UserPrincipal principal) {
+    User user = userRepository.getUser(principal);
+    if(passwordEncoder.matches(newPassword, user.getPassword())) {
+      throw new InvalidException(ErrorMessage.User.ERR_NEW_PASSWORD_EQUAL_OLD_PASSWORD);
+    }
+    if(!passwordEncoder.matches(oldPassword, user.getPassword())) {
+      throw new InvalidException(ErrorMessage.User.ERR_OLD_PASSWORD_IS_INCORRECT);
+    }
+    user.setPassword(passwordEncoder.encode(newPassword));
+    userRepository.save(user);
+    return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.CHANGE_PASSWORD_SUCCESS);
+  }
+
+  @Override
   public CommonResponseDTO lockUser(String userId) {
     Optional<User> user = userRepository.findCustomerById(userId);
     checkLockUser(user, userId);

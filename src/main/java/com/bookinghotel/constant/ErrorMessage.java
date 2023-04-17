@@ -40,6 +40,8 @@ public class ErrorMessage {
     public static final String ERR_USER_NOT_ENABLED = "This account is not enabled";
     public static final String ERR_USER_IS_LOCKED = "This account has been locked";
     public static final String ERR_USER_IS_NOT_LOCKED = "This account has not been locked";
+    public static final String ERR_OLD_PASSWORD_IS_INCORRECT = "Old password is not incorrect";
+    public static final String ERR_NEW_PASSWORD_EQUAL_OLD_PASSWORD = "New password and old password cannot be the same";
   }
 
   public static class Room {

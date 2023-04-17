@@ -11,6 +11,7 @@ public class CommonMessage {
   public static final String LOCK_SUCCESS = "Lock successfully";
   public static final String UNLOCK_SUCCESS = "Unlock successfully";
   public static final String CANCEL_SUCCESS = "Cancel successfully";
+  public static final String CHANGE_PASSWORD_SUCCESS = "Change password successfully";
 
   //Mail
   public static final String SUBJECT_REGISTER = "Confirm account registration";

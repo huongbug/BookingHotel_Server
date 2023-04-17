@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,10 +56,19 @@ public class UserController {
   @Tags({@Tag(name = "user-controller-admin"), @Tag(name = "user-controller")})
   @Operation(summary = "API update user by id")
   @AuthorizationInfo(role = { RoleConstant.ADMIN, RoleConstant.USER })
-  @PatchMapping(UrlConstant.User.UPDATE_USER)
-  public ResponseEntity<?> updateUserById(@PathVariable String userId, @Valid @RequestBody UserUpdateDTO userUpdateDTO,
+  @PatchMapping(value = UrlConstant.User.UPDATE_USER, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<?> updateUserById(@PathVariable String userId, @Valid @ModelAttribute UserUpdateDTO userUpdateDTO,
                                           @Parameter(name = "principal", hidden = true) @CurrentUserLogin UserPrincipal principal) {
     return VsResponseUtil.ok(userService.updateUser(userUpdateDTO, userId, principal));
+  }
+
+  @Tags({@Tag(name = "user-controller-admin"), @Tag(name = "user-controller")})
+  @Operation(summary = "API change password")
+  @AuthorizationInfo(role = { RoleConstant.ADMIN, RoleConstant.USER })
+  @PatchMapping(value = UrlConstant.User.CHANGE_PASS)
+  public ResponseEntity<?> changePassword(@RequestParam String oldPassword, @RequestParam String newPassword,
+                                          @Parameter(name = "principal", hidden = true) @CurrentUserLogin UserPrincipal principal) {
+    return VsResponseUtil.ok(userService.changePassword(oldPassword, newPassword, principal));
   }
 
   @Tag(name = "user-controller-admin")

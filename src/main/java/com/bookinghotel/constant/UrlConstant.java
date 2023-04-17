@@ -27,6 +27,7 @@ public class UrlConstant {
     public static final String GET_CURRENT_USER = PRE_FIX + "/current";
 
     public static final String UPDATE_USER = PRE_FIX + "/update/{userId}";
+    public static final String CHANGE_PASS = PRE_FIX + "/change-password";
     public static final String DELETE_USER = PRE_FIX + "/delete/{userId}";
     public static final String LOCK_UNLOCK_USER = PRE_FIX + "/lock-unlock/{userId}";
 
@@ -78,7 +79,7 @@ public class UrlConstant {
     public static final String DELETE_SALE_PERMANENTLY = PRE_FIX + "/delete/trash/{saleId}";
     public static final String RESTORE_SALE = PRE_FIX + "/restore/{saleId}";
 
-    public static final String ADD_SALE_TO_ROOM = PRE_FIX + "/add/room/{saleId}";
+    public static final String ADD_SALE_TO_ROOM = PRE_FIX + "/add/room/{saleId}/{roomId}";
     public static final String REMOVE_SALE_FROM_ROOM = PRE_FIX + "/remove/room/{saleId}/{roomId}";
 
     private Sale() {
