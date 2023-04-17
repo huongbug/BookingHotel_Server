@@ -14,8 +14,15 @@ public class PaginationUtil {
 
   private static final String CREATED_DATE = "created_date";
 
-  public static Pageable buildPageable(PaginationRequestDTO requestDTO) {
+  private static final String LAST_MODIFIED_DATE = "last_modified_date";
+
+  public static Pageable buildPageableSortCreatedDate(PaginationRequestDTO requestDTO) {
     Sort sort = Sort.by(CREATED_DATE).descending();
+    return PageRequest.of(requestDTO.getPageNum(), requestDTO.getPageSize(), sort);
+  }
+
+  public static Pageable buildPageableSortLastModifiedDate(PaginationRequestDTO requestDTO) {
+    Sort sort = Sort.by(LAST_MODIFIED_DATE).descending();
     return PageRequest.of(requestDTO.getPageNum(), requestDTO.getPageSize(), sort);
   }
 
