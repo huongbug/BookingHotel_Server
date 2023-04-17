@@ -1,5 +1,6 @@
 package com.bookinghotel.dto;
 
+import com.bookinghotel.annotation.ValidFileImage;
 import com.bookinghotel.constant.ErrorMessage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -49,6 +50,7 @@ public class UserCreateDTO {
   @NotBlank(message = ErrorMessage.NOT_BLANK_FIELD)
   private String address;
 
+  @ValidFileImage
   private MultipartFile avatarFile;
 
 }

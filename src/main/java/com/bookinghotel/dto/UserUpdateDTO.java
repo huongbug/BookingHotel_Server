@@ -1,5 +1,6 @@
 package com.bookinghotel.dto;
 
+import com.bookinghotel.annotation.ValidFileImage;
 import com.bookinghotel.constant.ErrorMessage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,6 +32,7 @@ public class UserUpdateDTO {
 
   private String address;
 
+  @ValidFileImage
   private MultipartFile fileAvatar;
 
 }
