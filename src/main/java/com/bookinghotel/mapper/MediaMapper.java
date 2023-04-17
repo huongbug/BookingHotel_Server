@@ -1,6 +1,7 @@
 package com.bookinghotel.mapper;
 
 import com.bookinghotel.dto.MediaDTO;
+import com.bookinghotel.dto.MediaDetailDTO;
 import com.bookinghotel.entity.Media;
 import org.mapstruct.Mapper;
 
@@ -16,5 +17,7 @@ public interface MediaMapper {
   MediaDTO toMediaDTO(Media media);
 
   List<MediaDTO> toMediaDTOs(List<Media> medias);
+
+  List<MediaDetailDTO> toMediaDetailDTOs(List<Media> medias);
 
 }

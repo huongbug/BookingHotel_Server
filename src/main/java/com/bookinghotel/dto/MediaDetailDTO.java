@@ -10,12 +10,16 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class MediaDTO {
+public class MediaDetailDTO {
 
   private Long id;
 
   private String url;
 
   private MediaType type;
+
+  private Long postId;
+
+  private Long roomId;
 
 }

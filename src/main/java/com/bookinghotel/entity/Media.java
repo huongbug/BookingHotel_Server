@@ -1,5 +1,6 @@
 package com.bookinghotel.entity;
 
+import com.bookinghotel.constant.MediaType;
 import com.bookinghotel.entity.common.FlagUserDateAuditing;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,6 +23,9 @@ public class Media extends FlagUserDateAuditing {
 
   @Column(nullable = false)
   private String url;
+
+  @Enumerated(EnumType.STRING)
+  private MediaType type;
 
   //Link to table Post
   @ManyToOne
