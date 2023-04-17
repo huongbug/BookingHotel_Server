@@ -14,7 +14,6 @@ public class FilesValidator implements ConstraintValidator<ValidFiles, List<Mult
   @Override
   public boolean isValid(List<MultipartFile> files, ConstraintValidatorContext constraintValidatorContext) {
     boolean result = true;
-
     if(CollectionUtils.isNotEmpty(files)) {
       for(MultipartFile file : files) {
         String contentType = file.getContentType();
@@ -30,7 +29,10 @@ public class FilesValidator implements ConstraintValidator<ValidFiles, List<Mult
   private boolean isSupportedContentType(String contentType) {
     return contentType.equals("image/png")
         || contentType.equals("image/jpg")
-        || contentType.equals("image/jpeg");
+        || contentType.equals("image/jpeg")
+        || contentType.equals("image/webp")
+        || contentType.equals("image/gif")
+        || contentType.equals("video/mp4");
   }
 
 }

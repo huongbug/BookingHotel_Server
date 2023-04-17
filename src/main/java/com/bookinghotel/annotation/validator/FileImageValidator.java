@@ -1,13 +1,13 @@
 package com.bookinghotel.annotation.validator;
 
-import com.bookinghotel.annotation.ValidFile;
+import com.bookinghotel.annotation.ValidFileImage;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Objects;
 
-public class FileValidator implements ConstraintValidator<ValidFile, MultipartFile> {
+public class FileImageValidator implements ConstraintValidator<ValidFileImage, MultipartFile> {
 
   @Override
   public boolean isValid(MultipartFile file, ConstraintValidatorContext constraintValidatorContext) {
@@ -26,8 +26,7 @@ public class FileValidator implements ConstraintValidator<ValidFile, MultipartFi
         || contentType.equals("image/jpg")
         || contentType.equals("image/jpeg")
         || contentType.equals("image/webp")
-        || contentType.equals("image/gif")
-        || contentType.equals("video/mp4");
+        || contentType.equals("image/gif");
   }
 
 }

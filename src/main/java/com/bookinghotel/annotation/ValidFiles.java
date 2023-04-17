@@ -12,9 +12,10 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = {FilesValidator.class})
 public @interface ValidFiles {
 
-  String message() default "Only PNG or JPG images are allowed";
+  String message() default "Only PNG, JPG, WEBP or GIF images and MP4 videos are allowed";
 
   Class<?>[] groups() default {};
 
   Class<? extends Payload>[] payload() default {};
+
 }
