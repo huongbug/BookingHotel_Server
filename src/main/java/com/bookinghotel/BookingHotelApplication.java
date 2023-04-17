@@ -2,53 +2,111 @@ package com.bookinghotel;
 
 import com.bookinghotel.config.UserInfoProperties;
 import com.bookinghotel.constant.RoleConstant;
+import com.bookinghotel.dto.init.RoomInitJSON;
+import com.bookinghotel.entity.Media;
 import com.bookinghotel.entity.Role;
+import com.bookinghotel.entity.Room;
 import com.bookinghotel.entity.User;
-import com.bookinghotel.repository.RoleRepository;
-import com.bookinghotel.repository.UserRepository;
+import com.bookinghotel.mapper.RoomMapper;
+import com.bookinghotel.repository.*;
+import com.bookinghotel.service.CustomUserDetailsService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
+@Log4j2
+@RequiredArgsConstructor
 @EnableConfigurationProperties({UserInfoProperties.class})
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.bookinghotel")
 public class BookingHotelApplication {
 
   private final UserRepository userRepository;
 
   private final RoleRepository roleRepository;
 
+  private final RoomRepository roomRepository;
 
-  public BookingHotelApplication(UserRepository userRepository, RoleRepository roleRepository) {
-    this.userRepository = userRepository;
-    this.roleRepository = roleRepository;
-  }
+  private final CustomUserDetailsService customUserDetailsService;
+
+  private final RoomMapper roomMapper;
 
   public static void main(String[] args) {
-    SpringApplication.run(BookingHotelApplication.class, args);
+    Environment env = SpringApplication.run(BookingHotelApplication.class, args).getEnvironment();
+    String appName = env.getProperty("spring.application.name");
+    if (appName != null) {
+      appName = appName.toUpperCase();
+    }
+    String port = env.getProperty("server.port");
+    log.info("-------------------------START " + appName
+        + " Application------------------------------");
+    log.info("   Application         : " + appName);
+    log.info("   Url swagger-ui      : http://localhost:" + port + "/swagger-ui.html");
+    log.info("-------------------------START SUCCESS " + appName
+        + " Application------------------------------");
   }
 
   @Bean
   CommandLineRunner init(UserInfoProperties userInfo) {
     return args -> {
       PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
+      //init role
       if (roleRepository.count() == 0) {
         roleRepository.save(new Role(null, RoleConstant.ADMIN, null));
         roleRepository.save(new Role(null, RoleConstant.USER, null));
       }
-
+      //init admin
       if (userRepository.count() == 0) {
         User admin = new User(userInfo.getEmail(), userInfo.getPhone(), passwordEncoder.encode(userInfo.getPassword()),
-            userInfo.getFirstName(), userInfo.getLastName(), userInfo.getGender(), LocalDate.parse(userInfo.getBirthday()),
-            userInfo.getAddress(), Boolean.TRUE, userInfo.getAvatar(), roleRepository.findByRoleName(RoleConstant.ADMIN));
+            userInfo.getFirstName(), userInfo.getLastName(), userInfo.getGender(),
+            LocalDate.parse(userInfo.getBirthday()),
+            userInfo.getAddress(), Boolean.TRUE, userInfo.getAvatar(),
+            roleRepository.findByRoleName(RoleConstant.ADMIN));
         userRepository.save(admin);
+      }
+
+      //Login
+      User admin = userRepository.findByEmail(userInfo.getEmail()).get();
+      UserDetails userDetails = customUserDetailsService.loadUserById(admin.getId());
+      UsernamePasswordAuthenticationToken authentication =
+          new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+      SecurityContextHolder.getContext().setAuthentication(authentication);
+
+      //init rooms
+      if(roomRepository.count() == 0) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        File file = new File("rooms.json");
+        try {
+          Map<String, List<RoomInitJSON>> roomsMap = objectMapper.readValue(file, new TypeReference<>() {});
+          for (Map.Entry<String, List<RoomInitJSON>> entry : roomsMap.entrySet()) {
+            for(RoomInitJSON roomInit : entry.getValue()) {
+              Room room = roomMapper.roomInitToRoom(roomInit);
+              for(Media media : room.getMedias()) {
+                media.setRoom(room);
+              }
+              roomRepository.save(room);
+            }
+          }
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
       }
     };
   }
