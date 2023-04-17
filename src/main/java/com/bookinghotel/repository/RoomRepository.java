@@ -20,13 +20,16 @@ import java.util.Optional;
 @Repository
 public interface RoomRepository extends JpaRepository<Room, Long> {
 
+  @Query(value = "SELECT r.* FROM rooms r WHERE r.type LIKE CONCAT('%', :typeRoom, '%') AND r.delete_flag = false GROUP BY r.type", nativeQuery = true)
+  List<Room> findByTypeForChatBot(@Param("typeRoom") String typeRoom);
+
   @Query("SELECT r FROM Room r WHERE r.id = ?1 AND r.deleteFlag = false")
   Optional<Room> findById(Long id);
 
   @Query("SELECT r FROM Room r WHERE r.id = ?1 AND r.deleteFlag = true")
   Optional<Room> findByIdAndIsDeleteFlag(Long id);
 
-  @Query(value = "SELECT r.id, r.title, r.price, r.type, r.max_num AS maxNum, r.floor, r.description," +
+  @Query(value = "SELECT r.id, r.name, r.price, r.type, r.bed, r.size, r.capacity, r.services, r.description, " +
       "r.created_date AS createdDate, r.last_modified_date AS lastModifiedDate, " +
       "s.id AS saleId, s.day_start AS saleDayStart, s.day_end AS saleDayEnd, s.sale_percent AS saleSalePercent, " +
       "createdBy.id AS createdById, " +
@@ -48,7 +51,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
   @Query("SELECT r FROM Room r WHERE r.id IN ?1 AND r.deleteFlag = false")
   List<Room> findAllByIds(List<Long> ids);
 
-  @Query(value = "SELECT r.id, r.title, r.price, r.type, r.max_num AS maxNum, r.floor, r.description, " +
+  @Query(value = "SELECT r.id, r.name, r.price, r.type, r.bed, r.size, r.capacity, r.services, r.description, " +
       "r.created_date AS createdDate, r.last_modified_date AS lastModifiedDate, " +
       "s.id AS saleId, s.day_start AS saleDayStart, s.day_end AS saleDayEnd, s.sale_percent AS saleSalePercent, " +
       "createdBy.id AS createdById, " +
@@ -63,10 +66,11 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
       "LEFT JOIN users createdBy ON r.created_by = createdBy.id " +
       "LEFT JOIN users lastModifiedBy ON r.last_modified_by = lastModifiedBy.id " +
       "LEFT JOIN sales s ON s.id = r.sale_id " +
-      "WHERE (:roomType IS NULL OR r.type LIKE CONCAT('%', :roomType, '%')) " +
+      "WHERE (:typeRoom IS NULL OR r.type LIKE CONCAT('%', :typeRoom, '%')) " +
       "AND ( " +
       "COALESCE(:keyword, '') = '' " +
-      "OR r.title LIKE CONCAT('%', :keyword, '%') " +
+      "OR r.name LIKE CONCAT('%', :keyword, '%') " +
+      "OR r.type LIKE CONCAT('%', :keyword, '%') " +
       "OR r.price LIKE CONCAT('%', :keyword, '%') " +
       ")" +
       "AND r.delete_flag = :deleteFlag",
@@ -74,15 +78,16 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
           "LEFT JOIN users createdBy ON r.created_by = createdBy.id " +
           "LEFT JOIN users lastModifiedBy ON r.last_modified_by = lastModifiedBy.id " +
           "LEFT JOIN sales s ON s.id = r.sale_id " +
-          "WHERE (:roomType IS NULL OR r.type LIKE CONCAT('%', :roomType, '%')) " +
+          "WHERE (:typeRoom IS NULL OR r.type LIKE CONCAT('%', :typeRoom, '%')) " +
           "AND ( " +
           "COALESCE(:keyword, '') = '' " +
-          "OR r.title LIKE CONCAT('%', :keyword, '%') " +
+          "OR r.name LIKE CONCAT('%', :keyword, '%') " +
+          "OR r.type LIKE CONCAT('%', :keyword, '%') " +
           "OR r.price LIKE CONCAT('%', :keyword, '%') " +
           ")" +
           "AND r.delete_flag = :deleteFlag",
       nativeQuery = true)
-  Page<RoomProjection> findAllRoom(@Param("keyword") String keyword, @Param("roomType") String roomType,
+  Page<RoomProjection> findAllRoom(@Param("keyword") String keyword, @Param("typeRoom") String typeRoom,
                                    @Param("deleteFlag") Boolean deleteFlag, Pageable pageable);
 
   @Query(value =
@@ -107,7 +112,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
           "UNION " +
           "SELECT * FROM data_check_checkout data_2 " +
       ") " +
-      "SELECT r.id, r.title, r.price, r.type, r.max_num AS maxNum, r.floor, r.description," +
+      "SELECT r.id, r.name, r.price, r.type, r.bed, r.size, r.capacity, r.services, r.description, " +
       "r.created_date AS createdDate, r.last_modified_date AS lastModifiedDate, " +
       "CASE WHEN r.id IN (SELECT id FROM data_unavailable) THEN FALSE ELSE TRUE END AS isAvailable," +
       "s.id AS saleId, s.day_start AS saleDayStart, s.day_end AS saleDayEnd, s.sale_percent AS saleSalePercent, " +
@@ -123,11 +128,11 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
       "LEFT JOIN users createdBy ON r.created_by = createdBy.id " +
       "LEFT JOIN users lastModifiedBy ON r.last_modified_by = lastModifiedBy.id " +
       "LEFT JOIN sales s ON s.id = r.sale_id " +
-      "WHERE (:maxNum IS NULL OR r.max_num = :maxNum) " +
+      "WHERE (:capacity IS NULL OR r.capacity = :capacity) " +
       "AND (:typeRoom IS NULL OR r.type LIKE CONCAT('%', :typeRoom, '%')) " +
       "AND ( " +
       "COALESCE(:keyword, '') = '' " +
-      "OR r.title LIKE CONCAT('%', :keyword, '%') " +
+      "OR r.name LIKE CONCAT('%', :keyword, '%') " +
       "OR r.type LIKE CONCAT('%', :keyword, '%') " +
       "OR r.price LIKE CONCAT('%', :keyword, '%') " +
       ")" +
@@ -157,17 +162,17 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
           "LEFT JOIN users createdBy ON r.created_by = createdBy.id " +
           "LEFT JOIN users lastModifiedBy ON r.last_modified_by = lastModifiedBy.id " +
           "LEFT JOIN sales s ON s.id = r.sale_id " +
-          "WHERE (:maxNum IS NULL OR r.max_num = :maxNum) " +
+          "WHERE (:capacity IS NULL OR r.capacity = :capacity) " +
           "AND (:typeRoom IS NULL OR r.type LIKE CONCAT('%', :typeRoom, '%')) " +
           "AND ( " +
           "COALESCE(:keyword, '') = '' " +
-          "OR r.title LIKE CONCAT('%', :keyword, '%') " +
+          "OR r.name LIKE CONCAT('%', :keyword, '%') " +
           "OR r.type LIKE CONCAT('%', :keyword, '%') " +
           "OR r.price LIKE CONCAT('%', :keyword, '%') " +
           ")" +
           "AND r.delete_flag = 0",
       nativeQuery = true)
-  Page<RoomProjection> findAllAvailable(@Param("keyword") String keyword, @Param("maxNum") Integer maxNum,
+  Page<RoomProjection> findAllAvailable(@Param("keyword") String keyword, @Param("capacity") Integer capacity,
                                         @Param("typeRoom") String typeRoom, @Param("filter") DateTimeFilterDTO filter,
                                         Pageable pageable);
 
@@ -194,7 +199,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
       nativeQuery = true)
   List<Room> findAllUnavailable(@Param("checkin") LocalDateTime checkin, @Param("checkout") LocalDateTime checkout);
 
-  @Query(value = "SELECT r.id, r.title, r.price, r.type, r.max_num AS maxNum, r.floor, r.description, " +
+  @Query(value = "SELECT r.id, r.name, r.price, r.type, r.bed, r.size, r.capacity, r.services, r.description, " +
       "r.created_date AS createdDate, r.last_modified_date AS lastModifiedDate, COUNT(b.id) AS `value` " +
       "FROM rooms r " +
       "LEFT JOIN booking_room_details brd ON brd.room_id = r.id " +
@@ -202,7 +207,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
       "WHERE (b.id IS NULL OR (MONTH(b.created_date) = :month AND YEAR(b.created_date) = :year)) " +
       "AND ( " +
       "COALESCE(:keyword, '') = '' " +
-      "OR r.title LIKE CONCAT('%', :keyword, '%') " +
+      "OR r.name LIKE CONCAT('%', :keyword, '%') " +
       "OR r.type LIKE CONCAT('%', :keyword, '%') " +
       "OR r.price LIKE CONCAT('%', :keyword, '%') " +
       ")" +
@@ -216,7 +221,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
           "WHERE (b.id IS NULL OR (MONTH(b.created_date) = :month AND YEAR(b.created_date) = :year)) " +
           "AND ( " +
           "COALESCE(:keyword, '') = '' " +
-          "OR r.title LIKE CONCAT('%', :keyword, '%') " +
+          "OR r.name LIKE CONCAT('%', :keyword, '%') " +
           "OR r.type LIKE CONCAT('%', :keyword, '%') " +
           "OR r.price LIKE CONCAT('%', :keyword, '%') " +
           ") " +

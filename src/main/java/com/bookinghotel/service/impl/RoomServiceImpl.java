@@ -4,10 +4,7 @@ import com.bookinghotel.constant.CommonConstant;
 import com.bookinghotel.constant.CommonMessage;
 import com.bookinghotel.constant.ErrorMessage;
 import com.bookinghotel.constant.SortByDataConstant;
-import com.bookinghotel.dto.RoomCreateDTO;
-import com.bookinghotel.dto.RoomDTO;
-import com.bookinghotel.dto.RoomFilterDTO;
-import com.bookinghotel.dto.RoomUpdateDTO;
+import com.bookinghotel.dto.*;
 import com.bookinghotel.dto.common.CommonResponseDTO;
 import com.bookinghotel.dto.common.DateTimeFilterDTO;
 import com.bookinghotel.dto.pagination.PaginationResponseDTO;
@@ -72,17 +69,17 @@ public class RoomServiceImpl implements RoomService {
   }
 
   @Override
-  public PaginationResponseDTO<RoomDTO> getRoomsAvailable(PaginationSearchSortRequestDTO requestDTO, RoomFilterDTO roomFilter) {
+  public PaginationResponseDTO<RoomAvailableDTO> getRoomsAvailable(PaginationSearchSortRequestDTO requestDTO, RoomFilterDTO roomFilter) {
     String roomType = roomFilter.getRoomType() == null ? null : roomFilter.getRoomType().getValue();
-    DateTimeFilterDTO filter =  new DateTimeFilterDTO();
+    DateTimeFilterDTO filter = new DateTimeFilterDTO();
     filter.setFromDateTime(LocalDateTime.of(roomFilter.getCheckin(), CommonConstant.TIME_14H00));
     filter.setToDateTime(LocalDateTime.of(roomFilter.getCheckin(), CommonConstant.TIME_12H00));
     //Pagination
     Pageable pageable = PaginationUtil.buildPageable(requestDTO, SortByDataConstant.ROOM);
-    Page<RoomProjection> rooms = roomRepository.findAllAvailable(requestDTO.getKeyword(), roomFilter.getMaxNum(), roomType, filter, pageable);
+    Page<RoomProjection> rooms = roomRepository.findAllAvailable(requestDTO.getKeyword(), roomFilter.getCapacity(), roomType, filter, pageable);
     //Create Output
     PagingMeta meta = PaginationUtil.buildPagingMeta(requestDTO, SortByDataConstant.ROOM, rooms);
-    return new PaginationResponseDTO<RoomDTO>(meta, toRoomDTOs(rooms));
+    return new PaginationResponseDTO<RoomAvailableDTO>(meta, toRoomAvailableDTOs(rooms));
   }
 
   @Override
@@ -91,7 +88,7 @@ public class RoomServiceImpl implements RoomService {
     User creator = userRepository.getUser(currentUser);
     Room room = roomMapper.createDtoToRoom(roomCreateDTO);
     roomRepository.save(room);
-    Set<Media> medias = mediaService.createMediaForRoom(room, roomCreateDTO.getFiles());
+    Set<Media> medias = mediaService.createMediasForRoom(room, roomCreateDTO.getFiles());
     room.setMedias(medias);
     return roomMapper.toRoomDTO(room, creator, creator);
   }
@@ -106,7 +103,7 @@ public class RoomServiceImpl implements RoomService {
     Room roomUpdate = mediaService.deleteMediaFromRoomUpdate(currentRoom.get(), roomUpdateDTO);
     //add file if exist
     if(roomUpdateDTO.getFiles() != null) {
-      Set<Media> medias = mediaService.createMediaForRoom(currentRoom.get(), roomUpdateDTO.getFiles());
+      Set<Media> medias = mediaService.createMediasForRoom(currentRoom.get(), roomUpdateDTO.getFiles());
       roomUpdate.getMedias().addAll(medias);
       roomRepository.save(roomUpdate);
     }
@@ -121,9 +118,6 @@ public class RoomServiceImpl implements RoomService {
     Optional<Room> currentRoom = roomRepository.findById(roomId);
     checkNotFoundRoomById(currentRoom, roomId);
     currentRoom.get().setDeleteFlag(CommonConstant.TRUE);
-    //set deleteFlag Media
-    Set<Media> mediaDeleteFlag = currentRoom.get().getMedias();
-    mediaService.deleteMediaFlagFalse(mediaDeleteFlag);
     roomRepository.save(currentRoom.get());
     return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.DELETE_SUCCESS);
   }
@@ -151,12 +145,12 @@ public class RoomServiceImpl implements RoomService {
     roomRepository.deleteByDeleteFlag(isDeleteFlag, daysToDeleteRecords);
   }
 
-  private List<RoomDTO> toRoomDTOs(Page<RoomProjection> roomProjections) {
-    List<RoomDTO> roomDTOs = new LinkedList<>();
+  private List<RoomAvailableDTO> toRoomAvailableDTOs(Page<RoomProjection> roomProjections) {
+    List<RoomAvailableDTO> roomAvailableDTOs = new LinkedList<>();
     for(RoomProjection roomProjection : roomProjections) {
-      roomDTOs.add(toRoomDTO(roomProjection));
+      roomAvailableDTOs.add(toRoomAvailableDTO(roomProjection));
     }
-    return roomDTOs;
+    return roomAvailableDTOs;
   }
 
   private List<RoomDTO> toRoomDTOs(Page<RoomProjection> roomProjections, Boolean deleteFlag) {
@@ -173,9 +167,16 @@ public class RoomServiceImpl implements RoomService {
     return roomDTOs;
   }
 
+  private RoomAvailableDTO toRoomAvailableDTO(RoomProjection roomProjection) {
+    RoomAvailableDTO roomAvailableDTO = roomMapper.roomProjectionToRoomAvailableDTO(roomProjection);
+    roomAvailableDTO.setIsAvailable(!roomProjection.getIsAvailable().equals(BigInteger.ZERO));
+    List<Media> medias = mediaService.getMediaByRoom(roomAvailableDTO.getId());
+    roomAvailableDTO.setMedias(mediaMapper.toMediaDTOs(medias));
+    return roomAvailableDTO;
+  }
+
   private RoomDTO toRoomDTO(RoomProjection roomProjection) {
     RoomDTO roomDTO = roomMapper.roomProjectionToRoomDTO(roomProjection);
-    roomDTO.setIsAvailable(!roomProjection.getIsAvailable().equals(BigInteger.ZERO));
     List<Media> medias = mediaService.getMediaByRoom(roomDTO.getId());
     roomDTO.setMedias(mediaMapper.toMediaDTOs(medias));
     return roomDTO;
