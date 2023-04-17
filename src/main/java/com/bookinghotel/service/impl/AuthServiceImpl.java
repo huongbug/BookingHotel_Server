@@ -85,7 +85,7 @@ public class AuthServiceImpl implements AuthService {
   @Override
   public CommonResponseDTO verifySignUp(String email, String token) {
     Optional<User> user = userRepository.findByEmail(email);
-    checkNotFoundUserByEmail(user, email);
+    checkNotFoundUserByEmailAndNotIsEnable(user, email);
     VerificationToken verificationToken = verificationTokenService.getByToken(token);
     checkAccountNotEqualTokenVerify(user.get(), verificationToken);
     user.get().setIsEnable(CommonConstant.TRUE);
@@ -160,6 +160,12 @@ public class AuthServiceImpl implements AuthService {
   private void checkAccountNotEqualTokenVerify(User user, VerificationToken token) {
     if(!Objects.equals(user.getId(), token.getUser().getId())) {
       throw new InvalidException(ErrorMessage.Auth.INCORRECT_TOKEN);
+    }
+  }
+
+  private void checkNotFoundUserByEmailAndNotIsEnable(Optional<User> user, String email) {
+    if (user.isEmpty()) {
+      throw new NotFoundException(String.format(ErrorMessage.User.ERR_ACCOUNT_NOT_FOUND_BY_EMAIL, email));
     }
   }
 
