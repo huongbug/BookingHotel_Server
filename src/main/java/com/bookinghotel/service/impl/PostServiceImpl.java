@@ -76,7 +76,7 @@ public class PostServiceImpl implements PostService {
     post.setUser(creator);
     Post postCreate = postRepository.save(post);
     if (CollectionUtils.isNotEmpty(createDTO.getFiles())) {
-      Set<Media> medias = mediaService.createMediaForPost(post, createDTO.getFiles());
+      Set<Media> medias = mediaService.createMediasForPost(post, createDTO.getFiles());
       postCreate.setMedias(medias);
     }
     return postMapper.toPostDTO(postCreate, creator, creator);
@@ -93,7 +93,7 @@ public class PostServiceImpl implements PostService {
     Post postUpdate = mediaService.deleteMediaFromPostUpdate(currentPost.get(), updateDTO);
     //add file if exist
     if (updateDTO.getFiles() != null) {
-      Set<Media> medias = mediaService.createMediaForPost(currentPost.get(), updateDTO.getFiles());
+      Set<Media> medias = mediaService.createMediasForPost(currentPost.get(), updateDTO.getFiles());
       postUpdate.getMedias().addAll(medias);
       postRepository.save(postUpdate);
     }
@@ -107,9 +107,6 @@ public class PostServiceImpl implements PostService {
     Optional<Post> post = postRepository.findById(postId);
     checkNotFoundPostById(post, postId);
     post.get().setDeleteFlag(CommonConstant.TRUE);
-    //set deleteFlag Media
-    Set<Media> mediaDeleteFlag = post.get().getMedias();
-    mediaService.deleteMediaFlagFalse(mediaDeleteFlag);
     postRepository.save(post.get());
     return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.DELETE_SUCCESS);
   }

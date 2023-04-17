@@ -87,7 +87,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
   @Transactional
   @Modifying
-  @Query("delete from Product p where p.deleteFlag = ?1")
-  void deleteByDeleteFlag(boolean isDelete);
+  @Query(value = "DELETE FROM services WHERE delete_flag = ?1 AND DATEDIFF(NOW(), last_modified_date) >= ?2", nativeQuery = true)
+  void deleteByDeleteFlag(boolean isDelete, int daysToDelete);
 
 }

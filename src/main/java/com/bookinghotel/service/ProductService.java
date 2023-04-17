@@ -26,4 +26,6 @@ public interface ProductService {
 
   CommonResponseDTO restoreProduct(Long productId);
 
+  void deleteProductByDeleteFlag(Boolean isDeleteFlag, Integer daysToDeleteRecords);
+
 }

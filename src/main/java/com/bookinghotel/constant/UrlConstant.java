@@ -138,6 +138,14 @@ public class UrlConstant {
     }
   }
 
+  public static class Media {
+    private static final String PRE_FIX = "/media";
+
+    public static final String GET_POSTS_IN_TRASH = PRE_FIX + "/trash";
+    public static final String DELETE_MEDIA_PERMANENTLY = PRE_FIX + "/delete/trash/{mediaId}";
+    public static final String RESTORE_MEDIA = PRE_FIX + "/restore/{mediaId}";
+  }
+
   public static class Booking {
     private static final String PRE_FIX = "/booking";
 

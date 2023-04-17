@@ -89,4 +89,9 @@ public class ErrorMessage {
     public static final String ERR_NOT_FOUND_ID_IN_TRASH = "Post not found with id %s in the trash";
   }
 
+  public static class Media {
+    public static final String ERR_NOT_FOUND_ID = "Media not found with id: %s";
+    public static final String ERR_NOT_FOUND_ID_IN_TRASH = "Media not found with id: %s in the trash";
+  }
+
 }

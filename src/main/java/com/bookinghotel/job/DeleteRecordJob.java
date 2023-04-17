@@ -20,9 +20,13 @@ public class DeleteRecordJob {
 
   private final RoomService roomService;
 
+  private final MediaService mediaService;
+
   private final SaleService saleService;
 
   private final HotelService hotelService;
+
+  private final ProductService productService;
 
   private final VerificationTokenService verificationTokenService;
 
@@ -48,6 +52,15 @@ public class DeleteRecordJob {
    * This job starts at 4:00 AM everyday
    */
   @Scheduled(cron = "0 0 4 * * *")
+  void deleteAllRecordStepThree() {
+    mediaService.deleteMediaByDeleteFlag(CommonConstant.TRUE, CommonConstant.DAYS_TO_DELETE_RECORDS);
+    productService.deleteProductByDeleteFlag(CommonConstant.TRUE, CommonConstant.DAYS_TO_DELETE_RECORDS);
+  }
+
+  /**
+   * This job starts at 4:30 AM everyday
+   */
+  @Scheduled(cron = "0 30 4 * * *")
   void deleteAllRecordJunkVerificationToken() {
     verificationTokenService.deleteAllJunkVerificationToken();;
   }

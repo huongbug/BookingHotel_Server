@@ -88,13 +88,11 @@ public class ProductServiceImpl implements ProductService {
     checkNotFoundProductById(currentProduct, productId);
     productMapper.updateProductFromDTO(productUpdateDTO, currentProduct.get());
     //update thumbnail
-    if(StringUtils.isEmpty(productUpdateDTO.getThumbnail())) {
-      if(productUpdateDTO.getThumbnailFile() != null) {
-        uploadFile.removeImageFromUrl(currentProduct.get().getThumbnail());
-        currentProduct.get().setThumbnail(uploadFile.getUrlFromFile(productUpdateDTO.getThumbnailFile()));
-      } else {
-        throw new InvalidException(ErrorMessage.Product.ERR_PRODUCT_MUST_HAVE_THUMBNAIL);
-      }
+    if(productUpdateDTO.getThumbnailFile() != null) {
+      uploadFile.removeImageFromUrl(currentProduct.get().getThumbnail());
+      currentProduct.get().setThumbnail(uploadFile.getUrlFromFile(productUpdateDTO.getThumbnailFile()));
+    } else {
+      throw new InvalidException(ErrorMessage.Product.ERR_PRODUCT_MUST_HAVE_THUMBNAIL);
     }
     User updater = userRepository.getUser(principal);
     User creator = userRepository.findById(currentProduct.get().getCreatedBy()).get();
@@ -125,6 +123,11 @@ public class ProductServiceImpl implements ProductService {
     product.get().setDeleteFlag(CommonConstant.FALSE);
     productRepository.save(product.get());
     return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.RESTORE_SUCCESS);
+  }
+
+  @Override
+  public void deleteProductByDeleteFlag(Boolean isDeleteFlag, Integer daysToDeleteRecords) {
+    productRepository.deleteByDeleteFlag(isDeleteFlag, daysToDeleteRecords);
   }
 
   private List<ProductDTO> toProductDTOs(Page<ProductProjection> productProjections) {
