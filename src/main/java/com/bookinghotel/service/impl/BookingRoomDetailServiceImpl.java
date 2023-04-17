@@ -59,7 +59,7 @@ public class BookingRoomDetailServiceImpl implements BookingRoomDetailService {
     for(Room room : rooms) {
       for(Room roomUn : roomUnavailable) {
         if(room.getId().equals(roomUn.getId())) {
-          result.put(room.getTitle(), ErrorMessage.Room.ERR_ROOM_UNAVAILABLE);
+          result.put(room.getName(), ErrorMessage.Room.ERR_ROOM_UNAVAILABLE);
         }
       }
     }

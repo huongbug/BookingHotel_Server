@@ -19,12 +19,16 @@ public interface BookingMapper {
 
   @Mappings({
       @Mapping(target = "id", source = "bookingRoomDetail.room.id"),
-      @Mapping(target = "title", source = "bookingRoomDetail.room.title"),
+      @Mapping(target = "name", source = "bookingRoomDetail.room.name"),
       @Mapping(target = "type", source = "bookingRoomDetail.room.type"),
-      @Mapping(target = "maxNum", source = "bookingRoomDetail.room.maxNum"),
-      @Mapping(target = "floor", source = "bookingRoomDetail.room.floor"),
+      @Mapping(target = "bed", source = "bookingRoomDetail.room.bed"),
+      @Mapping(target = "size", source = "bookingRoomDetail.room.size"),
+      @Mapping(target = "capacity", source = "bookingRoomDetail.room.capacity"),
+      @Mapping(target = "services", source = "bookingRoomDetail.room.services"),
+      @Mapping(target = "description", source = "bookingRoomDetail.room.description"),
       @Mapping(target = "price", source = "bookingRoomDetail.price"),
-      @Mapping(target = "salePercent", source = "bookingRoomDetail.salePercent")
+      @Mapping(target = "salePercent", source = "bookingRoomDetail.salePercent"),
+      @Mapping(target = "medias", source = "bookingRoomDetail.room.medias")
   })
   BookingRoomDetailDTO toBookingRoomDetailDTO(BookingRoomDetail bookingRoomDetail);
 

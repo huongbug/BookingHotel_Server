@@ -1,10 +1,11 @@
 package com.bookinghotel.dto;
 
-import com.bookinghotel.constant.RoomType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,16 +15,24 @@ public class BookingRoomDetailDTO {
 
   private Long id;
 
-  private String title;
+  private String name;
 
   private Long price;
 
-  private RoomType type;
+  private String type;
 
-  private Integer maxNum;
+  private String bed;
 
-  private Integer floor;
+  private Integer size;
+
+  private Integer capacity;
+
+  private String services;
+
+  private String description;
 
   private Integer salePercent;
+
+  private List<MediaDTO> medias;
 
 }

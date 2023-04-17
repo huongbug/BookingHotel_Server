@@ -2,12 +2,10 @@ package com.bookinghotel.controller;
 
 import com.bookinghotel.base.RestApiV1;
 import com.bookinghotel.base.VsResponseUtil;
-import com.bookinghotel.constant.BookingStatus;
 import com.bookinghotel.constant.RoleConstant;
 import com.bookinghotel.constant.UrlConstant;
 import com.bookinghotel.dto.BookingCreateDTO;
 import com.bookinghotel.dto.BookingFilterDTO;
-import com.bookinghotel.dto.common.DateFilterDTO;
 import com.bookinghotel.dto.pagination.PaginationSortRequestDTO;
 import com.bookinghotel.security.AuthorizationInfo;
 import com.bookinghotel.security.CurrentUserLogin;
@@ -85,7 +83,7 @@ public class BookingController {
     return VsResponseUtil.ok(bookingService.checkOutAndPayment(bookingId, principal));
   }
 
-  @Tag(name = "booking-controller-admin")
+  @Tags({@Tag(name = "booking-controller-admin"), @Tag(name = "booking-controller")})
   @Operation(summary = "API cancel booking")
   @AuthorizationInfo(role = { RoleConstant.ADMIN, RoleConstant.USER })
   @PostMapping(value = UrlConstant.Booking.CANCEL_BOOKING)
