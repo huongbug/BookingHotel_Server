@@ -1,6 +1,5 @@
 package com.bookinghotel.projection;
 
-import com.bookinghotel.constant.RoomType;
 import com.bookinghotel.dto.SaleSummaryDTO;
 import com.bookinghotel.dto.common.CreatedByDTO;
 import com.bookinghotel.dto.common.LastModifiedByDTO;
@@ -13,15 +12,19 @@ public interface RoomProjection {
 
   Long getId();
 
-  String getTitle();
+  String getName();
 
   Long getPrice();
 
-  RoomType getType();
+  String getType();
 
-  Integer getMaxNum();
+  String getBed();
 
-  Integer getFloor();
+  Integer getSize();
+
+  Integer getCapacity();
+
+  String getServices();
 
   String getDescription();
 

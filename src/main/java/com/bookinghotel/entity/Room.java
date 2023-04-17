@@ -28,20 +28,25 @@ public class Room extends FlagUserDateAuditing {
 
   @Nationalized
   @Column(nullable = false)
-  private String title;
+  private String name;
 
   @Column(nullable = false)
   private Long price;
 
   @Column(nullable = false)
-  @Enumerated(EnumType.STRING)
-  private RoomType type;
+  private String type;
 
   @Column(nullable = false)
-  private Integer maxNum;
+  private String bed;
 
   @Column(nullable = false)
-  private Integer floor;
+  private Integer size;
+
+  @Column(nullable = false)
+  private Integer capacity;
+
+  @Column(nullable = false)
+  private String services;
 
   @Lob
   @Nationalized

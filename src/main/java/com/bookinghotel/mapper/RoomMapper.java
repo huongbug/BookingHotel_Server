@@ -1,9 +1,7 @@
 package com.bookinghotel.mapper;
 
-import com.bookinghotel.dto.RoomCreateDTO;
-import com.bookinghotel.dto.RoomDTO;
-import com.bookinghotel.dto.RoomSummaryDTO;
-import com.bookinghotel.dto.RoomUpdateDTO;
+import com.bookinghotel.dto.*;
+import com.bookinghotel.dto.init.RoomInitJSON;
 import com.bookinghotel.entity.Room;
 import com.bookinghotel.entity.User;
 import com.bookinghotel.projection.RoomProjection;
@@ -36,9 +34,13 @@ public interface RoomMapper {
   @Mapping(target = "medias", ignore = true)
   void updateRoomFromDTO(RoomUpdateDTO updateDTO, @MappingTarget Room room);
 
-  @Mapping(target = "isAvailable", ignore = true)
   RoomDTO roomProjectionToRoomDTO(RoomProjection projection);
 
+  @Mapping(target = "isAvailable", ignore = true)
+  RoomAvailableDTO roomProjectionToRoomAvailableDTO(RoomProjection projection);
+
   RoomSummaryDTO statisticRoomToRoomDTO(StatisticRoomBookedProjection projection);
+
+  Room roomInitToRoom(RoomInitJSON initJSON);
 
 }

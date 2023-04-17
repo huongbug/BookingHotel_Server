@@ -26,6 +26,6 @@ public class RoomFilterDTO {
 
   private RoomType roomType;
 
-  private Integer maxNum;
+  private Integer capacity;
 
 }

@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class RoomDTO extends DateAuditingDTO {
+public class RoomAvailableDTO extends DateAuditingDTO {
 
   private Long id;
 
@@ -35,6 +35,8 @@ public class RoomDTO extends DateAuditingDTO {
   private String description;
 
   private SaleSummaryDTO sale;
+
+  private Boolean isAvailable;
 
   private CreatedByDTO createdBy;
 

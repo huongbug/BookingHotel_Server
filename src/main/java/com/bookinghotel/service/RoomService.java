@@ -1,9 +1,6 @@
 package com.bookinghotel.service;
 
-import com.bookinghotel.dto.RoomCreateDTO;
-import com.bookinghotel.dto.RoomDTO;
-import com.bookinghotel.dto.RoomFilterDTO;
-import com.bookinghotel.dto.RoomUpdateDTO;
+import com.bookinghotel.dto.*;
 import com.bookinghotel.dto.common.CommonResponseDTO;
 import com.bookinghotel.dto.pagination.PaginationResponseDTO;
 import com.bookinghotel.dto.pagination.PaginationSearchSortRequestDTO;
@@ -15,7 +12,7 @@ public interface RoomService {
 
   PaginationResponseDTO<RoomDTO> getRooms(PaginationSearchSortRequestDTO requestDTO, String roomType, Boolean deleteFlag);
 
-  PaginationResponseDTO<RoomDTO> getRoomsAvailable(PaginationSearchSortRequestDTO requestDTO, RoomFilterDTO roomFilterDTO);
+  PaginationResponseDTO<RoomAvailableDTO> getRoomsAvailable(PaginationSearchSortRequestDTO requestDTO, RoomFilterDTO roomFilterDTO);
 
   RoomDTO createRoom(RoomCreateDTO roomCreateDTO, UserPrincipal currentUser);
 

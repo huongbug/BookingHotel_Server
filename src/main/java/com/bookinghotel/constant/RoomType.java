@@ -9,8 +9,10 @@ import lombok.NoArgsConstructor;
 @Getter
 public enum RoomType {
 
-  Normal("Normal"),
-  VIP("VIP");
+  Standard("Standard"),
+  Superior("Superior"),
+  Deluxe("Deluxe"),
+  Suite("Suite");
 
   private String value;
 

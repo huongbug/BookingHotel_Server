@@ -19,22 +19,28 @@ import java.util.List;
 @Setter
 public class RoomCreateDTO {
 
-  @NotBlank(message = ErrorMessage.NOT_BLANK_FIELD)
-  private String title;
+  @NotNull(message = ErrorMessage.INVALID_SOME_THING_FIELD_IS_REQUIRED)
+  private String name;
 
   @NotNull(message = ErrorMessage.INVALID_SOME_THING_FIELD_IS_REQUIRED)
   private Long price;
 
   @NotNull(message = ErrorMessage.INVALID_SOME_THING_FIELD_IS_REQUIRED)
-  private RoomType type;
+  private String type;
 
   @NotNull(message = ErrorMessage.INVALID_SOME_THING_FIELD_IS_REQUIRED)
-  private Integer maxNum;
+  private String bed;
 
   @NotNull(message = ErrorMessage.INVALID_SOME_THING_FIELD_IS_REQUIRED)
-  private Integer floor;
+  private Integer size;
 
-  @NotBlank(message = ErrorMessage.NOT_BLANK_FIELD)
+  @NotNull(message = ErrorMessage.INVALID_SOME_THING_FIELD_IS_REQUIRED)
+  private Integer capacity;
+
+  @NotNull(message = ErrorMessage.INVALID_SOME_THING_FIELD_IS_REQUIRED)
+  private String services;
+
+  @NotNull(message = ErrorMessage.INVALID_SOME_THING_FIELD_IS_REQUIRED)
   private String description;
 
   @NotNull(message = ErrorMessage.INVALID_SOME_THING_FIELD_IS_REQUIRED)
