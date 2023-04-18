@@ -11,7 +11,7 @@
       "description": "Standard Single là loại phòng tiêu chuẩn, đơn giản nhất có diện tích nhỏ 12m2. Phòng dành cho 1 người, được trang bị 1 giường đơn.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230132/xrg8mvn43bfnknifhabo.jpg",
+          "url": "init/room/standard-single/1-standard-single.jpg",
           "type": "Image"
         }
       ]
@@ -27,7 +27,7 @@
       "description": "Standard Single là loại phòng tiêu chuẩn, đơn giản nhất có diện tích nhỏ 12m2. Phòng dành cho 1 người, được trang bị 1 giường đơn.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230132/xrg8mvn43bfnknifhabo.jpg",
+          "url": "init/room/standard-single/1-standard-single.jpg",
           "type": "Image"
         }
       ]
@@ -43,7 +43,7 @@
       "description": "Standard Single là loại phòng tiêu chuẩn, đơn giản nhất có diện tích nhỏ 12m2. Phòng dành cho 1 người, được trang bị 1 giường đơn.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230132/xrg8mvn43bfnknifhabo.jpg",
+          "url": "init/room/standard-single/1-standard-single.jpg",
           "type": "Image"
         }
       ]
@@ -59,7 +59,7 @@
       "description": "Standard Single là loại phòng tiêu chuẩn, đơn giản nhất có diện tích nhỏ 12m2. Phòng dành cho 1 người, được trang bị 1 giường đơn.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230132/xrg8mvn43bfnknifhabo.jpg",
+          "url": "init/room/standard-single/1-standard-single.jpg",
           "type": "Image"
         }
       ]
@@ -75,7 +75,7 @@
       "description": "Standard Single là loại phòng tiêu chuẩn, đơn giản nhất có diện tích nhỏ 12m2. Phòng dành cho 1 người, được trang bị 1 giường đơn.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230132/xrg8mvn43bfnknifhabo.jpg",
+          "url": "init/room/standard-single/1-standard-single.jpg",
           "type": "Image"
         }
       ]
@@ -93,7 +93,7 @@
       "description": "Standard Double là loại phòng tiêu chuẩn, đơn giản nhất có diện tích 15m2. Phòng dành cho 2 người, được trang bị 1 giường đôi.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230380/fry6bxc2dtvxy7qewi2s.jpg",
+          "url": "init/room/standard-double/1-standard-double.jpg",
           "type": "Image"
         }
       ]
@@ -109,7 +109,7 @@
       "description": "Standard Double là loại phòng tiêu chuẩn, đơn giản nhất có diện tích 15m2. Phòng dành cho 2 người, được trang bị 1 giường đôi.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230380/fry6bxc2dtvxy7qewi2s.jpg",
+          "url": "init/room/standard-double/1-standard-double.jpg",
           "type": "Image"
         }
       ]
@@ -125,7 +125,7 @@
       "description": "Standard Double là loại phòng tiêu chuẩn, đơn giản nhất có diện tích 15m2. Phòng dành cho 2 người, được trang bị 1 giường đôi.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230380/fry6bxc2dtvxy7qewi2s.jpg",
+          "url": "init/room/standard-double/1-standard-double.jpg",
           "type": "Image"
         }
       ]
@@ -141,7 +141,7 @@
       "description": "Standard Double là loại phòng tiêu chuẩn, đơn giản nhất có diện tích 15m2. Phòng dành cho 2 người, được trang bị 1 giường đôi.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230380/fry6bxc2dtvxy7qewi2s.jpg",
+          "url": "init/room/standard-double/1-standard-double.jpg",
           "type": "Image"
         }
       ]
@@ -157,7 +157,7 @@
       "description": "Standard Double là loại phòng tiêu chuẩn, đơn giản nhất có diện tích 15m2. Phòng dành cho 2 người, được trang bị 1 giường đôi.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230380/fry6bxc2dtvxy7qewi2s.jpg",
+          "url": "init/room/standard-double/1-standard-double.jpg",
           "type": "Image"
         }
       ]
@@ -165,7 +165,7 @@
   ],
   "Standard Twin": [
     {
-      "name": "Standard Double 211",
+      "name": "Standard Twin 211",
       "price": 470000,
       "type": "Standard Twin",
       "bed": "2 giường đơn",
@@ -175,13 +175,13 @@
       "description": "Standard Twin là loại phòng tiêu chuẩn, đơn giản có diện tích 15m2. Phòng dành cho 2 người, được trang bị 2 giường đơn.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230435/bz5shdrm2fxvpjqzhziw.jpg",
+          "url": "init/room/standard-twin/1-standard-twin.jpg",
           "type": "Image"
         }
       ]
     },
     {
-      "name": "Standard Double 212",
+      "name": "Standard Twin 212",
       "price": 470000,
       "type": "Standard Twin",
       "bed": "2 giường đơn",
@@ -191,13 +191,13 @@
       "description": "Standard Twin là loại phòng tiêu chuẩn, đơn giản có diện tích 15m2. Phòng dành cho 2 người, được trang bị 2 giường đơn.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230435/bz5shdrm2fxvpjqzhziw.jpg",
+          "url": "init/room/standard-twin/1-standard-twin.jpg",
           "type": "Image"
         }
       ]
     },
     {
-      "name": "Standard Double 213",
+      "name": "Standard Twin 213",
       "price": 470000,
       "type": "Standard Twin",
       "bed": "2 giường đơn",
@@ -207,13 +207,13 @@
       "description": "Standard Twin là loại phòng tiêu chuẩn, đơn giản có diện tích 15m2. Phòng dành cho 2 người, được trang bị 2 giường đơn.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230435/bz5shdrm2fxvpjqzhziw.jpg",
+          "url": "init/room/standard-twin/1-standard-twin.jpg",
           "type": "Image"
         }
       ]
     },
     {
-      "name": "Standard Double 214",
+      "name": "Standard Twin 214",
       "price": 470000,
       "type": "Standard Twin",
       "bed": "2 giường đơn",
@@ -223,13 +223,13 @@
       "description": "Standard Twin là loại phòng tiêu chuẩn, đơn giản có diện tích 15m2. Phòng dành cho 2 người, được trang bị 2 giường đơn.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230435/bz5shdrm2fxvpjqzhziw.jpg",
+          "url": "init/room/standard-twin/1-standard-twin.jpg",
           "type": "Image"
         }
       ]
     },
     {
-      "name": "Standard Double 215",
+      "name": "Standard Twin 215",
       "price": 470000,
       "type": "Standard Twin",
       "bed": "2 giường đơn",
@@ -239,7 +239,7 @@
       "description": "Standard Twin là loại phòng tiêu chuẩn, đơn giản có diện tích 15m2. Phòng dành cho 2 người, được trang bị 2 giường đơn.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230435/bz5shdrm2fxvpjqzhziw.jpg",
+          "url": "init/room/standard-twin/1-standard-twin.jpg",
           "type": "Image"
         }
       ]
@@ -257,7 +257,7 @@
       "description": "Superior Double có diện tích 20m2. Phòng dành cho 2 người, được trang bị 1 giường đôi và cùng với các trang thiết bị, cơ sở vật chất ở chất lượng khá.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230564/ype6ycgzn3sa3bhcziz1.png",
+          "url": "init/room/superior-double/1-superior-double.png",
           "type": "Image"
         }
       ]
@@ -273,7 +273,7 @@
       "description": "Superior Double có diện tích 20m2. Phòng dành cho 2 người, được trang bị 1 giường đôi và cùng với các trang thiết bị, cơ sở vật chất ở chất lượng khá.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230564/ype6ycgzn3sa3bhcziz1.png",
+          "url": "init/room/superior-double/1-superior-double.png",
           "type": "Image"
         }
       ]
@@ -289,7 +289,7 @@
       "description": "Superior Double có diện tích 20m2. Phòng dành cho 2 người, được trang bị 1 giường đôi và cùng với các trang thiết bị, cơ sở vật chất ở chất lượng khá.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230564/ype6ycgzn3sa3bhcziz1.png",
+          "url": "init/room/superior-double/1-superior-double.png",
           "type": "Image"
         }
       ]
@@ -305,7 +305,7 @@
       "description": "Superior Double có diện tích 20m2. Phòng dành cho 2 người, được trang bị 1 giường đôi và cùng với các trang thiết bị, cơ sở vật chất ở chất lượng khá.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230564/ype6ycgzn3sa3bhcziz1.png",
+          "url": "init/room/superior-double/1-superior-double.png",
           "type": "Image"
         }
       ]
@@ -321,7 +321,7 @@
       "description": "Superior Double có diện tích 20m2. Phòng dành cho 2 người, được trang bị 1 giường đôi và cùng với các trang thiết bị, cơ sở vật chất ở chất lượng khá.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230564/ype6ycgzn3sa3bhcziz1.png",
+          "url": "init/room/superior-double/1-superior-double.png",
           "type": "Image"
         }
       ]
@@ -339,7 +339,7 @@
       "description": "Superior Twin có diện tích 25m2. Phòng dành cho 2 người, được trang bị 2 giường đơn và cùng với các trang thiết bị, cơ sở vật chất ở chất lượng khá.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230704/gq90g6jr41pjzuvdfeef.png",
+          "url": "init/room/superior-twin/1-superior-twin.png",
           "type": "Image"
         }
       ]
@@ -355,7 +355,7 @@
       "description": "Superior Twin có diện tích 25m2. Phòng dành cho 2 người, được trang bị 2 giường đơn và cùng với các trang thiết bị, cơ sở vật chất ở chất lượng khá.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230704/gq90g6jr41pjzuvdfeef.png",
+          "url": "init/room/superior-twin/1-superior-twin.png",
           "type": "Image"
         }
       ]
@@ -371,7 +371,7 @@
       "description": "Superior Twin có diện tích 25m2. Phòng dành cho 2 người, được trang bị 2 giường đơn và cùng với các trang thiết bị, cơ sở vật chất ở chất lượng khá.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230704/gq90g6jr41pjzuvdfeef.png",
+          "url": "init/room/superior-twin/1-superior-twin.png",
           "type": "Image"
         }
       ]
@@ -387,7 +387,7 @@
       "description": "Superior Twin có diện tích 25m2. Phòng dành cho 2 người, được trang bị 2 giường đơn và cùng với các trang thiết bị, cơ sở vật chất ở chất lượng khá.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230704/gq90g6jr41pjzuvdfeef.png",
+          "url": "init/room/superior-twin/1-superior-twin.png",
           "type": "Image"
         }
       ]
@@ -403,7 +403,7 @@
       "description": "Superior Twin có diện tích 25m2. Phòng dành cho 2 người, được trang bị 2 giường đơn và cùng với các trang thiết bị, cơ sở vật chất ở chất lượng khá.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230704/gq90g6jr41pjzuvdfeef.png",
+          "url": "init/room/superior-twin/1-superior-twin.png",
           "type": "Image"
         }
       ]
@@ -421,7 +421,7 @@
       "description": "Superior Twin có diện tích 25m2. Phòng dành cho 3 người, được trang bị 1 giường king size và cùng với các trang thiết bị, cơ sở vật chất ở chất lượng khá.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230657/f64yvb81z4kh6xxzdf6x.png",
+          "url": "init/room/superior-king/1-superior-king.png",
           "type": "Image"
         }
       ]
@@ -437,7 +437,7 @@
       "description": "Superior Twin có diện tích 25m2. Phòng dành cho 3 người, được trang bị 1 giường king size và cùng với các trang thiết bị, cơ sở vật chất ở chất lượng khá.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230657/f64yvb81z4kh6xxzdf6x.png",
+          "url": "init/room/superior-king/1-superior-king.png",
           "type": "Image"
         }
       ]
@@ -453,7 +453,7 @@
       "description": "Superior Twin có diện tích 25m2. Phòng dành cho 3 người, được trang bị 1 giường king size và cùng với các trang thiết bị, cơ sở vật chất ở chất lượng khá.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230657/f64yvb81z4kh6xxzdf6x.png",
+          "url": "init/room/superior-king/1-superior-king.png",
           "type": "Image"
         }
       ]
@@ -469,7 +469,7 @@
       "description": "Superior Twin có diện tích 25m2. Phòng dành cho 3 người, được trang bị 1 giường king size và cùng với các trang thiết bị, cơ sở vật chất ở chất lượng khá.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230657/f64yvb81z4kh6xxzdf6x.png",
+          "url": "init/room/superior-king/1-superior-king.png",
           "type": "Image"
         }
       ]
@@ -485,7 +485,7 @@
       "description": "Superior Twin có diện tích 25m2. Phòng dành cho 3 người, được trang bị 1 giường king size và cùng với các trang thiết bị, cơ sở vật chất ở chất lượng khá.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230657/f64yvb81z4kh6xxzdf6x.png",
+          "url": "init/room/superior-king/1-superior-king.png",
           "type": "Image"
         }
       ]
@@ -503,7 +503,7 @@
       "description": "Deluxe Double có diện tích 32m2. Phòng dành cho 2 người, được trang bị 1 giường đôi và cùng với các trang thiết bị, cơ sở vật chất ở chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230792/yytterhfeh6m7wgbox9u.jpg",
+          "url": "init/room/deluxe-double/1-deluxe-double.jpg",
           "type": "Image"
         }
       ]
@@ -519,7 +519,7 @@
       "description": "Deluxe Double có diện tích 32m2. Phòng dành cho 2 người, được trang bị 1 giường đôi và cùng với các trang thiết bị, cơ sở vật chất ở chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230792/yytterhfeh6m7wgbox9u.jpg",
+          "url": "init/room/deluxe-double/1-deluxe-double.jpg",
           "type": "Image"
         }
       ]
@@ -535,7 +535,7 @@
       "description": "Deluxe Double có diện tích 32m2. Phòng dành cho 2 người, được trang bị 1 giường đôi và cùng với các trang thiết bị, cơ sở vật chất ở chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230792/yytterhfeh6m7wgbox9u.jpg",
+          "url": "init/room/deluxe-double/1-deluxe-double.jpg",
           "type": "Image"
         }
       ]
@@ -553,7 +553,7 @@
       "description": "Deluxe Double Sea View có diện tích 32m2. Phòng có view hướng ra biển dành cho 2 người, được trang bị 1 giường đôi và các trang thiết bị trong phòng đạt chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230851/is7ulvlusywvdzfarfrt.jpg",
+          "url": "init/room/deluxe-double-sea-view/1-deluxe-double-sea-view.jpg",
           "type": "Image"
         }
       ]
@@ -569,7 +569,7 @@
       "description": "Deluxe Double Sea View có diện tích 32m2. Phòng có view hướng ra biển dành cho 2 người, được trang bị 1 giường đôi và các trang thiết bị trong phòng đạt chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230851/is7ulvlusywvdzfarfrt.jpg",
+          "url": "init/room/deluxe-double-sea-view/1-deluxe-double-sea-view.jpg",
           "type": "Image"
         }
       ]
@@ -585,7 +585,7 @@
       "description": "Deluxe Double Sea View có diện tích 32m2. Phòng có view hướng ra biển dành cho 2 người, được trang bị 1 giường đôi và các trang thiết bị trong phòng đạt chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230851/is7ulvlusywvdzfarfrt.jpg",
+          "url": "init/room/deluxe-double-sea-view/1-deluxe-double-sea-view.jpg",
           "type": "Image"
         }
       ]
@@ -601,7 +601,7 @@
       "description": "Deluxe Double Sea View có diện tích 32m2. Phòng có view hướng ra biển dành cho 2 người, được trang bị 1 giường đôi và các trang thiết bị trong phòng đạt chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230851/is7ulvlusywvdzfarfrt.jpg",
+          "url": "init/room/deluxe-double-sea-view/1-deluxe-double-sea-view.jpg",
           "type": "Image"
         }
       ]
@@ -619,7 +619,7 @@
       "description": "Deluxe Twin có diện tích 32m2. Phòng dành cho 2 người, được trang bị 2 giường đơn và các trang thiết bị trong phòng đạt chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681231418/n1uxg4jumjsm5y1xjdfu.jpg",
+          "url": "init/room/deluxe-twin/1-deluxe-twin.jpg",
           "type": "Image"
         }
       ]
@@ -635,7 +635,7 @@
       "description": "Deluxe Twin có diện tích 32m2. Phòng dành cho 2 người, được trang bị 2 giường đơn và các trang thiết bị trong phòng đạt chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681231418/n1uxg4jumjsm5y1xjdfu.jpg",
+          "url": "init/room/deluxe-twin/1-deluxe-twin.jpg",
           "type": "Image"
         }
       ]
@@ -651,7 +651,7 @@
       "description": "Deluxe Twin có diện tích 32m2. Phòng dành cho 2 người, được trang bị 2 giường đơn và các trang thiết bị trong phòng đạt chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681231418/n1uxg4jumjsm5y1xjdfu.jpg",
+          "url": "init/room/deluxe-twin/1-deluxe-twin.jpg",
           "type": "Image"
         }
       ]
@@ -669,7 +669,7 @@
       "description": "Deluxe Twin Sea View có diện tích 32m2. Phòng có view hướng ra biển dành cho 2 người, được trang bị 2 giường đơn và các trang thiết bị trong phòng đạt chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681231450/konahl5kofd4555edxhz.jpg",
+          "url": "init/room/deluxe-twin-sea-view/1-deluxe-twin-sea-view.jpg",
           "type": "Image"
         }
       ]
@@ -685,7 +685,7 @@
       "description": "Deluxe Twin Sea View có diện tích 32m2. Phòng có view hướng ra biển dành cho 2 người, được trang bị 2 giường đơn và các trang thiết bị trong phòng đạt chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681231450/konahl5kofd4555edxhz.jpg",
+          "url": "init/room/deluxe-twin-sea-view/1-deluxe-twin-sea-view.jpg",
           "type": "Image"
         }
       ]
@@ -701,7 +701,7 @@
       "description": "Deluxe Twin Sea View có diện tích 32m2. Phòng có view hướng ra biển dành cho 2 người, được trang bị 2 giường đơn và các trang thiết bị trong phòng đạt chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681231450/konahl5kofd4555edxhz.jpg",
+          "url": "init/room/deluxe-twin-sea-view/1-deluxe-twin-sea-view.jpg",
           "type": "Image"
         }
       ]
@@ -717,7 +717,7 @@
       "description": "Deluxe Twin Sea View có diện tích 32m2. Phòng có view hướng ra biển dành cho 2 người, được trang bị 2 giường đơn và các trang thiết bị trong phòng đạt chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681231450/konahl5kofd4555edxhz.jpg",
+          "url": "init/room/deluxe-twin-sea-view/1-deluxe-twin-sea-view.jpg",
           "type": "Image"
         }
       ]
@@ -735,7 +735,7 @@
       "description": "Deluxe King có diện tích 32m2. Phòng dành cho 3 người, được trang bị 1 giường king size và các trang thiết bị trong phòng đạt chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230887/ylvy0ndlwhfppaqwr9t9.jpg",
+          "url": "init/room/deluxe-king/1-deluxe-king.jpg",
           "type": "Image"
         }
       ]
@@ -751,7 +751,7 @@
       "description": "Deluxe King có diện tích 32m2. Phòng dành cho 3 người, được trang bị 1 giường king size và các trang thiết bị trong phòng đạt chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230887/ylvy0ndlwhfppaqwr9t9.jpg",
+          "url": "init/room/deluxe-king/1-deluxe-king.jpg",
           "type": "Image"
         }
       ]
@@ -767,7 +767,7 @@
       "description": "Deluxe King có diện tích 32m2. Phòng dành cho 3 người, được trang bị 1 giường king size và các trang thiết bị trong phòng đạt chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230887/ylvy0ndlwhfppaqwr9t9.jpg",
+          "url": "init/room/deluxe-king/1-deluxe-king.jpg",
           "type": "Image"
         }
       ]
@@ -785,7 +785,7 @@
       "description": "Deluxe King có diện tích 32m2. Phòng có view hướng ra biển dành cho 3 người, được trang bị 1 giường king size và các trang thiết bị trong phòng đạt chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230887/ylvy0ndlwhfppaqwr9t9.jpg",
+          "url": "init/room/deluxe-king-sea-view/1-deluxe-king-sea-view.webp",
           "type": "Image"
         }
       ]
@@ -801,7 +801,7 @@
       "description": "Deluxe King có diện tích 32m2. Phòng có view hướng ra biển dành cho 3 người, được trang bị 1 giường king size và các trang thiết bị trong phòng đạt chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230887/ylvy0ndlwhfppaqwr9t9.jpg",
+          "url": "init/room/deluxe-king-sea-view/1-deluxe-king-sea-view.webp",
           "type": "Image"
         }
       ]
@@ -817,7 +817,7 @@
       "description": "Deluxe King có diện tích 32m2. Phòng có view hướng ra biển dành cho 3 người, được trang bị 1 giường king size và các trang thiết bị trong phòng đạt chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230887/ylvy0ndlwhfppaqwr9t9.jpg",
+          "url": "init/room/deluxe-king-sea-view/1-deluxe-king-sea-view.webp",
           "type": "Image"
         }
       ]
@@ -833,7 +833,7 @@
       "description": "Deluxe King có diện tích 32m2. Phòng có view hướng ra biển dành cho 3 người, được trang bị 1 giường king size và các trang thiết bị trong phòng đạt chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681230887/ylvy0ndlwhfppaqwr9t9.jpg",
+          "url": "init/room/deluxe-king-sea-view/1-deluxe-king-sea-view.webp",
           "type": "Image"
         }
       ]
@@ -851,7 +851,7 @@
       "description": "Phòng Deluxe Triple có diện tích 35m2. Phòng dành cho 3 người, được trang bị 3 giường đơn và các trang thiết bị trong phòng đạt chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681231729/nt6sw3qfk56jm1hvvpgm.jpg",
+          "url": "init/room/deluxe-triple/1-deluxe-triple.jpg",
           "type": "Image"
         }
       ]
@@ -867,7 +867,7 @@
       "description": "Phòng Deluxe Triple có diện tích 35m2. Phòng dành cho 3 người, được trang bị 3 giường đơn và các trang thiết bị trong phòng đạt chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681231729/nt6sw3qfk56jm1hvvpgm.jpg",
+          "url": "init/room/deluxe-triple/1-deluxe-triple.jpg",
           "type": "Image"
         }
       ]
@@ -883,7 +883,7 @@
       "description": "Phòng Deluxe Triple có diện tích 35m2. Phòng dành cho 3 người, được trang bị 3 giường đơn và các trang thiết bị trong phòng đạt chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681231729/nt6sw3qfk56jm1hvvpgm.jpg",
+          "url": "init/room/deluxe-triple/1-deluxe-triple.jpg",
           "type": "Image"
         }
       ]
@@ -901,7 +901,7 @@
       "description": "Deluxe King có diện tích 35m2. Phòng có view hướng ra biển dành cho 3 người, được trang bị 3 giường đơn và các trang thiết bị trong phòng đạt chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681231551/s7wz7d5oeigwnawqg5ra.jpg",
+          "url": "init/room/deluxe-triple-sea-view/1-deluxe-triple-sea-view.jpg",
           "type": "Image"
         }
       ]
@@ -917,7 +917,7 @@
       "description": "Deluxe King có diện tích 35m2. Phòng có view hướng ra biển dành cho 3 người, được trang bị 3 giường đơn và các trang thiết bị trong phòng đạt chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681231551/s7wz7d5oeigwnawqg5ra.jpg",
+          "url": "init/room/deluxe-triple-sea-view/1-deluxe-triple-sea-view.jpg",
           "type": "Image"
         }
       ]
@@ -933,7 +933,7 @@
       "description": "Deluxe King có diện tích 35m2. Phòng có view hướng ra biển dành cho 3 người, được trang bị 3 giường đơn và các trang thiết bị trong phòng đạt chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681231551/s7wz7d5oeigwnawqg5ra.jpg",
+          "url": "init/room/deluxe-triple-sea-view/1-deluxe-triple-sea-view.jpg",
           "type": "Image"
         }
       ]
@@ -949,7 +949,7 @@
       "description": "Deluxe King có diện tích 35m2. Phòng có view hướng ra biển dành cho 3 người, được trang bị 3 giường đơn và các trang thiết bị trong phòng đạt chất lượng cao.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681231551/s7wz7d5oeigwnawqg5ra.jpg",
+          "url": "init/room/deluxe-triple-sea-view/1-deluxe-triple-sea-view.jpg",
           "type": "Image"
         }
       ]
@@ -967,7 +967,7 @@
       "description": "Phòng Junior Suite có diện tích 64m2. Phòng có chất lượng về thiết bị và dịch vụ cao cấp, gồm 1 phòng khách, 1 phòng ngủ, ban công hướng đẹp nhất, thích hợp cho cặp đôi mới cưới hoặc gia đình nhỏ.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681300923/rumvotpb9bqwbk9ez1pf.jpg",
+          "url": "init/room/junior-suite/1-junior-suite.jpg",
           "type": "Image"
         }
       ]
@@ -983,7 +983,7 @@
       "description": "Phòng Junior Suite có diện tích 64m2. Phòng có chất lượng về thiết bị và dịch vụ cao cấp, gồm 1 phòng khách, 1 phòng ngủ, ban công hướng đẹp nhất, thích hợp cho cặp đôi mới cưới hoặc gia đình nhỏ.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681300923/rumvotpb9bqwbk9ez1pf.jpg",
+          "url": "init/room/junior-suite/1-junior-suite.jpg",
           "type": "Image"
         }
       ]
@@ -999,7 +999,7 @@
       "description": "Phòng Junior Suite có diện tích 64m2. Phòng có chất lượng về thiết bị và dịch vụ cao cấp, gồm 1 phòng khách, 1 phòng ngủ, ban công hướng đẹp nhất, thích hợp cho cặp đôi mới cưới hoặc gia đình nhỏ.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681300923/rumvotpb9bqwbk9ez1pf.jpg",
+          "url": "init/room/junior-suite/1-junior-suite.jpg",
           "type": "Image"
         }
       ]
@@ -1015,7 +1015,7 @@
       "description": "Phòng Junior Suite có diện tích 64m2. Phòng có chất lượng về thiết bị và dịch vụ cao cấp, gồm 1 phòng khách, 1 phòng ngủ, ban công hướng đẹp nhất, thích hợp cho cặp đôi mới cưới hoặc gia đình nhỏ.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681300923/rumvotpb9bqwbk9ez1pf.jpg",
+          "url": "init/room/junior-suite/1-junior-suite.jpg",
           "type": "Image"
         }
       ]
@@ -1033,15 +1033,15 @@
       "description": "Family Suite (hay phòng suite gia đình) là phòng suite có diện tích và không gian rộng với 1 phòng khách và 1 phòng ngủ phù hợp cho cả gia đình hoặc hội bạn thân. Phòng family suite được thiết kế đầu tư trang thiết bị hiện đại, nội thất tươi sáng, có view đẹp.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681349341/s9ondeepibarqyiumv0w.jpg",
+          "url": "init/room/family-suite/1-family-suite.jpg",
           "type": "Image"
         },
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681349468/mhcx8mdzrylcbupbsczp.jpg",
+          "url": "init/room/family-suite/2-family-suite.jpg",
           "type": "Image"
         },
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681349520/dhlswibc5cfjwc5ht1rd.jpg",
+          "url": "init/room/family-suite/3-family-suite.jpg",
           "type": "Image"
         }
       ]
@@ -1057,15 +1057,15 @@
       "description": "Family Suite (hay phòng suite gia đình) là phòng suite có diện tích và không gian rộng với 1 phòng khách và 1 phòng ngủ phù hợp cho cả gia đình hoặc hội bạn thân. Phòng family suite được thiết kế đầu tư trang thiết bị hiện đại, nội thất tươi sáng, có view đẹp.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681349341/s9ondeepibarqyiumv0w.jpg",
+          "url": "init/room/family-suite/1-family-suite.jpg",
           "type": "Image"
         },
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681349468/mhcx8mdzrylcbupbsczp.jpg",
+          "url": "init/room/family-suite/2-family-suite.jpg",
           "type": "Image"
         },
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681349520/dhlswibc5cfjwc5ht1rd.jpg",
+          "url": "init/room/family-suite/3-family-suite.jpg",
           "type": "Image"
         }
       ]
@@ -1081,15 +1081,15 @@
       "description": "Family Suite (hay phòng suite gia đình) là phòng suite có diện tích và không gian rộng với 1 phòng khách và 1 phòng ngủ phù hợp cho cả gia đình hoặc hội bạn thân. Phòng family suite được thiết kế đầu tư trang thiết bị hiện đại, nội thất tươi sáng, có view đẹp.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681349341/s9ondeepibarqyiumv0w.jpg",
+          "url": "init/room/family-suite/1-family-suite.jpg",
           "type": "Image"
         },
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681349468/mhcx8mdzrylcbupbsczp.jpg",
+          "url": "init/room/family-suite/2-family-suite.jpg",
           "type": "Image"
         },
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681349520/dhlswibc5cfjwc5ht1rd.jpg",
+          "url": "init/room/family-suite/3-family-suite.jpg",
           "type": "Image"
         }
       ]
@@ -1107,23 +1107,23 @@
       "description": "Phòng Senior Suite (còn gọi là King Suite) là hạng phòng suite có diện tích lớn với 72m2. Căn phòng hoàn hảo này kết hợp sự sang trọng với sự thoải mái và trang nhã, phòng Senior Suite có phòng khách và 1 phòng ngủ với giường cỡ king cùng phòng tắm.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681350477/xl4kbcyg4z0wzgm6m9tc.jpg",
+          "url": "init/room/senior-suite/1-senior-suite.jpg",
           "type": "Image"
         },
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681350663/me0flqpeyeapcvva5huk.jpg",
+          "url": "init/room/senior-suite/2-senior-suite.jpg",
           "type": "Image"
         },
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681350677/tzceeudzyclpyjckemkb.jpg",
+          "url": "init/room/senior-suite/3-senior-suite.jpg",
           "type": "Image"
         },
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681350690/loyygk1zkjadlieew9yd.jpg",
+          "url": "init/room/senior-suite/4-senior-suite.jpg",
           "type": "Image"
         },
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681350706/zyw6f5idkzihtol6vadn.jpg",
+          "url": "init/room/senior-suite/5-senior-suite.jpg",
           "type": "Image"
         }
       ]
@@ -1139,23 +1139,23 @@
       "description": "Phòng Senior Suite (còn gọi là King Suite) là hạng phòng suite có diện tích lớn với 72m2. Căn phòng hoàn hảo này kết hợp sự sang trọng với sự thoải mái và trang nhã, phòng Senior Suite có phòng khách và 1 phòng ngủ với giường cỡ king cùng phòng tắm.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681350477/xl4kbcyg4z0wzgm6m9tc.jpg",
+          "url": "init/room/senior-suite/1-senior-suite.jpg",
           "type": "Image"
         },
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681350663/me0flqpeyeapcvva5huk.jpg",
+          "url": "init/room/senior-suite/2-senior-suite.jpg",
           "type": "Image"
         },
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681350677/tzceeudzyclpyjckemkb.jpg",
+          "url": "init/room/senior-suite/3-senior-suite.jpg",
           "type": "Image"
         },
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681350690/loyygk1zkjadlieew9yd.jpg",
+          "url": "init/room/senior-suite/4-senior-suite.jpg",
           "type": "Image"
         },
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681350706/zyw6f5idkzihtol6vadn.jpg",
+          "url": "init/room/senior-suite/5-senior-suite.jpg",
           "type": "Image"
         }
       ]
@@ -1173,23 +1173,23 @@
       "description": "Phòng executive suite (hay President Suite hay Royal Suite) là loại phòng cao cấp có giá đắt nhất, trang bị cùng dịch vụ đặc biệt, vừa có 2 phòng ngủ và phòng tiếp khách riêng. Phòng president suite còn được lắp kính chống đạn để bảo đảm an toàn cho president khi sử dụng phòng.",
       "medias": [
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681301853/yozf9jfilzohkdxgeodu.jpg",
+          "url": "init/room/executive-suite/1-executive-suite.webp",
           "type": "Image"
         },
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681351047/afz570mthgwvt45edsyq.webp",
+          "url": "init/room/executive-suite/2-executive-suite.webp",
           "type": "Image"
         },
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681351061/hfaxgpyjkhqf7z5hjcbf.webp",
+          "url": "init/room/executive-suite/3-executive-suite.webp",
           "type": "Image"
         },
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681351079/e4qd9vhlxwkst0ztwd3r.webp",
+          "url": "init/room/executive-suite/4-executive-suite.webp",
           "type": "Image"
         },
         {
-          "url": "https://res.cloudinary.com/ds18kbgr2/image/upload/v1681351091/ds9jdojztowdd54logu6.webp",
+          "url": "init/room/executive-suite/5-executive-suite.webp",
           "type": "Image"
         }
       ]

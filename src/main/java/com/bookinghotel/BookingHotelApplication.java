@@ -46,6 +46,8 @@ public class BookingHotelApplication {
 
   private final CustomUserDetailsService customUserDetailsService;
 
+  private final UploadFileUtil uploadFile;
+
   private final RoomMapper roomMapper;
 
   public static void main(String[] args) {
@@ -99,6 +101,8 @@ public class BookingHotelApplication {
             for(RoomInitJSON roomInit : entry.getValue()) {
               Room room = roomMapper.roomInitToRoom(roomInit);
               for(Media media : room.getMedias()) {
+                String url = uploadFile.uploadImage(FileUtil.getBytesFileByPath(media.getUrl()));
+                media.setUrl(url);
                 media.setRoom(room);
               }
               roomRepository.save(room);
