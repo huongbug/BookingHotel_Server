@@ -1,6 +1,6 @@
 package com.bookinghotel.util;
 
-import com.bookinghotel.exception.UploadImageException;
+import com.bookinghotel.exception.UploadFileException;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import lombok.RequiredArgsConstructor;
@@ -18,33 +18,50 @@ public class UploadFileUtil {
 
   private final Cloudinary cloudinary;
 
-  public String getUrlFromFile(MultipartFile multipartFile) {
+  public String uploadFile(MultipartFile file) {
     try {
-      Map<?, ?> map = cloudinary.uploader().upload(multipartFile.getBytes(), ObjectUtils.emptyMap());
-      return map.get("secure_url").toString();
+      String resourceType = getResourceType(file);
+      Map result = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", resourceType));
+      return result.get("secure_url").toString();
     } catch (IOException e) {
-      throw new UploadImageException("Upload image failed!");
+      throw new UploadFileException("Upload file failed!");
     }
   }
 
-  public String getUrlFromLargeFile(MultipartFile multipartFile) {
+  public String uploadImage(byte[] bytes) {
     try {
-      Map<?, ?> map = cloudinary.uploader().uploadLarge(multipartFile.getBytes(), ObjectUtils.asMap("resource_type", "video"));
-      return map.get("secure_url").toString();
-    } catch (Exception e) {
-      throw new RuntimeException(e);
+      Map result = cloudinary.uploader().upload(bytes, ObjectUtils.asMap("resource_type", "image"));
+      return result.get("secure_url").toString();
+    } catch (IOException e) {
+      throw new UploadFileException("Upload image failed!");
     }
   }
 
-  public void removeImageFromUrl(String url) {
+  public void destroyFileWithUrl(String url) {
     int startIndex = url.lastIndexOf("/") + 1;
     int endIndex = url.lastIndexOf(".");
     String publicId = url.substring(startIndex, endIndex);
     try {
       Map result = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
-      log.info(String.format("Remove image public id %s %s", publicId, result.toString()));
+      log.info(String.format("Destroy image public id %s %s", publicId, result.toString()));
     } catch (IOException e) {
-      throw new UploadImageException("Remove image failed!");
+      throw new UploadFileException("Remove file failed!");
     }
   }
+
+  private static String getResourceType(MultipartFile file) {
+    String contentType = file.getContentType();
+    if (contentType != null) {
+      if (contentType.startsWith("image/")) {
+        return "image";
+      } else if (contentType.startsWith("video/")) {
+        return "video";
+      } else {
+        return "auto";
+      }
+    } else {
+      throw new UploadFileException("Invalid file!");
+    }
+  }
+
 }
