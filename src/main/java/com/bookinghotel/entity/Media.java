@@ -2,10 +2,13 @@ package com.bookinghotel.entity;
 
 import com.bookinghotel.constant.MediaType;
 import com.bookinghotel.entity.common.FlagUserDateAuditing;
+import com.bookinghotel.util.BeanUtil;
+import com.bookinghotel.util.UploadFileUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang3.ObjectUtils;
 
 import javax.persistence.*;
 
@@ -36,5 +39,13 @@ public class Media extends FlagUserDateAuditing {
   @ManyToOne
   @JoinColumn(name = "room_id", foreignKey = @ForeignKey(name = "FK_MEDIA_ROOM"))
   private Room room;
+
+  @PreRemove
+  private void destroyUrlMedia() {
+    if(ObjectUtils.isNotEmpty(url)) {
+      UploadFileUtil uploadFile = BeanUtil.getBean(UploadFileUtil.class);
+      uploadFile.destroyFileWithUrl(url);
+    }
+  }
 
 }
