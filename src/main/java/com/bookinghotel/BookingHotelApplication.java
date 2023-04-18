@@ -10,6 +10,8 @@ import com.bookinghotel.entity.User;
 import com.bookinghotel.mapper.RoomMapper;
 import com.bookinghotel.repository.*;
 import com.bookinghotel.service.CustomUserDetailsService;
+import com.bookinghotel.util.FileUtil;
+import com.bookinghotel.util.UploadFileUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +46,8 @@ public class BookingHotelApplication {
 
   private final RoomRepository roomRepository;
 
+  private final ServiceRepository serviceRepository;
+
   private final CustomUserDetailsService customUserDetailsService;
 
   private final UploadFileUtil uploadFile;
@@ -76,11 +80,10 @@ public class BookingHotelApplication {
       }
       //init admin
       if (userRepository.count() == 0) {
+        String url = uploadFile.uploadImage(FileUtil.getBytesFileByPath(userInfo.getAvatar()));
         User admin = new User(userInfo.getEmail(), userInfo.getPhone(), passwordEncoder.encode(userInfo.getPassword()),
-            userInfo.getFirstName(), userInfo.getLastName(), userInfo.getGender(),
-            LocalDate.parse(userInfo.getBirthday()),
-            userInfo.getAddress(), Boolean.TRUE, userInfo.getAvatar(),
-            roleRepository.findByRoleName(RoleConstant.ADMIN));
+            userInfo.getFirstName(), userInfo.getLastName(), userInfo.getGender(), LocalDate.parse(userInfo.getBirthday()),
+            userInfo.getAddress(), Boolean.TRUE, url, roleRepository.findByRoleName(RoleConstant.ADMIN));
         userRepository.save(admin);
       }
 
