@@ -6,19 +6,19 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @Setter
-public class UploadImageException extends RuntimeException {
+public class UploadFileException extends RuntimeException {
 
   private String message;
 
   private HttpStatus statusCode;
 
-  public UploadImageException(String message) {
+  public UploadFileException(String message) {
     super(message);
     this.message = message;
     this.statusCode = HttpStatus.BAD_GATEWAY;
   }
 
-  public UploadImageException(HttpStatus httpStatus, String message) {
+  public UploadFileException(HttpStatus httpStatus, String message) {
     super(message);
     this.message = message;
     this.statusCode = httpStatus;

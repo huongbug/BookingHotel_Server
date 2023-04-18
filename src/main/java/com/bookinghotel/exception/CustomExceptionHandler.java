@@ -96,8 +96,8 @@ public class CustomExceptionHandler {
     return VsResponseUtil.error(ex.getStatusCode(), ex.getMessage());
   }
 
-  @ExceptionHandler(UploadImageException.class)
-  public ResponseEntity<RestData<?>> handleUploadImageException(UploadImageException ex, WebRequest req) {
+  @ExceptionHandler(UploadFileException.class)
+  public ResponseEntity<RestData<?>> handleUploadImageException(UploadFileException ex, WebRequest req) {
     log.error(ex.getMessage(), ex);
     return VsResponseUtil.error(ex.getStatusCode(), ex.getMessage());
   }
