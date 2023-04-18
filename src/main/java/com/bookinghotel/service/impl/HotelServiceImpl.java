@@ -66,7 +66,7 @@ public class HotelServiceImpl implements HotelService {
   public ServiceDTO createService(ServiceCreateDTO serviceCreateDTO, UserPrincipal principal) {
     User creator = userRepository.getUser(principal);
     Service service = serviceMapper.createDtoToProduct(serviceCreateDTO);
-    service.setThumbnail(uploadFile.getUrlFromFile(serviceCreateDTO.getThumbnailFile()));
+    service.setThumbnail(uploadFile.uploadFile(serviceCreateDTO.getThumbnailFile()));
     return serviceMapper.toServiceDTO(serviceRepository.save(service), creator, creator);
   }
 
@@ -77,8 +77,8 @@ public class HotelServiceImpl implements HotelService {
     serviceMapper.updateProductFromDTO(serviceUpdateDTO, currentService.get());
     //update thumbnail
     if(serviceUpdateDTO.getThumbnailFile() != null) {
-      uploadFile.removeImageFromUrl(currentService.get().getThumbnail());
-      currentService.get().setThumbnail(uploadFile.getUrlFromFile(serviceUpdateDTO.getThumbnailFile()));
+      uploadFile.destroyFileWithUrl(currentService.get().getThumbnail());
+      currentService.get().setThumbnail(uploadFile.uploadFile(serviceUpdateDTO.getThumbnailFile()));
     } else {
       throw new InvalidException(ErrorMessage.Service.ERR_SERVICE_MUST_HAVE_THUMBNAIL);
     }

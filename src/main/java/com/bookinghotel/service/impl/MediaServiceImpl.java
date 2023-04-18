@@ -98,13 +98,13 @@ public class MediaServiceImpl implements MediaService {
       String contentType = file.getContentType();
       if(Objects.requireNonNull(contentType).equals("video/mp4")){
         Media video = new Media();
-        video.setUrl(uploadFile.getUrlFromLargeFile(file));
+        video.setUrl(uploadFile.uploadFile(file));
         video.setType(MediaType.Video);
         video.setRoom(room);
         medias.add(mediaRepository.save(video));
       } else {
         Media image = new Media();
-        image.setUrl(uploadFile.getUrlFromFile(file));
+        image.setUrl(uploadFile.uploadFile(file));
         image.setType(MediaType.Image);
         image.setRoom(room);
         medias.add(mediaRepository.save(image));
@@ -150,13 +150,13 @@ public class MediaServiceImpl implements MediaService {
       String contentType = file.getContentType();
       if(Objects.requireNonNull(contentType).equals("video/mp4")){
         Media video = new Media();
-        video.setUrl(uploadFile.getUrlFromLargeFile(file));
+        video.setUrl(uploadFile.uploadFile(file));
         video.setType(MediaType.Video);
         video.setPost(post);
         medias.add(mediaRepository.save(video));
       } else {
         Media image = new Media();
-        image.setUrl(uploadFile.getUrlFromFile(file));
+        image.setUrl(uploadFile.uploadFile(file));
         image.setType(MediaType.Image);
         image.setPost(post);
         medias.add(mediaRepository.save(image));

@@ -12,13 +12,14 @@ import com.bookinghotel.dto.pagination.PaginationResponseDTO;
 import com.bookinghotel.dto.pagination.PaginationSearchSortRequestDTO;
 import com.bookinghotel.dto.pagination.PagingMeta;
 import com.bookinghotel.entity.Product;
-import com.bookinghotel.entity.Room;
+import com.bookinghotel.entity.Service;
 import com.bookinghotel.entity.User;
 import com.bookinghotel.exception.InvalidException;
 import com.bookinghotel.exception.NotFoundException;
 import com.bookinghotel.mapper.ProductMapper;
 import com.bookinghotel.projection.ProductProjection;
 import com.bookinghotel.repository.ProductRepository;
+import com.bookinghotel.repository.ServiceRepository;
 import com.bookinghotel.repository.UserRepository;
 import com.bookinghotel.security.UserPrincipal;
 import com.bookinghotel.service.ProductService;
@@ -26,20 +27,20 @@ import com.bookinghotel.util.PaginationUtil;
 import com.bookinghotel.util.UploadFileUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-@Service
+@org.springframework.stereotype.Service
 public class ProductServiceImpl implements ProductService {
 
   private final ProductRepository productRepository;
+
+  private final ServiceRepository serviceRepository;
 
   private final UserRepository userRepository;
 
@@ -77,8 +78,11 @@ public class ProductServiceImpl implements ProductService {
   @Override
   public ProductDTO createProduct(ProductCreateDTO productCreateDTO, UserPrincipal principal) {
     User creator = userRepository.getUser(principal);
+    Optional<Service> service = serviceRepository.findById(productCreateDTO.getServiceId());
+    checkNotFoundServiceById(service, productCreateDTO.getServiceId());
     Product product = productMapper.createDtoToProduct(productCreateDTO);
-    product.setThumbnail(uploadFile.getUrlFromFile(productCreateDTO.getThumbnailFile()));
+    product.setThumbnail(uploadFile.uploadFile(productCreateDTO.getThumbnailFile()));
+    product.setService(service.get());
     return productMapper.toProductDTO(productRepository.save(product), creator, creator);
   }
 
@@ -89,8 +93,8 @@ public class ProductServiceImpl implements ProductService {
     productMapper.updateProductFromDTO(productUpdateDTO, currentProduct.get());
     //update thumbnail
     if(productUpdateDTO.getThumbnailFile() != null) {
-      uploadFile.removeImageFromUrl(currentProduct.get().getThumbnail());
-      currentProduct.get().setThumbnail(uploadFile.getUrlFromFile(productUpdateDTO.getThumbnailFile()));
+      uploadFile.destroyFileWithUrl(currentProduct.get().getThumbnail());
+      currentProduct.get().setThumbnail(uploadFile.uploadFile(productUpdateDTO.getThumbnailFile()));
     } else {
       throw new InvalidException(ErrorMessage.Product.ERR_PRODUCT_MUST_HAVE_THUMBNAIL);
     }
@@ -153,6 +157,12 @@ public class ProductServiceImpl implements ProductService {
   private void checkNotFoundProductById(ProductProjection productProjection, Long productId) {
     if (ObjectUtils.isEmpty(productProjection)) {
       throw new NotFoundException(String.format(ErrorMessage.Product.ERR_NOT_FOUND_ID, productId));
+    }
+  }
+
+  private void checkNotFoundServiceById(Optional<Service> service, Long serviceId) {
+    if (service.isEmpty()) {
+      throw new NotFoundException(String.format(ErrorMessage.Service.ERR_NOT_FOUND_ID, serviceId));
     }
   }
 

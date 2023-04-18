@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
     user.setPassword(passwordEncoder.encode(userCreateDTO.getPassword()));
     user.setRole(roleRepository.findByRoleName(RoleConstant.USER));
     if(userCreateDTO.getAvatarFile() != null) {
-      user.setAvatar(uploadFile.getUrlFromFile(userCreateDTO.getAvatarFile()));
+      user.setAvatar(uploadFile.uploadFile(userCreateDTO.getAvatarFile()));
     }
     return userRepository.save(user);
   }
@@ -88,9 +88,9 @@ public class UserServiceImpl implements UserService {
     userMapper.updateUserFromDTO(userUpdateDTO, user.get());
     if(userUpdateDTO.getFileAvatar() != null) {
       if(user.get().getAvatar() != null) {
-        uploadFile.removeImageFromUrl(user.get().getAvatar());
+        uploadFile.destroyFileWithUrl(user.get().getAvatar());
       }
-      user.get().setAvatar(uploadFile.getUrlFromFile(userUpdateDTO.getFileAvatar()));
+      user.get().setAvatar(uploadFile.uploadFile(userUpdateDTO.getFileAvatar()));
     }
     return userMapper.toUserDTO(userRepository.save(user.get()));
   }
