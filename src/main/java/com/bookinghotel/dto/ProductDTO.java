@@ -22,7 +22,7 @@ public class ProductDTO extends DateAuditingDTO {
 
   private String description;
 
-  private Long serviceId;
+  private ServiceSummaryDTO service;
 
   private CreatedByDTO createdBy;
 

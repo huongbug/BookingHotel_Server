@@ -19,7 +19,6 @@ public interface ProductMapper {
       @Mapping(target = "id", source = "product.id"),
       @Mapping(target = "createdDate", source = "product.createdDate"),
       @Mapping(target = "lastModifiedDate", source = "product.lastModifiedDate"),
-      @Mapping(target = "serviceId", source = "product.service.id"),
       @Mapping(target = "createdBy.id", source = "createdBy.id"),
       @Mapping(target = "createdBy.firstName", source = "createdBy.firstName"),
       @Mapping(target = "createdBy.lastName", source = "createdBy.lastName"),

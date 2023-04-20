@@ -24,6 +24,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
   @Query(value = "SELECT p.id, p.name, p.thumbnail, p.description, " +
       "p.created_date AS createdDate, p.last_modified_date AS lastModifiedDate, " +
+      "s.id AS serviceId, s.title AS serviceTitle, s.thumbnail AS serviceThumbnail, s.price AS servicePrice," +
       "createdBy.id AS createdById, " +
       "createdBy.first_name AS createdByFirstName, " +
       "createdBy.last_name AS createdByLastName, " +
@@ -35,12 +36,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
       "FROM products p " +
       "LEFT JOIN users createdBy ON p.created_by = createdBy.id " +
       "LEFT JOIN users lastModifiedBy ON p.last_modified_by = lastModifiedBy.id " +
+      "LEFT JOIN services s ON s.id = p.service_id " +
       "WHERE p.id = ?1 AND p.delete_flag = 0",
       nativeQuery = true)
   ProductProjection findProductById(Long id);
 
   @Query(value = "SELECT p.id, p.name, p.thumbnail, p.description, " +
       "p.created_date AS createdDate, p.last_modified_date AS lastModifiedDate, " +
+      "s.id AS serviceId, s.title AS serviceTitle, s.thumbnail AS serviceThumbnail, s.price AS servicePrice," +
       "createdBy.id AS createdById, " +
       "createdBy.first_name AS createdByFirstName, " +
       "createdBy.last_name AS createdByLastName, " +
@@ -52,11 +55,13 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
       "FROM products p " +
       "LEFT JOIN users createdBy ON p.created_by = createdBy.id " +
       "LEFT JOIN users lastModifiedBy ON p.last_modified_by = lastModifiedBy.id " +
+      "LEFT JOIN services s ON s.id = p.service_id " +
       "WHERE (:keyword IS NULL OR p.name LIKE CONCAT('%', :keyword, '%')) " +
       "AND p.delete_flag = :deleteFlag",
       countQuery = "SELECT COUNT(*) FROM products p " +
           "LEFT JOIN users createdBy ON p.created_by = createdBy.id " +
           "LEFT JOIN users lastModifiedBy ON p.last_modified_by = lastModifiedBy.id " +
+          "LEFT JOIN services s ON s.id = p.service_id " +
           "WHERE (:keyword IS NULL OR p.name LIKE CONCAT('%', :keyword, '%')) " +
           "AND p.delete_flag = :deleteFlag",
       nativeQuery = true)
@@ -64,6 +69,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
   @Query(value = "SELECT p.id, p.name, p.thumbnail, p.description, " +
       "p.created_date AS createdDate, p.last_modified_date AS lastModifiedDate, " +
+      "s.id AS serviceId, s.title AS serviceTitle, s.thumbnail AS serviceThumbnail, s.price AS servicePrice," +
       "createdBy.id AS createdById, " +
       "createdBy.first_name AS createdByFirstName, " +
       "createdBy.last_name AS createdByLastName, " +
@@ -75,11 +81,13 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
       "FROM products p " +
       "LEFT JOIN users createdBy ON p.created_by = createdBy.id " +
       "LEFT JOIN users lastModifiedBy ON p.last_modified_by = lastModifiedBy.id " +
+      "LEFT JOIN services s ON s.id = p.service_id " +
       "WHERE (:keyword IS NULL OR p.name LIKE CONCAT('%', :keyword, '%')) " +
       "AND p.service_id = :serviceId AND p.delete_flag = 0",
       countQuery = "SELECT COUNT(*) FROM products p " +
           "LEFT JOIN users createdBy ON p.created_by = createdBy.id " +
           "LEFT JOIN users lastModifiedBy ON p.last_modified_by = lastModifiedBy.id " +
+          "LEFT JOIN services s ON s.id = p.service_id " +
           "WHERE (:keyword IS NULL OR p.name LIKE CONCAT('%', :keyword, '%')) " +
           "AND p.service_id = :serviceId AND p.delete_flag = 0",
       nativeQuery = true)
