@@ -3,6 +3,8 @@ package com.bookinghotel.exception;
 import com.bookinghotel.base.RestData;
 import com.bookinghotel.base.VsResponseUtil;
 import lombok.extern.log4j.Log4j2;
+import org.hibernate.validator.internal.engine.path.PathImpl;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -13,10 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.validation.ConstraintViolationException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Log4j2(topic = "ErrorLogger")
 @RestControllerAdvice
@@ -26,10 +25,12 @@ public class CustomExceptionHandler {
   @ExceptionHandler(ConstraintViolationException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ResponseEntity<?> handleConstraintViolationException(ConstraintViolationException ex, WebRequest request) {
-    List<String> errors = new ArrayList<>();
-    ex.getConstraintViolations().forEach(cv -> errors.add(cv.getMessage()));
-    Map<String, List<String>> result = new HashMap<>();
-    result.put("errors", errors);
+    Map<String, String> result = new LinkedHashMap<>();
+    ex.getConstraintViolations().forEach((error) -> {
+      String fieldName = ((PathImpl) error.getPropertyPath()).getLeafNode().getName();
+      String errorMessage = error.getMessage();
+      result.put(fieldName, errorMessage);
+    });
     return VsResponseUtil.error(HttpStatus.BAD_REQUEST, result);
   }
 
