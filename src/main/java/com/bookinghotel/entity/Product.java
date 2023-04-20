@@ -31,6 +31,7 @@ public class Product extends FlagUserDateAuditing {
   private String thumbnail;
 
   @Nationalized
+  @Lob
   private String description;
 
   //Link to table Service
