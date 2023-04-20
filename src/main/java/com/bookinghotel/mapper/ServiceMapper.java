@@ -3,6 +3,7 @@ package com.bookinghotel.mapper;
 import com.bookinghotel.dto.ServiceCreateDTO;
 import com.bookinghotel.dto.ServiceDTO;
 import com.bookinghotel.dto.ServiceUpdateDTO;
+import com.bookinghotel.dto.init.ServiceInitJSON;
 import com.bookinghotel.entity.Service;
 import com.bookinghotel.entity.User;
 import com.bookinghotel.projection.ServiceProjection;
@@ -35,5 +36,7 @@ public interface ServiceMapper {
   void updateProductFromDTO(ServiceUpdateDTO updateDTO, @MappingTarget Service service);
 
   ServiceDTO serviceProjectionToServiceDTO(ServiceProjection projection);
+
+  Service serviceInitToService(ServiceInitJSON initJSON);
 
 }

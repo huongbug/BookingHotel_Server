@@ -3,12 +3,14 @@ package com.bookinghotel;
 import com.bookinghotel.config.UserInfoProperties;
 import com.bookinghotel.constant.RoleConstant;
 import com.bookinghotel.dto.init.RoomInitJSON;
-import com.bookinghotel.entity.Media;
-import com.bookinghotel.entity.Role;
-import com.bookinghotel.entity.Room;
-import com.bookinghotel.entity.User;
+import com.bookinghotel.dto.init.ServiceInitJSON;
+import com.bookinghotel.entity.*;
 import com.bookinghotel.mapper.RoomMapper;
-import com.bookinghotel.repository.*;
+import com.bookinghotel.mapper.ServiceMapper;
+import com.bookinghotel.repository.RoleRepository;
+import com.bookinghotel.repository.RoomRepository;
+import com.bookinghotel.repository.ServiceRepository;
+import com.bookinghotel.repository.UserRepository;
 import com.bookinghotel.service.CustomUserDetailsService;
 import com.bookinghotel.util.FileUtil;
 import com.bookinghotel.util.UploadFileUtil;
@@ -53,6 +55,8 @@ public class BookingHotelApplication {
   private final UploadFileUtil uploadFile;
 
   private final RoomMapper roomMapper;
+
+  private final ServiceMapper serviceMapper;
 
   public static void main(String[] args) {
     Environment env = SpringApplication.run(BookingHotelApplication.class, args).getEnvironment();
@@ -110,6 +114,26 @@ public class BookingHotelApplication {
               }
               roomRepository.save(room);
             }
+          }
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+
+      //init services & product
+      if(serviceRepository.count() == 0) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        File file = new File("services.json");
+        try {
+          List<ServiceInitJSON> services = objectMapper.readValue(file, new TypeReference<>() {});
+          for(ServiceInitJSON serviceInit : services) {
+            Service service = serviceMapper.serviceInitToService(serviceInit);
+            for(Product product : service.getProducts()) {
+              String url = uploadFile.uploadImage(FileUtil.getBytesFileByPath(product.getThumbnail()));
+              product.setThumbnail(url);
+              product.setService(service);
+            }
+            serviceRepository.save(service);
           }
         } catch (IOException e) {
           e.printStackTrace();
