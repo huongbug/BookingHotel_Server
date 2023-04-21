@@ -16,6 +16,7 @@ import com.bookinghotel.entity.Sale;
 import com.bookinghotel.entity.User;
 import com.bookinghotel.exception.InvalidException;
 import com.bookinghotel.exception.NotFoundException;
+import com.bookinghotel.exception.VsException;
 import com.bookinghotel.mapper.SaleMapper;
 import com.bookinghotel.projection.SaleProjection;
 import com.bookinghotel.repository.RoomRepository;
@@ -28,12 +29,11 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -82,34 +82,33 @@ public class SaleServiceImpl implements SaleService {
   }
 
   @Override
-  public CommonResponseDTO addSalesToRoom(Long saleId, Long roomId) {
+  public CommonResponseDTO addSalesToRooms(Long saleId, List<Long> roomIds) {
     Optional<Sale> sale = saleRepository.findById(saleId);
     checkNotFoundSaleById(sale, saleId);
-    Optional<Room> room = roomRepository.findById(roomId);
-    checkNotFoundRoomById(room, roomId);
-    if(ObjectUtils.isEmpty(room.get().getSale())) {
-      room.get().setSale(sale.get());
-      roomRepository.save(room.get());
-    } else {
-      throw new InvalidException(String.format(ErrorMessage.Room.ROOM_HAS_BEEN_DISCOUNTED, roomId));
+    List<Room> rooms = roomRepository.findAllByIds(roomIds);
+    checkNotFoundRoomsByIds(rooms, roomIds);
+
+    for(Room room : rooms) {
+      if(ObjectUtils.isEmpty(room.getSale())) {
+        room.setSale(sale.get());
+        roomRepository.save(room);
+      } else {
+        throw new InvalidException(String.format(ErrorMessage.Room.ROOM_HAS_BEEN_DISCOUNTED, room.getId()));
+      }
     }
     return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.ADD_SUCCESS);
   }
 
   @Override
   public CommonResponseDTO removeSaleFromRoom(Long saleId, Long roomId) {
-    Optional<Room> room = roomRepository.findById(roomId);
-    checkNotFoundRoomById(room, roomId);
-    checkRoomNotForSale(room.get());
     Optional<Sale> sale = saleRepository.findById(saleId);
     checkNotFoundSaleById(sale, saleId);
-    if(room.get().getSale().getId().equals(saleId)) {
-      room.get().setSale(null);
-      roomRepository.save(room.get());
-      return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.DELETE_SUCCESS);
-    } else {
-      throw new InvalidException(String.format(ErrorMessage.Room.ROOM_NOT_FOR_SALE, roomId, saleId));
-    }
+    Optional<Room> room = roomRepository.findById(roomId);
+    checkNotFoundRoomById(room, roomId);
+    checkRoomNotForSale(room.get(), sale.get());
+    room.get().setSale(null);
+    roomRepository.save(room.get());
+    return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.DELETE_SUCCESS);
   }
 
   @Override
@@ -176,9 +175,32 @@ public class SaleServiceImpl implements SaleService {
     }
   }
 
-  private void checkRoomNotForSale(Room room) {
+  private void checkRoomNotForSale(Room room, Sale sale) {
     if(ObjectUtils.isEmpty(room.getSale())) {
       throw new InvalidException(String.format(ErrorMessage.Room.ROOM_NO_SALE, room.getId()));
+    } else {
+      if(!room.getSale().getId().equals(sale.getId())) {
+        throw new InvalidException(String.format(ErrorMessage.Room.ROOM_NOT_FOR_SALE, room.getId(), sale.getId()));
+      }
+    }
+  }
+
+  private void checkNotFoundRoomsByIds(List<Room> rooms, List<Long> roomIds) {
+    if(rooms.size() != roomIds.size()) {
+      Map<String, String> result = new HashMap<>();
+      for(Long roomId : roomIds) {
+        boolean isValid = false;
+        for(Room room : rooms) {
+          if(room.getId().equals(roomId)) {
+            isValid = true;
+            break;
+          }
+        }
+        if(!isValid) {
+          result.put(roomId.toString(), String.format(ErrorMessage.Room.ERR_NOT_FOUND_ID, roomId));
+        }
+      }
+      throw new VsException(HttpStatus.BAD_REQUEST, result);
     }
   }
 

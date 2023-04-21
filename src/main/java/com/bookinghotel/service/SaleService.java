@@ -20,7 +20,7 @@ public interface SaleService {
 
   SaleDTO updateSale(Long saleId, SaleUpdateDTO updateDTO, UserPrincipal principal);
 
-  CommonResponseDTO addSalesToRoom(Long saleId, Long roomId);
+  CommonResponseDTO addSalesToRooms(Long saleId, List<Long> roomIds);
 
   CommonResponseDTO removeSaleFromRoom(Long saleId, Long roomId);
 
