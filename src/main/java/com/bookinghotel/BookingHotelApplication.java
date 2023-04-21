@@ -128,9 +128,11 @@ public class BookingHotelApplication {
           List<ServiceInitJSON> services = objectMapper.readValue(file, new TypeReference<>() {});
           for(ServiceInitJSON serviceInit : services) {
             Service service = serviceMapper.serviceInitToService(serviceInit);
+            String urlThumbnailService = uploadFile.uploadImage(FileUtil.getBytesFileByPath(service.getThumbnail()));
+            service.setThumbnail(urlThumbnailService);
             for(Product product : service.getProducts()) {
-              String url = uploadFile.uploadImage(FileUtil.getBytesFileByPath(product.getThumbnail()));
-              product.setThumbnail(url);
+              String urlThumbnailProduct = uploadFile.uploadImage(FileUtil.getBytesFileByPath(product.getThumbnail()));
+              product.setThumbnail(urlThumbnailProduct);
               product.setService(service);
             }
             serviceRepository.save(service);
