@@ -185,6 +185,9 @@ public class UrlConstant {
     public static final String GET_SERVICES = SERVICE;
     public static final String GET_SERVICE = SERVICE + "/{serviceId}";
 
+    private static final String PRODUCT = PRE_FIX + "/product";
+    public static final String GET_PRODUCT = PRODUCT + "/{productId}";
+
     private ChatBot() {
     }
   }

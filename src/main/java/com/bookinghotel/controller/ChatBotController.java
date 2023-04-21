@@ -37,4 +37,9 @@ public class ChatBotController {
     return ResponseEntity.ok(chatBotService.getHotelServiceById(serviceId));
   }
 
+  @GetMapping(UrlConstant.ChatBot.GET_PRODUCT)
+  public ResponseEntity<?> getProductDetail(@PathVariable Long productId) {
+    return ResponseEntity.ok(chatBotService.getProductsById(productId));
+  }
+
 }

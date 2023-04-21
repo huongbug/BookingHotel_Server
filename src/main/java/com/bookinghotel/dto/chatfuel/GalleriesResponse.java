@@ -21,7 +21,7 @@ public class GalleriesResponse {
     @Setter
     public static class Payload {
       private String template_type = "generic";
-      private String image_aspect_ratio = "square";
+      private String image_aspect_ratio = "horizontal";
       private List<Element> elements;
 
       @Getter

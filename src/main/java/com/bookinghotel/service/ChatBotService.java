@@ -10,4 +10,6 @@ public interface ChatBotService {
 
   Object getHotelServiceById(Long id);
 
+  Object getProductsById(Long id);
+
 }
