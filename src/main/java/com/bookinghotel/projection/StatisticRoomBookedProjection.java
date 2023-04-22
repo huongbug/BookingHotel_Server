@@ -1,7 +1,5 @@
 package com.bookinghotel.projection;
 
-import com.bookinghotel.constant.RoomType;
-
 import java.time.LocalDateTime;
 
 public interface StatisticRoomBookedProjection {
@@ -12,7 +10,7 @@ public interface StatisticRoomBookedProjection {
 
   Long getPrice();
 
-  RoomType getType();
+  String getType();
 
   Integer getMaxNum();
 

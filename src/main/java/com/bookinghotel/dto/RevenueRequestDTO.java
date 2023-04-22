@@ -21,9 +21,6 @@ public class RevenueRequestDTO {
   private Integer toMonth;
 
   @NotNull(message = ErrorMessage.INVALID_SOME_THING_FIELD_IS_REQUIRED)
-  private Integer fromYear;
-
-  @NotNull(message = ErrorMessage.INVALID_SOME_THING_FIELD_IS_REQUIRED)
-  private Integer toYear;
+  private Integer year;
 
 }

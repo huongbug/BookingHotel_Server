@@ -5,17 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class RevenueDTO {
-
-  private Integer year;
+public class RevenueMonthDTO {
+  private String month;
   private Integer totalBooking;
   private Long totalRevenue;
-  private List<RevenueMonthDTO> revenueMonths;
-
 }

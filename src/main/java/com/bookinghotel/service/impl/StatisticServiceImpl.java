@@ -23,7 +23,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
@@ -76,42 +79,31 @@ public class StatisticServiceImpl implements StatisticService {
   }
 
   @Override
-  public List<RevenueDTO> statisticRevenue(RevenueRequestDTO request) {
-    List<RevenueDTO> revenueDTOs = new LinkedList<>();
-    for(int year = request.getFromYear(); year <= request.getToYear(); year++) {
-      List<RevenueDTO.RevenueMonthDTO> revenueMonthDTOs = new LinkedList<>();
-      int totalBookingYear = 0;
-      long totalRevenueYear = 0;
-      //loop month
-      for(int month = request.getFromMonth(); month <= request.getToMonth(); month++) {
-        List<Booking> bookings = bookingRepository.statisticRevenueProjection(month, year);
-        System.out.println(bookings.size());
-        long totalRevenueMonth = 0;
-        for(Booking booking : bookings) {
+  public List<RevenueMonthDTO> statisticRevenue(RevenueRequestDTO request) {
+    List<RevenueMonthDTO> revenueMonthDTOs = new LinkedList<>();
+    int fromMonth = request.getFromMonth(), toMonth = request.getToMonth();
+    List<Booking> bookings = bookingRepository.statisticRevenue(request);
+    for(int month = fromMonth; month <= toMonth; month++) {
+      long totalRevenueMonth = 0;
+      int totalBooking = 0;
+      for(Booking booking : bookings) {
+        if(booking.getCreatedDate().getMonthValue() == month) {
           totalRevenueMonth += bookingService.calculateTotalRoomPrice(booking);
           totalRevenueMonth += bookingService.calculateTotalServicePrice(booking);
           List<BookingSurchargeDTO> surchargeDTOs = bookingService.calculateSurcharge(booking);
           for(BookingSurchargeDTO surchargeDTO : surchargeDTOs) {
             totalRevenueMonth += surchargeDTO.getRoomSurcharge();
           }
+          totalBooking++;
         }
-        RevenueDTO.RevenueMonthDTO revenueMonthDTO = new RevenueDTO.RevenueMonthDTO();
-        revenueMonthDTO.setMonth(convertMonthNumberToString(month));
-        revenueMonthDTO.setTotalBooking(bookings.size());
-        revenueMonthDTO.setTotalRevenue(totalRevenueMonth);
-        revenueMonthDTOs.add(revenueMonthDTO);
-        totalBookingYear += bookings.size();
-        totalRevenueYear += totalRevenueMonth;
       }
-      //end loop month
-      RevenueDTO revenueDTO = new RevenueDTO();
-      revenueDTO.setYear(year);
-      revenueDTO.setTotalBooking(totalBookingYear);
-      revenueDTO.setTotalRevenue(totalRevenueYear);
-      revenueDTO.setRevenueMonths(revenueMonthDTOs);
-      revenueDTOs.add(revenueDTO);
+      RevenueMonthDTO revenueMonthDTO = new RevenueMonthDTO();
+      revenueMonthDTO.setMonth(convertMonthNumberToString(month));
+      revenueMonthDTO.setTotalBooking(totalBooking);
+      revenueMonthDTO.setTotalRevenue(totalRevenueMonth);
+      revenueMonthDTOs.add(revenueMonthDTO);
     }
-    return revenueDTOs;
+    return revenueMonthDTOs;
   }
 
   @Override
