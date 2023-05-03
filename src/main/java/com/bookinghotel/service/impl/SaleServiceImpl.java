@@ -87,14 +87,10 @@ public class SaleServiceImpl implements SaleService {
     checkNotFoundSaleById(sale, saleId);
     List<Room> rooms = roomRepository.findAllByIds(roomIds);
     checkNotFoundRoomsByIds(rooms, roomIds);
-
+    checkRoomsOnSale(rooms);
     for(Room room : rooms) {
-      if(ObjectUtils.isEmpty(room.getSale())) {
-        room.setSale(sale.get());
-        roomRepository.save(room);
-      } else {
-        throw new InvalidException(String.format(ErrorMessage.Room.ROOM_HAS_BEEN_DISCOUNTED, room.getId()));
-      }
+      room.setSale(sale.get());
+      roomRepository.save(room);
     }
     return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.ADD_SUCCESS);
   }
@@ -108,6 +104,18 @@ public class SaleServiceImpl implements SaleService {
     checkRoomNotForSale(room.get(), sale.get());
     room.get().setSale(null);
     roomRepository.save(room.get());
+    return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.DELETE_SUCCESS);
+  }
+
+  @Override
+  public CommonResponseDTO removeSaleFromRooms(List<Long> roomIds) {
+    List<Room> rooms = roomRepository.findAllByIds(roomIds);
+    checkNotFoundRoomsByIds(rooms, roomIds);
+    checkRoomsNotSale(rooms);
+    for(Room room : rooms) {
+      room.setSale(null);
+      roomRepository.save(room);
+    }
     return new CommonResponseDTO(CommonConstant.TRUE, CommonMessage.DELETE_SUCCESS);
   }
 
@@ -200,6 +208,32 @@ public class SaleServiceImpl implements SaleService {
           result.put(roomId.toString(), String.format(ErrorMessage.Room.ERR_NOT_FOUND_ID, roomId));
         }
       }
+      if(!result.isEmpty()) {
+        throw new VsException(HttpStatus.BAD_REQUEST, result);
+      }
+    }
+  }
+
+  private void checkRoomsOnSale(List<Room> rooms) {
+    Map<String, String> result = new HashMap<>();
+    for(Room room : rooms) {
+      if(ObjectUtils.isNotEmpty(room.getSale())) {
+        result.put(room.getId().toString(), String.format(ErrorMessage.Room.ROOM_HAS_BEEN_DISCOUNTED, room.getId()));
+      }
+    }
+    if(!result.isEmpty()) {
+      throw new VsException(HttpStatus.BAD_REQUEST, result);
+    }
+  }
+
+  private void checkRoomsNotSale(List<Room> rooms) {
+    Map<String, String> result = new HashMap<>();
+    for(Room room : rooms) {
+      if(ObjectUtils.isEmpty(room.getSale())) {
+        result.put(room.getId().toString(), String.format(ErrorMessage.Room.ROOM_NO_SALE, room.getId()));
+      }
+    }
+    if(!result.isEmpty()) {
       throw new VsException(HttpStatus.BAD_REQUEST, result);
     }
   }

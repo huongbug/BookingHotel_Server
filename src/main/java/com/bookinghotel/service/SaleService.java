@@ -24,6 +24,8 @@ public interface SaleService {
 
   CommonResponseDTO removeSaleFromRoom(Long saleId, Long roomId);
 
+  CommonResponseDTO removeSaleFromRooms(List<Long> roomId);
+
   CommonResponseDTO deleteSale(Long saleId);
 
   CommonResponseDTO deleteSalePermanently(Long saleId);

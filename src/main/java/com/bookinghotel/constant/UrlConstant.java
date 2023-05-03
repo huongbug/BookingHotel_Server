@@ -80,7 +80,7 @@ public class UrlConstant {
     public static final String RESTORE_SALE = PRE_FIX + "/restore/{saleId}";
 
     public static final String ADD_SALE_TO_ROOM = PRE_FIX + "/add/room/{saleId}";
-    public static final String REMOVE_SALE_FROM_ROOM = PRE_FIX + "/remove/room/{saleId}/{roomId}";
+    public static final String REMOVE_SALE_FROM_ROOMS = PRE_FIX + "/remove/room";
 
     private Sale() {
     }

@@ -70,11 +70,11 @@ public class SaleController {
     return VsResponseUtil.ok(saleService.addSalesToRooms(saleId, roomIds));
   }
 
-  @Operation(summary = "API remove sale from room")
+  @Operation(summary = "API remove sale from rooms")
   @AuthorizationInfo(role = { RoleConstant.ADMIN })
-  @PostMapping(UrlConstant.Sale.REMOVE_SALE_FROM_ROOM)
-  public ResponseEntity<?> removeSaleFromRoom(@PathVariable Long saleId, @PathVariable Long roomId) {
-    return VsResponseUtil.ok(saleService.removeSaleFromRoom(saleId, roomId));
+  @PostMapping(UrlConstant.Sale.REMOVE_SALE_FROM_ROOMS)
+  public ResponseEntity<?> removeSaleFromRooms(@RequestBody List<Long> roomIds) {
+    return VsResponseUtil.ok(saleService.removeSaleFromRooms(roomIds));
   }
 
   @Operation(summary = "API delete sale by id")

@@ -25,7 +25,7 @@ public class ServiceCreateDTO {
   private MultipartFile thumbnailFile;
 
   @NotNull(message = ErrorMessage.INVALID_SOME_THING_FIELD_IS_REQUIRED)
-  private Integer price;
+  private Long price;
 
   @NotBlank(message = ErrorMessage.NOT_BLANK_FIELD)
   private String description;
