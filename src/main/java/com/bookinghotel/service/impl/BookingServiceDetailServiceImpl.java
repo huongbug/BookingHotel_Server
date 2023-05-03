@@ -22,6 +22,11 @@ public class BookingServiceDetailServiceImpl implements BookingServiceDetailServ
   private final ServiceRepository serviceRepository;
 
   @Override
+  public Set<BookingServiceDetail> getBookingServiceDetailsByBooking(Long bookingId) {
+    return bookingServiceDetailRepository.findAllByBookingId(bookingId);
+  }
+
+  @Override
   public Set<BookingServiceDetail> createBookingServiceDetails(Booking booking, List<BookingServiceDTO> bookingService) {
     Set<BookingServiceDetail> bookingServiceDetails = new LinkedHashSet<>(Math.max((int) (bookingService.size() / .75f) + 1, 16));
     // services ordered by the customer

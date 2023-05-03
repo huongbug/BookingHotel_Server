@@ -25,6 +25,11 @@ public class BookingRoomDetailServiceImpl implements BookingRoomDetailService {
   private final RoomRepository roomRepository;
 
   @Override
+  public Set<BookingRoomDetail> getBookingRoomDetailsByBooking(Long bookingId) {
+    return bookingRoomDetailRepository.findAllByBookingId(bookingId);
+  }
+
+  @Override
   public Set<BookingRoomDetail> createBookingRoomDetails(Booking booking, List<Long> roomIds) {
     List<Room> bookingRooms = new LinkedList<>();
     for(Long id : roomIds) {

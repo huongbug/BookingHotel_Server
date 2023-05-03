@@ -9,6 +9,8 @@ import java.util.Set;
 
 public interface BookingServiceDetailService {
 
+  Set<BookingServiceDetail> getBookingServiceDetailsByBooking(Long bookingId);
+
   Set<BookingServiceDetail> createBookingServiceDetails(Booking booking, List<BookingServiceDTO> bookingService);
 
 }

@@ -17,6 +17,7 @@ import com.bookinghotel.exception.InvalidException;
 import com.bookinghotel.exception.NotFoundException;
 import com.bookinghotel.mapper.BookingMapper;
 import com.bookinghotel.mapper.UserMapper;
+import com.bookinghotel.projection.BookingProjection;
 import com.bookinghotel.repository.BookingRepository;
 import com.bookinghotel.repository.UserRepository;
 import com.bookinghotel.security.UserPrincipal;
@@ -27,6 +28,7 @@ import com.bookinghotel.util.PaginationUtil;
 import com.bookinghotel.util.SendMailUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
@@ -61,18 +63,16 @@ public class BookingServiceImpl implements BookingService {
 
   @Override
   public BookingDTO getBookingById(Long bookingId) {
-    Optional<Booking> booking = bookingRepository.findById(bookingId);
+    BookingProjection booking = bookingRepository.findBookingProjectionById(bookingId);
     checkNotFoundBookingById(booking, bookingId);
-    Optional<User> creator = userRepository.findById(booking.get().getCreatedBy());
-    Optional<User> updater = userRepository.findById(booking.get().getLastModifiedBy());
-    return mapperToBookingDTO(booking.get(), creator.get(), updater.get());
+    return mapperToBookingDTO(booking);
   }
 
   @Override
   public PaginationResponseDTO<BookingDTO> getBookingsForUser(PaginationSortRequestDTO requestDTO, UserPrincipal principal) {
     //Pagination
     Pageable pageable = PaginationUtil.buildPageable(requestDTO, SortByDataConstant.BOOKING);
-    Page<Booking> bookings = bookingRepository.findAllForUser(principal.getId(), pageable);
+    Page<BookingProjection> bookings = bookingRepository.findAllForUser(principal.getId(), pageable);
     //Create Output
     PagingMeta meta = PaginationUtil.buildPagingMeta(requestDTO, SortByDataConstant.BOOKING, bookings);
     List<BookingDTO> bookingDTOs = mapperToBookingDTOs(bookings.getContent());
@@ -84,7 +84,7 @@ public class BookingServiceImpl implements BookingService {
     String bookingStatus = filterDTO.getBookingStatus() == null ? null : filterDTO.getBookingStatus().toString();
     //Pagination
     Pageable pageable = PaginationUtil.buildPageable(requestDTO, SortByDataConstant.BOOKING);
-    Page<Booking> bookings = bookingRepository.findAllForAdmin(filterDTO, bookingStatus, pageable);
+    Page<BookingProjection> bookings = bookingRepository.findAllForAdmin(filterDTO, bookingStatus, pageable);
     //Create Output
     PagingMeta meta = PaginationUtil.buildPagingMeta(requestDTO, SortByDataConstant.BOOKING, bookings);
     List<BookingDTO> bookingDTOs = mapperToBookingDTOs(bookings.getContent());
@@ -117,15 +117,26 @@ public class BookingServiceImpl implements BookingService {
   }
 
   @Override
+  public BookingDTO updateBooking(Long bookingId, BookingUpdateDTO bookingUpdateDTO, UserPrincipal principal) {
+    Optional<Booking> booking = bookingRepository.findById(bookingId);
+    checkNotFoundBookingById(booking, bookingId);
+    bookingMapper.updateBookingFromDTO(bookingUpdateDTO, booking.get());
+    bookingRepository.save(booking.get());
+    Optional<User> creator = userRepository.findById(booking.get().getCreatedBy());
+    User updater = userRepository.getUser(principal);
+    return mapperToBookingDTO(booking.get(), creator.get(), updater);
+  }
+
+  @Override
   public BookingDTO checkIn(Long bookingId, UserPrincipal principal) {
     Optional<Booking> booking = bookingRepository.findById(bookingId);
     checkNotFoundBookingById(booking, bookingId);
-    User updater = userRepository.getUser(principal);
     LocalDateTime now = LocalDateTime.now();
     booking.get().setCheckIn(now);
     booking.get().setStatus(BookingStatus.CHECKED_IN);
     bookingRepository.save(booking.get());
     Optional<User> creator = userRepository.findById(booking.get().getCreatedBy());
+    User updater = userRepository.getUser(principal);
     return mapperToBookingDTO(booking.get(), creator.get(), updater);
   }
 
@@ -133,12 +144,15 @@ public class BookingServiceImpl implements BookingService {
   public BookingDTO checkOutAndPayment(Long bookingId, UserPrincipal principal) {
     Optional<Booking> booking = bookingRepository.findById(bookingId);
     checkNotFoundBookingById(booking, bookingId);
-    User updater = userRepository.getUser(principal);
+    if(booking.get().getCheckIn() == null) {
+      throw new InvalidException(ErrorMessage.Booking.ERR_NOT_CHECKIN);
+    }
     LocalDateTime now = LocalDateTime.now();
     booking.get().setCheckOut(now);
     booking.get().setStatus(BookingStatus.CHECKED_OUT);
     bookingRepository.save(booking.get());
     Optional<User> creator = userRepository.findById(booking.get().getCreatedBy());
+    User updater = userRepository.getUser(principal);
     return mapperToBookingDTO(booking.get(), creator.get(), updater);
   }
 
@@ -190,55 +204,60 @@ public class BookingServiceImpl implements BookingService {
   }
 
   @Override
-  public List<BookingDTO> mapperToBookingDTOs(List<Booking> bookings) {
+  public List<BookingDTO> mapperToBookingDTOs(List<BookingProjection> bookings) {
     List<BookingDTO> bookingDTOs = new LinkedList<>();
-    for (Booking booking : bookings) {
-      Optional<User> creator = userRepository.findById(booking.getCreatedBy());
-      Optional<User> updater = userRepository.findById(booking.getLastModifiedBy());
-      BookingDTO bookingDTO = mapperToBookingDTO(booking, creator.get(), updater.get());
+    for (BookingProjection booking : bookings) {
+      BookingDTO bookingDTO = mapperToBookingDTO(booking);
       bookingDTOs.add(bookingDTO);
     }
     return bookingDTOs;
   }
 
-  private BookingDTO mapperToBookingDTO(Booking booking, User creator, User updater) {
-    BookingDTO bookingDTO = new BookingDTO();
-    bookingDTO.setId(booking.getId());
-    bookingDTO.setStatus(booking.getStatus());
-    bookingDTO.setNote(booking.getNote());
-    bookingDTO.setCreatedDate(booking.getCreatedDate());
-    bookingDTO.setLastModifiedDate(booking.getLastModifiedDate());
-    bookingDTO.setCreatedBy(userMapper.toCreatedByDTO(creator));
-    bookingDTO.setLastModifiedBy(userMapper.toLastModifiedByDTO(updater));
-    //check booking status to calculate surcharge and set checkin checkout
-    if (booking.getStatus().equals(BookingStatus.CHECKED_IN)) {
-      bookingDTO.setCheckIn(booking.getCheckIn());
-      bookingDTO.setCheckOut(booking.getExpectedCheckOut());
-      bookingDTO.setSurcharges(calculateSurcharge(booking));
-    } else if (booking.getStatus().equals(BookingStatus.CHECKED_OUT)) {
-      bookingDTO.setCheckIn(booking.getCheckIn());
-      bookingDTO.setCheckOut(booking.getCheckOut());
-      bookingDTO.setSurcharges(calculateSurcharge(booking));
-    } else {
-      bookingDTO.setCheckIn(booking.getExpectedCheckIn());
-      bookingDTO.setCheckOut(booking.getExpectedCheckOut());
+  private BookingDTO mapperToBookingDTO(BookingProjection booking) {
+    Set<BookingRoomDetail> bookingRoomDetails = bookingRoomDetailService.getBookingRoomDetailsByBooking(booking.getId());
+    Set<BookingServiceDetail> bookingServiceDetails = bookingServiceDetailService.getBookingServiceDetailsByBooking(booking.getId());
+    BookingDTO bookingDTO = bookingMapper.toBookingDTO(booking);
+    //check booking status to calculate surcharge
+    if (booking.getStatus().equals(BookingStatus.CHECKED_IN) || booking.getStatus().equals(BookingStatus.CHECKED_OUT)) {
+      bookingDTO.setSurcharges(calculateSurcharge(booking, bookingRoomDetails));
     }
     //room
-    bookingDTO.setTotalRoomPrice(calculateTotalRoomPrice(booking));
-    List<BookingRoomDetailDTO> bookingRoomDetailDTOs = bookingMapper.toBookingRoomDetailDTOs(booking.getBookingRoomDetails());
+    bookingDTO.setTotalRoomPrice(calculateTotalRoomPrice(booking, bookingRoomDetails));
+    List<BookingRoomDetailDTO> bookingRoomDetailDTOs = bookingMapper.toBookingRoomDetailDTOs(bookingRoomDetails);
     bookingDTO.setRooms(bookingRoomDetailDTOs);
     //service
-    bookingDTO.setTotalServicePrice(calculateTotalServicePrice(booking));
-    List<BookingServiceDetailDTO> bookingServiceDetailDTOs = bookingMapper.toBookingServiceDetailDTOs(booking.getBookingServiceDetails());
+    bookingDTO.setTotalServicePrice(calculateTotalServicePrice(booking, bookingServiceDetails));
+    List<BookingServiceDetailDTO> bookingServiceDetailDTOs = bookingMapper.toBookingServiceDetailDTOs(bookingServiceDetails);
+    bookingDTO.setServices(bookingServiceDetailDTOs);
+    return bookingDTO;
+  }
+
+  private BookingDTO mapperToBookingDTO(Booking booking, User creator, User updater) {
+    Set<BookingRoomDetail> bookingRoomDetails = booking.getBookingRoomDetails();
+    Set<BookingServiceDetail> bookingServiceDetails = booking.getBookingServiceDetails();
+    BookingDTO bookingDTO = bookingMapper.toBookingDTO(booking);
+    bookingDTO.setCreatedBy(userMapper.toCreatedByDTO(creator));
+    bookingDTO.setLastModifiedBy(userMapper.toLastModifiedByDTO(updater));
+    //check booking status to calculate surcharge
+    if (booking.getStatus().equals(BookingStatus.CHECKED_IN) || booking.getStatus().equals(BookingStatus.CHECKED_OUT)) {
+      bookingDTO.setSurcharges(calculateSurcharge(booking, bookingRoomDetails));
+    }
+    //room
+    bookingDTO.setTotalRoomPrice(calculateTotalRoomPrice(booking, bookingRoomDetails));
+    List<BookingRoomDetailDTO> bookingRoomDetailDTOs = bookingMapper.toBookingRoomDetailDTOs(bookingRoomDetails);
+    bookingDTO.setRooms(bookingRoomDetailDTOs);
+    //service
+    bookingDTO.setTotalServicePrice(calculateTotalServicePrice(booking, bookingServiceDetails));
+    List<BookingServiceDetailDTO> bookingServiceDetailDTOs = bookingMapper.toBookingServiceDetailDTOs(bookingServiceDetails);
     bookingDTO.setServices(bookingServiceDetailDTOs);
     return bookingDTO;
   }
 
   @Override
-  public Long calculateTotalRoomPrice(Booking booking) {
+  public Long calculateTotalRoomPrice(BookingProjection booking, Set<BookingRoomDetail> bookingRoomDetails) {
     long totalRoomPrice = 0L;
     Long totalDay = Math.round(ChronoUnit.HOURS.between(booking.getExpectedCheckIn(), booking.getExpectedCheckOut()) / 24d);
-    for (BookingRoomDetail bookingRoomDetail : booking.getBookingRoomDetails()) {
+    for (BookingRoomDetail bookingRoomDetail : bookingRoomDetails) {
       if(bookingRoomDetail.getSalePercent() != null) {
         double salePrice = bookingRoomDetail.getPrice() * (bookingRoomDetail.getSalePercent() / 100f);
         totalRoomPrice += (bookingRoomDetail.getPrice() - salePrice) * totalDay;
@@ -250,27 +269,63 @@ public class BookingServiceImpl implements BookingService {
   }
 
   @Override
-  public Long calculateTotalServicePrice(Booking booking) {
+  public Long calculateTotalRoomPrice(Booking booking, Set<BookingRoomDetail> bookingRoomDetails) {
+    long totalRoomPrice = 0L;
+    Long totalDay = Math.round(ChronoUnit.HOURS.between(booking.getExpectedCheckIn(), booking.getExpectedCheckOut()) / 24d);
+    for (BookingRoomDetail bookingRoomDetail : bookingRoomDetails) {
+      if(bookingRoomDetail.getSalePercent() != null) {
+        double salePrice = bookingRoomDetail.getPrice() * (bookingRoomDetail.getSalePercent() / 100f);
+        totalRoomPrice += (bookingRoomDetail.getPrice() - salePrice) * totalDay;
+      } else {
+        totalRoomPrice += bookingRoomDetail.getPrice() * totalDay;
+      }
+    }
+    return totalRoomPrice;
+  }
+
+  @Override
+  public Long calculateTotalServicePrice(BookingProjection booking, Set<BookingServiceDetail> bookingServiceDetails) {
     long totalServicePrice = 0L;
-    for (BookingServiceDetail bookingServiceDetail : booking.getBookingServiceDetails()) {
+    for (BookingServiceDetail bookingServiceDetail : bookingServiceDetails) {
       totalServicePrice += (bookingServiceDetail.getPrice() * bookingServiceDetail.getAmount());
     }
     return totalServicePrice;
   }
 
   @Override
-  public List<BookingSurchargeDTO> calculateSurcharge(Booking booking) {
+  public Long calculateTotalServicePrice(Booking booking, Set<BookingServiceDetail> bookingServiceDetails) {
+    long totalServicePrice = 0L;
+    for (BookingServiceDetail bookingServiceDetail : bookingServiceDetails) {
+      totalServicePrice += (bookingServiceDetail.getPrice() * bookingServiceDetail.getAmount());
+    }
+    return totalServicePrice;
+  }
+
+  @Override
+  public List<BookingSurchargeDTO> calculateSurcharge(BookingProjection booking, Set<BookingRoomDetail> bookingRoomDetails) {
     List<BookingSurchargeDTO> roomSurcharges = new LinkedList<>();
     if(booking.getCheckIn() != null && !booking.getCheckIn().equals(LocalDateTime.MIN)) {
-      roomSurcharges.add(calculateTotalCheckInSurcharge(booking));
+      roomSurcharges.add(calculateTotalCheckInSurcharge(booking, bookingRoomDetails));
     }
     if(booking.getCheckOut() != null && !booking.getCheckOut().equals(LocalDateTime.MIN)) {
-      roomSurcharges.add(calculateTotalCheckOutSurcharge(booking));
+      roomSurcharges.add(calculateTotalCheckOutSurcharge(booking, bookingRoomDetails));
     }
     return roomSurcharges;
   }
 
-  private BookingSurchargeDTO calculateTotalCheckInSurcharge(Booking booking) {
+  @Override
+  public List<BookingSurchargeDTO> calculateSurcharge(Booking booking, Set<BookingRoomDetail> bookingRoomDetails) {
+    List<BookingSurchargeDTO> roomSurcharges = new LinkedList<>();
+    if(booking.getCheckIn() != null && !booking.getCheckIn().equals(LocalDateTime.MIN)) {
+      roomSurcharges.add(calculateTotalCheckInSurcharge(booking, bookingRoomDetails));
+    }
+    if(booking.getCheckOut() != null && !booking.getCheckOut().equals(LocalDateTime.MIN)) {
+      roomSurcharges.add(calculateTotalCheckOutSurcharge(booking, bookingRoomDetails));
+    }
+    return roomSurcharges;
+  }
+
+  private BookingSurchargeDTO calculateTotalCheckInSurcharge(BookingProjection booking, Set<BookingRoomDetail> bookingRoomDetails) {
     LocalDateTime checkIn = booking.getCheckIn();
     LocalDate dateCheckIn = checkIn.toLocalDate();
     LocalDateTime date_5h = LocalDateTime.of(dateCheckIn, CommonConstant.TIME_5H00);
@@ -280,17 +335,17 @@ public class BookingServiceImpl implements BookingService {
     long totalCheckInSurcharge = 0L;
     if (checkIn.isBefore(date_5h)) {
       checkInSurcharge.setReason("You check-in before 5h. You pay 100% more of the total room price");
-      for (BookingRoomDetail bookingRoomDetail : booking.getBookingRoomDetails()) {
+      for (BookingRoomDetail bookingRoomDetail : bookingRoomDetails) {
         totalCheckInSurcharge += bookingRoomDetail.getPrice();
       }
     } else if (checkIn.isAfter(date_5h) && checkIn.isBefore(date_9h)) {
       checkInSurcharge.setReason("You check-in from 5h to 9h. You pay 50% more of the total room price");
-      for (BookingRoomDetail bookingRoomDetail : booking.getBookingRoomDetails()) {
+      for (BookingRoomDetail bookingRoomDetail : bookingRoomDetails) {
         totalCheckInSurcharge += Math.round(bookingRoomDetail.getPrice() * 0.5);
       }
     } else if (checkIn.isAfter(date_9h) && checkIn.isBefore(date_14h)) {
       checkInSurcharge.setReason("You check-in from 9h to 14h. You pay 30% more of the total room price");
-      for (BookingRoomDetail bookingRoomDetail : booking.getBookingRoomDetails()) {
+      for (BookingRoomDetail bookingRoomDetail : bookingRoomDetails) {
         totalCheckInSurcharge += Math.round(bookingRoomDetail.getPrice() * 0.3);
       }
     } else {
@@ -300,7 +355,37 @@ public class BookingServiceImpl implements BookingService {
     return checkInSurcharge;
   }
 
-  private BookingSurchargeDTO calculateTotalCheckOutSurcharge(Booking booking) {
+  private BookingSurchargeDTO calculateTotalCheckInSurcharge(Booking booking, Set<BookingRoomDetail> bookingRoomDetails) {
+    LocalDateTime checkIn = booking.getCheckIn();
+    LocalDate dateCheckIn = checkIn.toLocalDate();
+    LocalDateTime date_5h = LocalDateTime.of(dateCheckIn, CommonConstant.TIME_5H00);
+    LocalDateTime date_9h = LocalDateTime.of(dateCheckIn, CommonConstant.TIME_9H00);
+    LocalDateTime date_14h = LocalDateTime.of(dateCheckIn, CommonConstant.TIME_14H00);
+    BookingSurchargeDTO checkInSurcharge = new BookingSurchargeDTO();
+    long totalCheckInSurcharge = 0L;
+    if (checkIn.isBefore(date_5h)) {
+      checkInSurcharge.setReason("You check-in before 5h. You pay 100% more of the total room price");
+      for (BookingRoomDetail bookingRoomDetail : bookingRoomDetails) {
+        totalCheckInSurcharge += bookingRoomDetail.getPrice();
+      }
+    } else if (checkIn.isAfter(date_5h) && checkIn.isBefore(date_9h)) {
+      checkInSurcharge.setReason("You check-in from 5h to 9h. You pay 50% more of the total room price");
+      for (BookingRoomDetail bookingRoomDetail : bookingRoomDetails) {
+        totalCheckInSurcharge += Math.round(bookingRoomDetail.getPrice() * 0.5);
+      }
+    } else if (checkIn.isAfter(date_9h) && checkIn.isBefore(date_14h)) {
+      checkInSurcharge.setReason("You check-in from 9h to 14h. You pay 30% more of the total room price");
+      for (BookingRoomDetail bookingRoomDetail : bookingRoomDetails) {
+        totalCheckInSurcharge += Math.round(bookingRoomDetail.getPrice() * 0.3);
+      }
+    } else {
+      return null;
+    }
+    checkInSurcharge.setRoomSurcharge(totalCheckInSurcharge);
+    return checkInSurcharge;
+  }
+
+  private BookingSurchargeDTO calculateTotalCheckOutSurcharge(BookingProjection booking, Set<BookingRoomDetail> bookingRoomDetails) {
     LocalDateTime checkOut = booking.getCheckOut();
     LocalDate dateCheckOut = checkOut.toLocalDate();
     LocalDateTime date_12h = LocalDateTime.of(dateCheckOut, CommonConstant.TIME_12H00);
@@ -310,17 +395,47 @@ public class BookingServiceImpl implements BookingService {
     long totalCheckOutSurcharge = 0L;
     if (checkOut.isAfter(date_12h) && checkOut.isBefore(date_15h)) {
       checkOutSurcharge.setReason("You check-out from 12h to 15h. You pay 30% more of the total room price");
-      for (BookingRoomDetail bookingRoomDetail : booking.getBookingRoomDetails()) {
+      for (BookingRoomDetail bookingRoomDetail : bookingRoomDetails) {
         totalCheckOutSurcharge += Math.round(bookingRoomDetail.getPrice() * 0.3);
       }
     } else if (checkOut.isAfter(date_15h) && checkOut.isBefore(date_18h)) {
       checkOutSurcharge.setReason("You check-out from 15h to 18h. You pay 50% more of the total room price");
-      for (BookingRoomDetail bookingRoomDetail : booking.getBookingRoomDetails()) {
+      for (BookingRoomDetail bookingRoomDetail : bookingRoomDetails) {
         totalCheckOutSurcharge += Math.round(bookingRoomDetail.getPrice() * 0.5);
       }
     } else if (checkOut.isAfter(date_18h)) {
       checkOutSurcharge.setReason("You check-out after 18h. You pay 100% more of the total room price");
-      for (BookingRoomDetail bookingRoomDetail : booking.getBookingRoomDetails()) {
+      for (BookingRoomDetail bookingRoomDetail : bookingRoomDetails) {
+        totalCheckOutSurcharge += bookingRoomDetail.getPrice();
+      }
+    } else {
+      return null;
+    }
+    checkOutSurcharge.setRoomSurcharge(totalCheckOutSurcharge);
+    return checkOutSurcharge;
+  }
+
+  private BookingSurchargeDTO calculateTotalCheckOutSurcharge(Booking booking, Set<BookingRoomDetail> bookingRoomDetails) {
+    LocalDateTime checkOut = booking.getCheckOut();
+    LocalDate dateCheckOut = checkOut.toLocalDate();
+    LocalDateTime date_12h = LocalDateTime.of(dateCheckOut, CommonConstant.TIME_12H00);
+    LocalDateTime date_15h = LocalDateTime.of(dateCheckOut, CommonConstant.TIME_15H00);
+    LocalDateTime date_18h = LocalDateTime.of(dateCheckOut, CommonConstant.TIME_18H00);
+    BookingSurchargeDTO checkOutSurcharge = new BookingSurchargeDTO();
+    long totalCheckOutSurcharge = 0L;
+    if (checkOut.isAfter(date_12h) && checkOut.isBefore(date_15h)) {
+      checkOutSurcharge.setReason("You check-out from 12h to 15h. You pay 30% more of the total room price");
+      for (BookingRoomDetail bookingRoomDetail : bookingRoomDetails) {
+        totalCheckOutSurcharge += Math.round(bookingRoomDetail.getPrice() * 0.3);
+      }
+    } else if (checkOut.isAfter(date_15h) && checkOut.isBefore(date_18h)) {
+      checkOutSurcharge.setReason("You check-out from 15h to 18h. You pay 50% more of the total room price");
+      for (BookingRoomDetail bookingRoomDetail : bookingRoomDetails) {
+        totalCheckOutSurcharge += Math.round(bookingRoomDetail.getPrice() * 0.5);
+      }
+    } else if (checkOut.isAfter(date_18h)) {
+      checkOutSurcharge.setReason("You check-out after 18h. You pay 100% more of the total room price");
+      for (BookingRoomDetail bookingRoomDetail : bookingRoomDetails) {
         totalCheckOutSurcharge += bookingRoomDetail.getPrice();
       }
     } else {
@@ -363,6 +478,12 @@ public class BookingServiceImpl implements BookingService {
 
   private void checkNotFoundBookingById(Optional<Booking> booking, Long bookingId) {
     if (booking.isEmpty()) {
+      throw new NotFoundException(String.format(ErrorMessage.Booking.ERR_NOT_FOUND_ID, bookingId));
+    }
+  }
+
+  private void checkNotFoundBookingById(BookingProjection booking, Long bookingId) {
+    if (ObjectUtils.isEmpty(booking)) {
       throw new NotFoundException(String.format(ErrorMessage.Booking.ERR_NOT_FOUND_ID, bookingId));
     }
   }

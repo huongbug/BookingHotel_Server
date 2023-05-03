@@ -24,6 +24,12 @@ public class BookingDTO extends DateAuditingDTO {
   private Long id;
 
   @JsonFormat(pattern = CommonConstant.PATTERN_DATE_TIME)
+  private LocalDateTime expectedCheckIn;
+
+  @JsonFormat(pattern = CommonConstant.PATTERN_DATE_TIME)
+  private LocalDateTime expectedCheckOut;
+
+  @JsonFormat(pattern = CommonConstant.PATTERN_DATE_TIME)
   private LocalDateTime checkIn;
 
   @JsonFormat(pattern = CommonConstant.PATTERN_DATE_TIME)
@@ -42,6 +48,8 @@ public class BookingDTO extends DateAuditingDTO {
   private List<BookingServiceDetailDTO> services = new LinkedList<>();
 
   private List<BookingSurchargeDTO> surcharges = new LinkedList<>();
+
+  private UserSummaryDTO user;
 
   private CreatedByDTO createdBy;
 

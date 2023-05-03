@@ -1,16 +1,17 @@
 package com.bookinghotel.service;
 
-import com.bookinghotel.dto.BookingCreateDTO;
-import com.bookinghotel.dto.BookingDTO;
-import com.bookinghotel.dto.BookingFilterDTO;
-import com.bookinghotel.dto.BookingSurchargeDTO;
+import com.bookinghotel.dto.*;
 import com.bookinghotel.dto.common.CommonResponseDTO;
 import com.bookinghotel.dto.pagination.PaginationResponseDTO;
 import com.bookinghotel.dto.pagination.PaginationSortRequestDTO;
 import com.bookinghotel.entity.Booking;
+import com.bookinghotel.entity.BookingRoomDetail;
+import com.bookinghotel.entity.BookingServiceDetail;
+import com.bookinghotel.projection.BookingProjection;
 import com.bookinghotel.security.UserPrincipal;
 
 import java.util.List;
+import java.util.Set;
 
 public interface BookingService {
 
@@ -22,6 +23,8 @@ public interface BookingService {
 
   BookingDTO createBooking(BookingCreateDTO bookingCreateDTO, UserPrincipal principal);
 
+  BookingDTO updateBooking(Long bookingId, BookingUpdateDTO bookingUpdateDTO, UserPrincipal principal);
+
   BookingDTO checkIn(Long bookingId, UserPrincipal principal);
 
   BookingDTO checkOutAndPayment(Long bookingId, UserPrincipal principal);
@@ -30,12 +33,18 @@ public interface BookingService {
 
   void lockUserRefuseToCheckIn();
 
-  List<BookingDTO> mapperToBookingDTOs(List<Booking> bookings);
+  List<BookingDTO> mapperToBookingDTOs(List<BookingProjection> bookings);
 
-  Long calculateTotalRoomPrice(Booking booking);
+  Long calculateTotalRoomPrice(BookingProjection booking, Set<BookingRoomDetail> bookingRoomDetails);
 
-  Long calculateTotalServicePrice(Booking booking);
+  Long calculateTotalRoomPrice(Booking booking, Set<BookingRoomDetail> bookingRoomDetails);
 
-  List<BookingSurchargeDTO> calculateSurcharge(Booking booking);
+  Long calculateTotalServicePrice(BookingProjection booking, Set<BookingServiceDetail> bookingServiceDetails);
+
+  Long calculateTotalServicePrice(Booking booking, Set<BookingServiceDetail> bookingServiceDetails);
+
+  List<BookingSurchargeDTO> calculateSurcharge(BookingProjection booking, Set<BookingRoomDetail> bookingRoomDetails);
+
+  List<BookingSurchargeDTO> calculateSurcharge(Booking booking, Set<BookingRoomDetail> bookingRoomDetails);
 
 }

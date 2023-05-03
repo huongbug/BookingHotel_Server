@@ -1,12 +1,16 @@
 package com.bookinghotel.mapper;
 
+import com.bookinghotel.dto.BookingDTO;
 import com.bookinghotel.dto.BookingRoomDetailDTO;
 import com.bookinghotel.dto.BookingServiceDetailDTO;
+import com.bookinghotel.dto.BookingUpdateDTO;
 import com.bookinghotel.entity.Booking;
 import com.bookinghotel.entity.BookingRoomDetail;
 import com.bookinghotel.entity.BookingServiceDetail;
+import com.bookinghotel.projection.BookingProjection;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.Mappings;
 
 import java.util.List;
@@ -16,6 +20,27 @@ import java.util.Set;
 public interface BookingMapper {
 
   Booking toBookingCreated(Booking booking);
+
+  @Mappings({
+      @Mapping(target = "totalRoomPrice", ignore = true),
+      @Mapping(target = "rooms", ignore = true),
+      @Mapping(target = "totalServicePrice", ignore = true),
+      @Mapping(target = "services", ignore = true),
+      @Mapping(target = "surcharges", ignore = true),
+      @Mapping(target = "user", ignore = true),
+      @Mapping(target = "createdBy", ignore = true),
+      @Mapping(target = "lastModifiedBy", ignore = true)
+  })
+  BookingDTO toBookingDTO(Booking booking);
+
+  @Mappings({
+      @Mapping(target = "totalRoomPrice", ignore = true),
+      @Mapping(target = "rooms", ignore = true),
+      @Mapping(target = "totalServicePrice", ignore = true),
+      @Mapping(target = "services", ignore = true),
+      @Mapping(target = "surcharges", ignore = true)
+  })
+  BookingDTO toBookingDTO(BookingProjection booking);
 
   @Mappings({
       @Mapping(target = "id", source = "bookingRoomDetail.room.id"),
@@ -44,5 +69,7 @@ public interface BookingMapper {
   BookingServiceDetailDTO toBookingServiceDetailDTO(BookingServiceDetail bookingServiceDetail);
 
   List<BookingServiceDetailDTO> toBookingServiceDetailDTOs(Set<BookingServiceDetail> bookingServiceDetails);
+
+  void updateBookingFromDTO(BookingUpdateDTO updateDTO, @MappingTarget Booking booking);
 
 }

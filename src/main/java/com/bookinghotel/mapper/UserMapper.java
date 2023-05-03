@@ -2,6 +2,7 @@ package com.bookinghotel.mapper;
 
 import com.bookinghotel.dto.UserCreateDTO;
 import com.bookinghotel.dto.UserDTO;
+import com.bookinghotel.dto.UserSummaryDTO;
 import com.bookinghotel.dto.UserUpdateDTO;
 import com.bookinghotel.dto.common.CreatedByDTO;
 import com.bookinghotel.dto.common.LastModifiedByDTO;
@@ -21,6 +22,8 @@ public interface UserMapper {
       @Mapping(target = "roleName", source = "user.role.roleName"),
   })
   UserDTO toUserDTO(User user);
+
+  UserSummaryDTO toUserSummaryDTO(User user);
 
   List<UserDTO> toUserDTOs(List<User> user);
 

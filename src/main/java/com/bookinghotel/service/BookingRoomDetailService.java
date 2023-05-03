@@ -8,6 +8,8 @@ import java.util.Set;
 
 public interface BookingRoomDetailService {
 
+  Set<BookingRoomDetail> getBookingRoomDetailsByBooking(Long bookingId);
+
   Set<BookingRoomDetail> createBookingRoomDetails(Booking booking, List<Long> roomIds);
 
 }

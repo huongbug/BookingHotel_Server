@@ -14,6 +14,7 @@ public class CommonConstant {
 
   public static final Integer DAYS_TO_DELETE_RECORDS = 30;
   public static final Integer HOURS_IN_A_DAY = 24;
+  public static final Long LATE_CHECKIN_HOURS = 8L;
 
   public static final Integer MAX_MESSAGE_CHAT_BOT = 10;
 

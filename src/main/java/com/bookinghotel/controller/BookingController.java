@@ -6,6 +6,7 @@ import com.bookinghotel.constant.RoleConstant;
 import com.bookinghotel.constant.UrlConstant;
 import com.bookinghotel.dto.BookingCreateDTO;
 import com.bookinghotel.dto.BookingFilterDTO;
+import com.bookinghotel.dto.BookingUpdateDTO;
 import com.bookinghotel.dto.pagination.PaginationSortRequestDTO;
 import com.bookinghotel.security.AuthorizationInfo;
 import com.bookinghotel.security.CurrentUserLogin;
@@ -61,6 +62,16 @@ public class BookingController {
                                              @Parameter(name = "principal", hidden = true)
                                              @CurrentUserLogin UserPrincipal principal) {
     return VsResponseUtil.ok(bookingService.createBooking(bookingCreateDTO, principal));
+  }
+
+  @Operation(summary = "API update booking")
+  @AuthorizationInfo(role = { RoleConstant.ADMIN })
+  @PostMapping(value = UrlConstant.Booking.UPDATE_BOOKING)
+  public ResponseEntity<?> updateBooking(@PathVariable Long bookingId,
+                                         @Valid @RequestBody BookingUpdateDTO bookingUpdateDTO,
+                                         @Parameter(name = "principal", hidden = true)
+                                         @CurrentUserLogin UserPrincipal principal) {
+    return VsResponseUtil.ok(bookingService.updateBooking(bookingId, bookingUpdateDTO, principal));
   }
 
   @Tag(name = "booking-controller-admin")
