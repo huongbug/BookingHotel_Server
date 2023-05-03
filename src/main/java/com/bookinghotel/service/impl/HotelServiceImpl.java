@@ -76,11 +76,13 @@ public class HotelServiceImpl implements HotelService {
     checkNotFoundServiceById(currentService, serviceId);
     serviceMapper.updateProductFromDTO(serviceUpdateDTO, currentService.get());
     //update thumbnail
-    if(serviceUpdateDTO.getThumbnailFile() != null) {
-      uploadFile.destroyFileWithUrl(currentService.get().getThumbnail());
-      currentService.get().setThumbnail(uploadFile.uploadFile(serviceUpdateDTO.getThumbnailFile()));
-    } else {
-      throw new InvalidException(ErrorMessage.Service.ERR_SERVICE_MUST_HAVE_THUMBNAIL);
+    if(ObjectUtils.isEmpty(serviceUpdateDTO.getThumbnail())) {
+      if(serviceUpdateDTO.getThumbnailFile() != null) {
+        uploadFile.destroyFileWithUrl(currentService.get().getThumbnail());
+        currentService.get().setThumbnail(uploadFile.uploadFile(serviceUpdateDTO.getThumbnailFile()));
+      } else {
+        throw new InvalidException(ErrorMessage.Service.ERR_SERVICE_MUST_HAVE_THUMBNAIL);
+      }
     }
     User updater = userRepository.getUser(principal);
     User creator = userRepository.findById(currentService.get().getCreatedBy()).get();

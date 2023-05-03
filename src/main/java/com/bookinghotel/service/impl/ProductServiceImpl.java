@@ -92,11 +92,13 @@ public class ProductServiceImpl implements ProductService {
     checkNotFoundProductById(currentProduct, productId);
     productMapper.updateProductFromDTO(productUpdateDTO, currentProduct.get());
     //update thumbnail
-    if(productUpdateDTO.getThumbnailFile() != null) {
-      uploadFile.destroyFileWithUrl(currentProduct.get().getThumbnail());
-      currentProduct.get().setThumbnail(uploadFile.uploadFile(productUpdateDTO.getThumbnailFile()));
-    } else {
-      throw new InvalidException(ErrorMessage.Product.ERR_PRODUCT_MUST_HAVE_THUMBNAIL);
+    if(ObjectUtils.isEmpty(productUpdateDTO.getThumbnail())) {
+      if(productUpdateDTO.getThumbnailFile() != null) {
+        uploadFile.destroyFileWithUrl(currentProduct.get().getThumbnail());
+        currentProduct.get().setThumbnail(uploadFile.uploadFile(productUpdateDTO.getThumbnailFile()));
+      } else {
+        throw new InvalidException(ErrorMessage.Product.ERR_PRODUCT_MUST_HAVE_THUMBNAIL);
+      }
     }
     User updater = userRepository.getUser(principal);
     User creator = userRepository.findById(currentProduct.get().getCreatedBy()).get();
