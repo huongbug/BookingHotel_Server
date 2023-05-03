@@ -18,9 +18,9 @@ public class LockUserRefuseToCheckinJob {
   private final BookingService bookingService;
 
   /**
-   * This job starts at 5:00 AM everyday
+   * This job starts at 22:00 PM everyday
    */
-  @Scheduled(cron = "0 0 5 * * *")
+  @Scheduled(cron = "0 0/5 22-23 * * *")
   void lockUserRefuseToCheckin() {
     bookingService.lockUserRefuseToCheckIn();
   }

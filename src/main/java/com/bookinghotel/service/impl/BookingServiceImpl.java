@@ -180,7 +180,8 @@ public class BookingServiceImpl implements BookingService {
     dataMailDTO.setSubject(CommonMessage.SUBJECT_ACCOUNT_LOCK_NOTICE);
     List<Booking> bookings = bookingRepository.findBookingUserByStatus(BookingStatus.PENDING.toString());
     for(Booking booking : bookings) {
-      if(booking.getExpectedCheckIn().isBefore(now)) {
+      LocalDateTime expectedCheckIn = booking.getExpectedCheckIn().plusHours(CommonConstant.LATE_CHECKIN_HOURS);
+      if(expectedCheckIn.isBefore(now)) {
         User userBooking = booking.getUser();
         userBooking.setIsLocked(CommonConstant.TRUE);
         userRepository.save(userBooking);
