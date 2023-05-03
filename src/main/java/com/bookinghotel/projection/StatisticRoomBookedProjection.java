@@ -6,15 +6,19 @@ public interface StatisticRoomBookedProjection {
 
   Long getId();
 
-  String getTitle();
+  String getName();
 
   Long getPrice();
 
   String getType();
 
-  Integer getMaxNum();
+  String getBed();
 
-  Integer getFloor();
+  Integer getSize();
+
+  Integer getCapacity();
+
+  String getServices();
 
   String getDescription();
 

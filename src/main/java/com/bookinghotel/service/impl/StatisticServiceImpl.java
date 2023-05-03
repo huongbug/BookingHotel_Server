@@ -8,6 +8,8 @@ import com.bookinghotel.dto.pagination.PaginationResponseDTO;
 import com.bookinghotel.dto.pagination.PaginationSearchSortRequestDTO;
 import com.bookinghotel.dto.pagination.PagingMeta;
 import com.bookinghotel.entity.Booking;
+import com.bookinghotel.entity.BookingRoomDetail;
+import com.bookinghotel.entity.BookingServiceDetail;
 import com.bookinghotel.mapper.RoomMapper;
 import com.bookinghotel.mapper.UserMapper;
 import com.bookinghotel.projection.StatisticCustomerTopBookingProjection;
@@ -19,14 +21,13 @@ import com.bookinghotel.service.BookingService;
 import com.bookinghotel.service.StatisticService;
 import com.bookinghotel.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -88,11 +89,15 @@ public class StatisticServiceImpl implements StatisticService {
       int totalBooking = 0;
       for(Booking booking : bookings) {
         if(booking.getCreatedDate().getMonthValue() == month) {
-          totalRevenueMonth += bookingService.calculateTotalRoomPrice(booking);
-          totalRevenueMonth += bookingService.calculateTotalServicePrice(booking);
-          List<BookingSurchargeDTO> surchargeDTOs = bookingService.calculateSurcharge(booking);
+          Set<BookingRoomDetail> bookingRoomDetails = booking.getBookingRoomDetails();
+          Set<BookingServiceDetail> bookingServiceDetails = booking.getBookingServiceDetails();
+          totalRevenueMonth += bookingService.calculateTotalRoomPrice(booking, bookingRoomDetails);
+          totalRevenueMonth += bookingService.calculateTotalServicePrice(booking, bookingServiceDetails);
+          List<BookingSurchargeDTO> surchargeDTOs = bookingService.calculateSurcharge(booking, bookingRoomDetails);
           for(BookingSurchargeDTO surchargeDTO : surchargeDTOs) {
-            totalRevenueMonth += surchargeDTO.getRoomSurcharge();
+            if(ObjectUtils.isNotEmpty(surchargeDTO)) {
+              totalRevenueMonth += surchargeDTO.getRoomSurcharge();
+            }
           }
           totalBooking++;
         }
