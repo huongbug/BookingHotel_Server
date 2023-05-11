@@ -7,6 +7,7 @@ import com.bookinghotel.constant.UrlConstant;
 import com.bookinghotel.dto.BookingCreateDTO;
 import com.bookinghotel.dto.BookingFilterDTO;
 import com.bookinghotel.dto.BookingUpdateDTO;
+import com.bookinghotel.dto.pagination.PaginationSearchSortRequestDTO;
 import com.bookinghotel.dto.pagination.PaginationSortRequestDTO;
 import com.bookinghotel.security.AuthorizationInfo;
 import com.bookinghotel.security.CurrentUserLogin;
@@ -50,7 +51,7 @@ public class BookingController {
   @Operation(summary = "API get booking for admin")
   @AuthorizationInfo(role = { RoleConstant.ADMIN })
   @GetMapping(UrlConstant.Booking.GET_BOOKINGS_FOR_ADMIN)
-  public ResponseEntity<?> getBookingsForAdmin(@Valid @ParameterObject PaginationSortRequestDTO pagination,
+  public ResponseEntity<?> getBookingsForAdmin(@Valid @ParameterObject PaginationSearchSortRequestDTO pagination,
                                                @ParameterObject BookingFilterDTO bookingFilterDTO) {
     return VsResponseUtil.ok(bookingService.getBookingsForAdmin(pagination, bookingFilterDTO));
   }

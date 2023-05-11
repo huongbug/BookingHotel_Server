@@ -104,13 +104,31 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
       "LEFT JOIN users u ON u.id = b.user_id " +
       "WHERE (:#{#filter.fromDate} IS NULL OR b.expected_check_in >= :#{#filter.fromDate}) " +
       "AND (:#{#filter.toDate} IS NULL OR b.expected_check_out <= :#{#filter.toDate}) " +
-      "AND (:status IS NULL OR b.status = :status)",
+      "AND (:status IS NULL OR b.status = :status) " +
+      "AND ( " +
+      "COALESCE(:keyword, '') = '' " +
+      "OR u.first_name LIKE CONCAT('%', :keyword, '%') " +
+      "OR u.last_name LIKE CONCAT('%', :keyword, '%') " +
+      "OR u.email LIKE CONCAT('%', :keyword, '%') " +
+      "OR u.phone_number LIKE CONCAT('%', :keyword, '%') " +
+      ")",
       countQuery = "SELECT COUNT(*) FROM bookings b " +
+          "LEFT JOIN users createdBy ON b.created_by = createdBy.id " +
+          "LEFT JOIN users lastModifiedBy ON b.last_modified_by = lastModifiedBy.id " +
+          "LEFT JOIN users u ON u.id = b.user_id " +
           "WHERE (:#{#filter.fromDate} IS NULL OR b.expected_check_in >= :#{#filter.fromDate}) " +
           "AND (:#{#filter.toDate} IS NULL OR b.expected_check_out <= :#{#filter.toDate}) " +
-          "AND (:status IS NULL OR b.status = :status)",
+          "AND (:status IS NULL OR b.status = :status) " +
+          "AND ( " +
+          "COALESCE(:keyword, '') = '' " +
+          "OR u.first_name LIKE CONCAT('%', :keyword, '%') " +
+          "OR u.last_name LIKE CONCAT('%', :keyword, '%') " +
+          "OR u.email LIKE CONCAT('%', :keyword, '%') " +
+          "OR u.phone_number LIKE CONCAT('%', :keyword, '%') " +
+          ")",
       nativeQuery = true)
-  Page<BookingProjection> findAllForAdmin(@Param("filter") BookingFilterDTO filter, @Param("status") String bookingStatus, Pageable pageable);
+  Page<BookingProjection> findAllForAdmin(@Param("keyword") String keyword, @Param("filter") BookingFilterDTO filter,
+                                          @Param("status") String bookingStatus, Pageable pageable);
 
   @Query(value = "SELECT * FROM bookings b " +
       "WHERE MONTH(b.created_date) BETWEEN :#{#filter.fromMonth} AND :#{#filter.toMonth} " +

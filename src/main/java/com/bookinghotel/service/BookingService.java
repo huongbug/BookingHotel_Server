@@ -3,6 +3,7 @@ package com.bookinghotel.service;
 import com.bookinghotel.dto.*;
 import com.bookinghotel.dto.common.CommonResponseDTO;
 import com.bookinghotel.dto.pagination.PaginationResponseDTO;
+import com.bookinghotel.dto.pagination.PaginationSearchSortRequestDTO;
 import com.bookinghotel.dto.pagination.PaginationSortRequestDTO;
 import com.bookinghotel.entity.Booking;
 import com.bookinghotel.entity.BookingRoomDetail;
@@ -19,7 +20,7 @@ public interface BookingService {
 
   PaginationResponseDTO<BookingDTO> getBookingsForUser(PaginationSortRequestDTO requestDTO, UserPrincipal principal);
 
-  PaginationResponseDTO<BookingDTO> getBookingsForAdmin(PaginationSortRequestDTO requestDTO, BookingFilterDTO bookingFilterDTO);
+  PaginationResponseDTO<BookingDTO> getBookingsForAdmin(PaginationSearchSortRequestDTO requestDTO, BookingFilterDTO bookingFilterDTO);
 
   BookingDTO createBooking(BookingCreateDTO bookingCreateDTO, UserPrincipal principal);
 

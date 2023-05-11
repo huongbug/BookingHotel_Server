@@ -6,6 +6,7 @@ import com.bookinghotel.dto.*;
 import com.bookinghotel.dto.common.CommonResponseDTO;
 import com.bookinghotel.dto.common.DataMailDTO;
 import com.bookinghotel.dto.pagination.PaginationResponseDTO;
+import com.bookinghotel.dto.pagination.PaginationSearchSortRequestDTO;
 import com.bookinghotel.dto.pagination.PaginationSortRequestDTO;
 import com.bookinghotel.dto.pagination.PagingMeta;
 import com.bookinghotel.entity.Booking;
@@ -80,11 +81,11 @@ public class BookingServiceImpl implements BookingService {
   }
 
   @Override
-  public PaginationResponseDTO<BookingDTO> getBookingsForAdmin(PaginationSortRequestDTO requestDTO, BookingFilterDTO filterDTO) {
+  public PaginationResponseDTO<BookingDTO> getBookingsForAdmin(PaginationSearchSortRequestDTO requestDTO, BookingFilterDTO filterDTO) {
     String bookingStatus = filterDTO.getBookingStatus() == null ? null : filterDTO.getBookingStatus().toString();
     //Pagination
     Pageable pageable = PaginationUtil.buildPageable(requestDTO, SortByDataConstant.BOOKING);
-    Page<BookingProjection> bookings = bookingRepository.findAllForAdmin(filterDTO, bookingStatus, pageable);
+    Page<BookingProjection> bookings = bookingRepository.findAllForAdmin(requestDTO.getKeyword(), filterDTO, bookingStatus, pageable);
     //Create Output
     PagingMeta meta = PaginationUtil.buildPagingMeta(requestDTO, SortByDataConstant.BOOKING, bookings);
     List<BookingDTO> bookingDTOs = mapperToBookingDTOs(bookings.getContent());
