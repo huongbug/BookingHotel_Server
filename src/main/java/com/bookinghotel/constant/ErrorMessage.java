@@ -21,6 +21,7 @@ public class ErrorMessage {
   public static class Auth {
     public static final String ERR_INCORRECT_AUTHENTICATION = "Tên đăng nhập hoặc mật khẩu không chính xác!";
     public static final String ERR_DUPLICATE_EMAIL = "Email đã được sử dụng!";
+    public static final String ERR_DUPLICATE_PHONE = "Số điện thoại đã được sử dụng!";
     public static final String ERR_DUPLICATE_PASSWORD = "Mật khẩu mới phải khác với mật khẩu cũ!";
     public static final String ERR_ACCOUNT_NOT_ENABLED = "Tài khoản này chưa được kích hoạt!";
     public static final String ERR_ACCOUNT_LOCKED = "Tài khoản này đã bị khóa!";

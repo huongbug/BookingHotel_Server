@@ -67,14 +67,17 @@ public class AuthServiceImpl implements AuthService {
 
   @Override
   public CommonResponseDTO signUp(UserCreateDTO userCreateDTO) {
-    Optional<User> findUser = userRepository.findByEmail(userCreateDTO.getEmail());
-    if(findUser.isPresent()) {
-      if(findUser.get().getIsEnable()) {
-        throw new DuplicateException(ErrorMessage.Auth.ERR_DUPLICATE_EMAIL);
-      } else {
-        VerificationToken verificationToken = verificationTokenService.createVerificationToken(findUser.get());
-        return sendMailSignUp(findUser.get(), verificationToken);
-      }
+    Optional<User> findUserByEmail = userRepository.findByEmail(userCreateDTO.getEmail());
+    if(findUserByEmail.isPresent() && findUserByEmail.get().getIsEnable()) {
+      throw new DuplicateException(ErrorMessage.Auth.ERR_DUPLICATE_EMAIL);
+    }
+    Optional<User> findUserByPhone = userRepository.findByPhone(userCreateDTO.getPhoneNumber());
+    if(findUserByPhone.isPresent() && findUserByPhone.get().getIsEnable()) {
+      throw new DuplicateException(ErrorMessage.Auth.ERR_DUPLICATE_PHONE);
+    }
+    if(findUserByEmail.isPresent() && findUserByPhone.isPresent()) {
+      VerificationToken verificationToken = verificationTokenService.createVerificationToken(findUserByEmail.get());
+      return sendMailSignUp(findUserByEmail.get(), verificationToken);
     } else {
       User user = userService.createUser(userCreateDTO);
       VerificationToken verificationToken = verificationTokenService.createVerificationToken(user);
